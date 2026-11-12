@@ -1,0 +1,13 @@
+#!/bin/sh
+# Forced command for the dedicated we-actions SSH deploy key.
+set -eu
+request=${SSH_ORIGINAL_COMMAND:-}
+case "$request" in
+  'deploy '*) sha=${request#deploy } ;;
+  *) echo 'Denied: expected deploy <commit-sha>' >&2; exit 64 ;;
+esac
+if ! printf '%s\n' "$sha" | grep -Eq '^[0-9a-f]{40}$'; then
+  echo 'Denied: commit SHA must contain exactly 40 lowercase hex characters' >&2
+  exit 64
+fi
+exec /usr/bin/sudo -n /usr/local/sbin/we-site-release "$sha"
