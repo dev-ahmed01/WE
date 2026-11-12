@@ -40,7 +40,7 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
       assert.equal(await page.locator('#weAmPop .we-pop__tile').first()
         .evaluate(el => getComputedStyle(el,'::before').display), 'none', 'no modal red fill');
       await page.locator('#closeAmenities').click();
-      await page.locator('#weAmPop[hidden]').waitFor({ timeout: 8000 });
+      await page.locator('#weAmPop').waitFor({ state: 'hidden', timeout: 8000 });
       await page.close();
       console.log('WORKSPACES UI OK: width=' + width);
     }
