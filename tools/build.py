@@ -599,7 +599,7 @@ def main():
             # Fail closed if the original source marker changes rather than shipping
             # a partial edit. Editable SVG and hover code live in source/.
             illustration = (SRC / "managed-office-split-illustration.html").read_text(encoding="utf-8")
-            svg_pattern = r'<svg aria-label="Architectural line drawing of a modern managed office"[^>]*>[\\s\\S]*?</svg>'
+            svg_pattern = r'<svg aria-label="Architectural line drawing of a modern managed office"[^>]*>(?s:.*?)</svg>'
             body, replaced = re.subn(svg_pattern, lambda _: illustration, body, count=1)
             if replaced != 1:
                 raise SystemExit("managed offices illustration marker changed; refusing unsafe build")
@@ -610,7 +610,7 @@ def main():
                 raise SystemExit("benefits pinned-stage measurement changed; refusing unsafe build")
             body = body.replace(old_measure, "cardH=Math.round(clamp(stageH-3*strip,250,480));")
             hover = (SRC / "managed-office-hover.js").read_text(encoding="utf-8")
-            body += "\\n<script>\\n" + hover + "\\n</script>\\n"
+            body += "\n<script>\n" + hover + "\n</script>\n"
         body = extract_scripts(body, page["key"])
         if page["key"] == "home":
             logo = re.search(r'<img src="(/assets/img/workspace-by-emlen-[^"]+)"', body).group(1)
