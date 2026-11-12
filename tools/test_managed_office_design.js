@@ -22,19 +22,54 @@ fs.mkdirSync(SHOTS, {recursive:true});
    assert.equal(await page.locator('.hero .copy h1').count(),1,'original centred heading retained');
    assert.equal(await page.locator('.hero .actions a.button').count(),2,'both CTAs retained');
    assert.equal(await page.locator('.hero .copy').evaluate(el=>getComputedStyle(el).textAlign),'center','heading stays centred');
-   assert.ok((await page.locator('.hero .illustration').getAttribute('viewBox'))?.includes('1590'),'original line illustration retained');
-   const hero = await page.locator('.hero .illustration').evaluate(el=>({
-      alpha:getComputedStyle(el).opacity,
-      mask:getComputedStyle(el).maskImage || getComputedStyle(el).webkitMaskImage
-   }));
-   assert.equal(hero.alpha,'0.9','illustration opacity unchanged');
-   if(!mobile) assert.ok(hero.mask.includes('linear-gradient'),'split illustration masks centre on desktop');
+   assert.equal(await page.locator('.hero .hero-art > svg').count(),2,'two independent complete illustrations');
+   const left=page.locator('.hero-art .illustration--left'),right=page.locator('.hero-art .illustration--right');
+   for(const art of [left,right]){
+     const computed=await art.evaluate(el=>({
+       opacity:getComputedStyle(el).opacity,
+       mask:getComputedStyle(el).maskImage,
+       paths:el.querySelectorAll('path').length
+     }));
+     assert.equal(computed.opacity,'0.9','art kept at 90% opacity');
+     assert.equal(computed.mask,'none','no fading or cropping mask');
+     assert.ok(computed.paths>25,'complete vector scene retained');
+   }
+   assert.ok(await left.locator('path[d^="M61 274"]').count(),'desk/plant artwork included');
+   assert.ok(await right.locator('path[d^="M395 274"]').count(),'full meeting pod included');
+   assert.ok(await right.locator('path[d^="M899 256"]').count(),'full lounge sofa included');
+   assert.ok(await right.locator('path[d^="M1411 274"]').count(),'full storage shelves included');
+   assert.equal(await page.locator('.hero-art path[d^="M0 58H1590"]').count(),0,
+      'no old full-width ceiling spanning the CTAs');
+   const call = page.locator('.hero .actions .button').nth(1);
+   assert.equal(await call.getAttribute('href'),'tel:+919814953954','secondary Call now retains dial link');
+   assert.equal(await call.evaluate(el=>getComputedStyle(el).color),'rgb(22, 22, 22)',
+      'secondary CTA not red filled');
+   assert.ok((await call.evaluate(el=>getComputedStyle(el).backgroundImage)).includes('gradient'),
+      'secondary CTA uses subtle frosted glass');
+   if(!mobile){
+     const artL=await left.boundingBox(),artR=await right.boundingBox();
+     const first=await page.locator('.hero .actions .button').first().boundingBox();
+     const second=await call.boundingBox();
+     assert.ok(artL.x+artL.width<=first.x+12,'left illustration clears the main CTA');
+     assert.ok(artR.x>=second.x+second.width-12,'right illustration clears secondary CTA');
+   }
    for(const card of await page.locator('.hero .cards .card').all()) {
       assert.equal(await card.locator('p').evaluate(el=>getComputedStyle(el).display),'block','description visible');
       const border=await card.locator('p').evaluate(el=>getComputedStyle(el).borderTopWidth);
       assert.notEqual(border,'0px','visible dividing rule');
       assert.equal(await card.locator('.ic').count(),1,'plus icon retained');
+      assert.equal(await card.locator('.ic').evaluate(el=>getComputedStyle(el).position),
+        'absolute','red/black plus mark remains in the top-right');
       assert.ok((await card.evaluate(el=>getComputedStyle(el).backgroundImage)).includes('gradient'),'yellow gradient retained');
+   }
+   if(!mobile){
+     const firstCard=page.locator('.hero .cards .card').first();
+     await firstCard.scrollIntoViewIfNeeded();
+     await firstCard.hover();
+     assert.ok((await firstCard.evaluate(el=>el.style.getPropertyValue('--spot-x'))).endsWith('%'),
+       'yellow card spotlight tracks the pointer');
+     assert.equal(await firstCard.evaluate(el=>getComputedStyle(el,'::after').opacity),'1',
+       'yellow card hover reveal is enabled');
    }
    await page.screenshot({path:path.join(SHOTS,'managed-office-'+(mobile?'mobile':'desktop')+'-hero.png'),animations:'disabled'});
    const benefits=page.locator('#benefits');
