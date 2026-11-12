@@ -41,6 +41,13 @@ const routes = [
       assert.ok(state.withinViewport, route + ': header fits viewport');
       assert.ok(state.sections >= 4, route + ': on-page section choices');
 
+      if (route === '/') {
+        await desktop.screenshot({ path: path.join(SHOTS, 'home-desktop.png'), animations: 'disabled' });
+      }
+      if (route === '/managed-office/south-bangalore/') {
+        await desktop.screenshot({ path: path.join(SHOTS, 'managed-office-desktop.png'), animations: 'disabled' });
+      }
+
       const details = desktop.locator('.em-nav__sections');
       await details.locator('summary').click();
       assert.equal(await details.getAttribute('open'), '', route + ': section menu expands');
@@ -50,12 +57,6 @@ const routes = [
       assert.equal(new URL(desktop.url()).hash, firstHash, route + ': section link jumps locally');
       assert.equal(await details.getAttribute('open'), null, route + ': dropdown closes after selection');
 
-      if (route === '/') {
-        await desktop.screenshot({ path: path.join(SHOTS, 'home-desktop.png'), animations: 'disabled' });
-      }
-      if (route === '/managed-office/south-bangalore/') {
-        await desktop.screenshot({ path: path.join(SHOTS, 'managed-office-desktop.png'), animations: 'disabled' });
-      }
       await desktop.close();
 
       const mobile = await browser.newPage({
