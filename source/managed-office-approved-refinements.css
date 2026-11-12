@@ -91,7 +91,7 @@ html body .hero .cards .card::after {
   opacity:0;
   transition:opacity .28s ease;
 }
-html body .hero .cards .card > * {position:relative;z-index:1}
+html body .hero .cards .card > :not(.ic) {position:relative;z-index:1}
 html body .hero .cards .card .ic {z-index:2}
 @media(hover:hover) and (pointer:fine) {
   html body .hero .cards .card:hover {
