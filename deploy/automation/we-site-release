@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+# Root-owned deployment entrypoint; only the current origin/main SHA is accepted.
+set -Eeuo pipefail
+umask 077
+
+if (( EUID != 0 )) || (( $# != 1 )) || [[ ! "$1" =~ ^[0-9a-f]{40}$ ]]; then
+  echo 'Usage: we-site-release <40-character SHA> (root only)' >&2
+  exit 64
+fi
+sha=$1
+repo=/opt/apps/Workspace-Public-Site
+compose=$repo/deploy/compose.contabo.yaml
+releases=/opt/apps/.we-site-releases
+image="workspace-emlen-public:$sha"
+caddy=emlen-central-ingress-caddy-1
+canary="we-site-check-${sha:0:12}"
+previous_image=''
+activation_started=0
+activated=0
+
+exec 9>/run/lock/we-site-release.lock
+if ! flock -n 9; then
+  echo 'Another Workspace public website deployment is in progress' >&2
+  exit 75
+fi
+
+cleanup() {
+  local exit_code=$?
+  trap - EXIT
+  /usr/bin/docker rm -f "$canary" >/dev/null 2>&1 || true
+  if (( activation_started == 1 && activated == 0 )) && [[ -n "$previous_image" ]]; then
+    echo 'Deployment validation failed; restoring previous public website image' >&2
+    /usr/bin/docker tag "$previous_image" workspace-emlen-public:local || true
+    /usr/bin/docker compose -f "$compose" up -d --no-build --force-recreate web || true
+  fi
+  exit "$exit_code"
+}
+trap cleanup EXIT
+
+[[ -f "$compose" ]] || { echo 'Website compose file not found' >&2; exit 1; }
+
+/usr/sbin/runuser -u deploy -- /usr/bin/git -C "$repo" fetch --no-tags origin main
+head=$(/usr/sbin/runuser -u deploy -- /usr/bin/git -C "$repo" rev-parse refs/remotes/origin/main)
+if [[ "$sha" != "$head" ]]; then
+  echo 'Rejected: requested SHA is not the current origin/main head' >&2
+  exit 65
+fi
+
+echo "Preparing validated release $sha"
+/usr/bin/install -d -m 755 "$releases"
+release=$(/usr/bin/mktemp -d "$releases/${sha:0:12}.XXXXXXXX")
+/usr/bin/chown deploy:deploy "$release"
+/usr/bin/chmod 700 "$release"
+/usr/sbin/runuser -u deploy -- /usr/bin/git -C "$repo" archive "$sha" |
+  /usr/sbin/runuser -u deploy -- /usr/bin/tar -xf - -C "$release"
+
+uid=$(/usr/bin/id -u deploy)
+gid=$(/usr/bin/id -g deploy)
+/usr/bin/docker run --rm \
+  --user "$uid:$gid" \
+  --security-opt no-new-privileges:true \
+  --cap-drop ALL \
+  -v "$release:/app:ro" \
+  -v "$release:/out" \
+  -w /app \
+  -e EMLEN_OUT=/out/generated \
+  -e EMLEN_SITE_URL=https://workspacebyemlen.co.uk \
+  -e PYTHONDONTWRITEBYTECODE=1 \
+  python:3.12-slim \
+  sh -ec 'python -m pip install --quiet --no-cache-dir --target /tmp/we-deps Pillow==11.3.0; PYTHONPATH=/tmp/we-deps python tools/build.py; python tools/check_links.py /out/generated'
+
+for path in index.html workspaces/index.html managed-office/south-bangalore/index.html managed-office/one-person-office/index.html; do
+  test -s "$release/generated/$path"
+done
+/usr/bin/grep -q 'https://workspacebyemlen.co.uk' "$release/generated/sitemap.xml"
+
+/usr/bin/rm -rf -- "$release/public"
+/usr/bin/mv -- "$release/generated" "$release/public"
+/usr/bin/docker build --file "$release/deploy/Dockerfile" --tag "$image" "$release"
+
+/usr/bin/docker run -d --name "$canary" --network emlen_ingress \
+  --security-opt no-new-privileges:true "$image" >/dev/null
+for path in / /workspaces/ /managed-office/south-bangalore/ /managed-office/one-person-office/ /sitemap.xml; do
+  success=0
+  for attempt in {1..12}; do
+    if /usr/bin/docker exec "$caddy" wget -q -O /dev/null -T 8 "http://$canary:80$path"; then
+      success=1
+      break
+    fi
+    sleep 1
+  done
+  if (( success != 1 )); then
+    echo "Canary check failed for $path" >&2
+    exit 1
+  fi
+done
+/usr/bin/docker rm -f "$canary" >/dev/null
+
+previous_image=$(/usr/bin/docker image inspect workspace-emlen-public:local --format '{{.Id}}')
+/usr/bin/docker tag "$previous_image" workspace-emlen-public:rollback
+activation_started=1
+/usr/bin/docker tag "$image" workspace-emlen-public:local
+/usr/bin/docker compose -f "$compose" up -d --no-build --force-recreate web
+cid=$(/usr/bin/docker compose -f "$compose" ps -q web)
+[[ -n "$cid" ]] || { echo 'Public website container not found after deployment' >&2; exit 1; }
+
+health=''
+for attempt in {1..30}; do
+  health=$(/usr/bin/docker inspect --format '{{.State.Health.Status}}' "$cid")
+  [[ "$health" == 'healthy' ]] && break
+  [[ "$health" == 'unhealthy' ]] && break
+  sleep 2
+done
+[[ "$health" == 'healthy' ]] || { echo "Website unhealthy after deploy: $health" >&2; exit 1; }
+
+for path in / /workspaces/ /managed-office/south-bangalore/ /managed-office/one-person-office/; do
+  /usr/bin/curl --noproxy '*' --fail --silent --show-error --max-time 15 \
+    --resolve workspacebyemlen.co.uk:443:127.0.0.1 \
+    "https://workspacebyemlen.co.uk$path" -o /dev/null
+done
+
+activated=1
+/usr/bin/install -d -m 755 /var/lib/we-site-release
+printf '%s\n' "$sha" > /var/lib/we-site-release/current-sha
+chmod 644 /var/lib/we-site-release/current-sha
+echo "DEPLOYMENT SUCCESSFUL: $sha"
