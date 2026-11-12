@@ -229,12 +229,13 @@ html body #office-checklist .consult-card {
  * pinned viewport. Compact only the collapsed title strips and spacing,
  * preserving the four-card stack animation and all existing content. */
 @media (min-width:901px) and (min-height:480px) {
-  html body #benefits.bn-live .bn-stage {--strip:46px!important;}
+  html body #benefits.bn-live .bn-stage {--strip:44px!important;}
   html body #benefits.bn-live .bn-inner {
     gap:11px!important;
+    padding-top:88px!important;
     padding-bottom:8px!important;
   }
-  html body #benefits.bn-live .bn-head {margin-bottom:10px!important;}
+  html body #benefits.bn-live .bn-head {margin-bottom:18px!important;}
   html body #benefits.bn-live .bn-card .bn-body {
     padding-bottom:clamp(22px,2.4vh,30px)!important;
   }
