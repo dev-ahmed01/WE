@@ -1,0 +1,6 @@
+/* One-Person Office: fade only the Section 7 architectural drawing.
+ * Previous explicit opacity: 0.30; requested: exactly half -> 0.15.
+ * Keep the SVG paths, reveal timeline, floor, and existing fade mask. */
+html body #how-it-works .hs-stage {
+  opacity:.15!important;
+}

@@ -589,6 +589,9 @@ def main():
         if page["key"] == "category":
             # Build-scoped, editable styles for the approved Managed Offices visuals.
             css += "\n/* Approved Managed Offices refinements */\n" + (SRC / "managed-office-approved-refinements.css").read_text(encoding="utf-8")
+        if page["key"] == "one-person":
+            # Keep opacity styling scoped to the Section 7 illustration.
+            css += "\n/* One-Person Office illustration refinement */\n" + (SRC / "one-person-illustration-opacity.css").read_text(encoding="utf-8")
         if not font_url:
             m = FONT_RE.search(head)
             font_url = html.unescape(m.group(0)) if m else None

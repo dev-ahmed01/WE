@@ -63,8 +63,8 @@ fs.mkdirSync(SHOTS, {recursive:true});
      const firstTitle=await page.locator('.hero .cards .card-title').first().boundingBox();
      const firstCard=await page.locator('.hero .cards .card').first().boundingBox();
      const artBox=await page.locator('.hero .hero-art').boundingBox();
-     assert.ok(firstTitle.y+firstTitle.height < viewport.height-8,
-        'feature-card headings visible at initial desktop fold');
+     assert.ok(firstTitle.y+firstTitle.height < viewport.height-40,
+        'yellow feature-card headings have clear breathing room above the desktop fold');
      assert.ok(firstCard.y > viewport.height*0.68,
         'only the feature card header is introduced near first fold');
      assert.ok(artBox.y < firstCard.y,
@@ -95,8 +95,27 @@ fs.mkdirSync(SHOTS, {recursive:true});
        'yellow card hover reveal is enabled');
    }
    await page.screenshot({path:path.join(SHOTS,'managed-office-'+viewport.width+'-hero.png'),animations:'disabled'});
+   const consultation=page.locator('#office-checklist.consult-section');
+   const seam=await consultation.evaluate(el=>{
+      const section=getComputedStyle(el),card=getComputedStyle(el.querySelector('.consult-card'));
+      return {background:section.backgroundImage,paddingTop:parseFloat(section.paddingTop),
+        cardBackground:card.backgroundImage};
+   });
+   assert.ok(seam.background.includes('linear-gradient'),'consultation uses a continuous ivory gradient');
+   assert.ok(seam.cardBackground.includes('linear-gradient'),'consultation glass card retains a blended gradient');
+   assert.ok(seam.paddingTop>=38,'consultation gets enough separation from adjacent sections');
    const benefits=page.locator('#benefits');
    assert.equal(await benefits.locator('.bn-card').count(),4,'all four benefits preserved');
+   if(!mobile){
+     const expandedLayout=await benefits.evaluate(el=>({
+       pinned:el.classList.contains('bn-live'),
+       titleStrip:getComputedStyle(el.querySelector('.bn-stage')).getPropertyValue('--strip').trim(),
+       height:parseFloat(getComputedStyle(el.querySelector('.bn-card')).height)
+     }));
+     assert.ok(expandedLayout.pinned,'desktop Benefits preserves pinned stacking');
+     assert.equal(expandedLayout.titleStrip,'44px','shorter collapsed headings reserve space for expanded content');
+     assert.ok(expandedLayout.height>=300,'Benefits panels are tall enough to show content comfortably');
+   }
    for(const card of await benefits.locator('.bn-card').all()) {
       const styles=await card.evaluate(el=>{
         const title=el.querySelector('.bn-title'),content=el.querySelector('.bn-copy'),photo=el.querySelector('.bn-photo'),body=el.querySelector('.bn-body');

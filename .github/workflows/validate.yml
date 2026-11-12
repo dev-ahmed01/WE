@@ -65,6 +65,7 @@ jobs:
           node --check tools/test_navigation.js
           node --check tools/test_workspaces_refinements.js
           node --check tools/test_managed_office_design.js
+          node --check tools/test_oneperson_illustration.js
           node tools/check_navigation.js "${{ runner.temp }}/we-site-generated"
 
       - name: Install Playwright browser
@@ -88,6 +89,7 @@ jobs:
           node tools/test_navigation.js http://127.0.0.1:8802
           node tools/test_workspaces_refinements.js http://127.0.0.1:8802
           node tools/test_managed_office_design.js http://127.0.0.1:8802
+          node tools/test_oneperson_illustration.js http://127.0.0.1:8802
 
       - name: Upload navigation preview screenshots
         if: always()
