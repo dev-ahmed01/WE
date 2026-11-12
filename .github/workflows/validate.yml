@@ -1,0 +1,66 @@
+name: Validate public website
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: we-validate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and check all four pages
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out website source
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install build dependency
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+
+      - name: Build production website in an isolated directory
+        env:
+          EMLEN_SITE_URL: https://workspacebyemlen.co.uk
+          EMLEN_OUT: ${{ runner.temp }}/we-site-generated
+        run: python tools/build.py
+
+      - name: Check local links and asset references
+        run: python tools/check_links.py "${{ runner.temp }}/we-site-generated"
+
+      - name: Verify routes and SEO output
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="${{ runner.temp }}/we-site-generated"
+          for path in \
+            index.html \
+            workspaces/index.html \
+            managed-office/south-bangalore/index.html \
+            managed-office/one-person-office/index.html
+          do
+            test -s "$OUT/$path"
+            echo "OK: $path"
+          done
+          grep -q 'https://workspacebyemlen.co.uk' "$OUT/sitemap.xml"
+          grep -q 'Sitemap: https://workspacebyemlen.co.uk/sitemap.xml' "$OUT/robots.txt"
+
+      - name: Save validated website build
+        uses: actions/upload-artifact@v4
+        with:
+          name: we-public-site-${{ github.sha }}
+          path: ${{ runner.temp }}/we-site-generated/
+          if-no-files-found: error
+          retention-days: 7
