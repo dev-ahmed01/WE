@@ -1,0 +1,11 @@
+# Netlify / Cloudflare Pages: copy this file and _redirects into public/ before deploying.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  X-Frame-Options: SAMEORIGIN
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; frame-src https://www.google.com https://maps.google.com; connect-src 'self' https:; base-uri 'self'; form-action 'self' https://wa.me; object-src 'none'; frame-ancestors 'self'
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/js/config.js
+  Cache-Control: no-cache

@@ -1,0 +1,16 @@
+node_modules/
+.DS_Store
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.agekey
+.ssh/
+
+# Backups and temporary files
+*.bak
+*.zip
+*.log

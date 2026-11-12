@@ -1,0 +1,11 @@
+{
+  "name": "workspace-by-emlen-site",
+  "private": true,
+  "scripts": {
+    "build": "python3 tools/build.py",
+    "serve": "node tools/serve.js public 8802",
+    "audit": "node tools/audit.js http://localhost:8802 / /workspaces/ /managed-office/south-bangalore/ /managed-office/one-person-office/",
+    "flows": "node tools/flows.js http://localhost:8802"
+  },
+  "devDependencies": { "playwright": "^1.50.0" }
+}

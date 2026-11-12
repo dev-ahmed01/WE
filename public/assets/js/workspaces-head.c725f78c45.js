@@ -1,0 +1,1 @@
+(function(d){if(!matchMedia("(prefers-reduced-motion: reduce)").matches)d.classList.add("we-motion");addEventListener("load",function(){setTimeout(function(){var h=document.querySelector(".we-hero");h&&h.classList.add("is-in","is-done")},2500)})})(document.documentElement);;

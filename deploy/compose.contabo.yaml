@@ -1,0 +1,25 @@
+# Isolated public website service. Does not publish host ports or alter existing apps.
+name: workspace-public-site
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: workspace-emlen-public:local
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      ingress:
+        aliases:
+          - we-public-web
+networks:
+  ingress:
+    external: true
+    name: emlen_ingress
