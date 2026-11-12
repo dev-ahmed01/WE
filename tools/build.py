@@ -508,8 +508,6 @@ def patch_category(b):
     b = rep(b, '<li><a href="#faq">FAQs</a></li></ul></div><div><h4>Contact</h4>',
             '<li><a href="#faq">FAQs</a></li></ul></div><div><h4>More from Emlen</h4><ul><li><a href="/">Home</a></li><li><a href="/workspaces/">Workspaces</a></li>'
             '<li><a href="/managed-office/one-person-office/">One Person Office</a></li></ul></div><div><h4>Contact</h4>', label="cat footer")
-    b = rep(b, '</div></div></section>\n<section class="other-wrap">',
-            '</div><p class="sl-more"><a href="/managed-office/one-person-office/">Explore One-Person Office plans <span aria-hidden="true">&rarr;</span></a></p></div></section>\n<section class="other-wrap">', label="cat tile link")
     return b
 
 def patch_one_person(b):
