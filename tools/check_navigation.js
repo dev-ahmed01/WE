@@ -21,8 +21,8 @@ for (const route of routes) {
   const cfg = pageConfig[route];
   if (!cfg) throw new Error(route + ': missing navigation configuration');
   if (!pages.some(p => p.path === route)) throw new Error(route + ': missing global navigation route');
-  if (!html.includes('href="/assets/css/site-navigation.css"')) throw new Error(route + ': navigation CSS missing');
-  if (!html.includes('src="/assets/js/site-navigation.js"')) throw new Error(route + ': navigation JS missing');
+  if (!/href="\/assets\/css\/site-navigation\.[a-f0-9]{10}\.css"/.test(html)) throw new Error(route + ': versioned navigation CSS missing');
+  if (!/src="\/assets\/js\/site-navigation\.[a-f0-9]{10}\.js"/.test(html)) throw new Error(route + ': versioned navigation JS missing');
   if (!html.includes('id="' + cfg.enquire.slice(1) + '"')) throw new Error(route + ': enquiry anchor missing');
   for (const [name, hash] of cfg.sections) {
     if (!html.includes('id="' + hash.slice(1) + '"')) {
