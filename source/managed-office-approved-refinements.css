@@ -17,7 +17,8 @@ html body .hero .hero-art {
   width:calc(100% - 32px);
   max-width:1520px;
   min-height:240px;
-  margin:-51px auto 62px!important;
+  /* Raise the complete scenes ~28px and bring the card headers ~60px into view. */
+  margin:-79px auto 30px!important;
   padding:0!important;
   pointer-events:none;
 }
@@ -39,7 +40,7 @@ html body .hero .hero-art .illustration {
 }
 html body .hero .hero-art .illustration--left {flex-basis:33%;width:33%!important}
 html body .hero .hero-art .illustration--right {flex-basis:34%;width:34%!important}
-html body .hero .hero-art .illustration > g {opacity:.67}
+html body .hero .hero-art .illustration > g {opacity:.90}
 html body .hero .hero-art :is(path,g) {vector-effect:non-scaling-stroke}
 
 /* Red primary; quiet liquid-glass secondary, with clear hover hierarchy. */
