@@ -1,0 +1,194 @@
+/*
+ * Managed Offices: approved centred hero with an open break in the existing
+ * architectural illustration; structured yellow features; left-copy/right-image
+ * Benefits panels. This stylesheet is appended to CATEGORY CSS at build time.
+ * Never flatten the live page into a screenshot or change CTA/navigation routes.
+ */
+
+/* Keep the approved original line artwork, its thin stroke, and opacity.
+ * Mask only the centre so the same drawing frames BOTH sides of the CTAs. */
+html body .hero .copy {
+  position:relative;
+  z-index:5;
+}
+html body .hero .actions {
+  position:relative;
+  z-index:6;
+  transform:translateY(-7px);
+  margin-top:clamp(22px,2.4vw,30px)!important;
+}
+html body .hero .illustration {
+  position:relative;
+  z-index:2;
+  opacity:.9!important;
+  width:min(var(--wrap,1330px),calc(100% - 34px))!important;
+  max-width:var(--wrap,1330px)!important;
+  margin:-65px auto 30px!important;
+  pointer-events:none;
+  -webkit-mask-image:linear-gradient(to right,
+    #000 0%,#000 27%,rgba(0,0,0,.85) 31%,
+    transparent 39%,transparent 61%,
+    rgba(0,0,0,.85) 69%,#000 73%,#000 100%);
+  mask-image:linear-gradient(to right,
+    #000 0%,#000 27%,rgba(0,0,0,.85) 31%,
+    transparent 39%,transparent 61%,
+    rgba(0,0,0,.85) 69%,#000 73%,#000 100%);
+}
+html body .hero .illustration :is(path,rect,line,circle,ellipse,polygon,polyline) {
+  vector-effect:non-scaling-stroke;
+}
+html body .hero .cards {
+  position:relative;
+  z-index:4;
+  gap:16px!important;
+  align-items:stretch!important;
+}
+
+/* Same existing yellow gradient, red/black plus icon and outer radius.
+ * Only the interior follows the selected structured reference:
+ * title + icon, hairline divider, readable description. */
+html body .hero .cards .card {
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  justify-content:flex-start!important;
+  min-height:253px!important;
+  padding:27px 27px 25px!important;
+  gap:0!important;
+}
+html body .hero .cards .card-title {
+  display:block!important;
+  min-height:2.35em;
+  max-width:calc(100% - 58px)!important;
+  padding:0!important;
+  margin:0!important;
+  white-space:normal!important;
+  text-align:left!important;
+  font-size:clamp(19px,1.45vw,24px)!important;
+  line-height:1.14!important;
+  letter-spacing:-.044em!important;
+}
+html body .hero .cards .card .ic {
+  top:27px!important;
+  right:24px!important;
+  transform:none!important;
+}
+html body .hero .cards .card p {
+  display:block!important;
+  flex:1 0 auto;
+  width:100%;
+  max-width:none!important;
+  margin:15px 0 0!important;
+  padding:18px 0 0!important;
+  border-top:1px solid rgba(22,22,22,.18);
+  color:#29231f!important;
+  font:400 clamp(14px,1.03vw,17px)/1.56 var(--body,'Poppins',sans-serif)!important;
+  text-align:left!important;
+}
+
+/* Give the Benefits heading breathing room above the existing stack. */
+html body #benefits .bn-head {
+  margin-bottom:clamp(18px,2.5vh,28px)!important;
+}
+html body #benefits .bn-inner {
+  gap:clamp(20px,2.6vh,34px)!important;
+}
+/* In pinned mode preserve the pinned stage's flexible height. */
+html body #benefits.bn-live .bn-inner {
+  gap:clamp(15px,2vh,25px)!important;
+}
+/* All four Benefits panels: headings and text on LEFT, photos on RIGHT,
+ * including the two cards previously flipped by .is-flip. */
+html body #benefits .bn-card .bn-strip,
+html body #benefits .bn-card.is-flip .bn-strip {
+  padding:0 32px 0 34px!important;
+  text-align:left!important;
+  justify-content:flex-start!important;
+}
+html body #benefits .bn-card .bn-title {
+  margin:0!important;
+  text-align:left!important;
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  font-size:clamp(19px,1.8vw,28px)!important;
+}
+html body #benefits .bn-card .bn-body,
+html body #benefits .bn-card.is-flip .bn-body {
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,.64fr)!important;
+  gap:clamp(18px,2.4vw,34px)!important;
+  padding:0 20px 20px 34px!important;
+}
+html body #benefits .bn-card .bn-copy {
+  grid-column:1;
+  grid-row:1;
+  order:0!important;
+  min-width:0;
+  text-align:left!important;
+}
+html body #benefits .bn-card .bn-photo,
+html body #benefits .bn-card.is-flip .bn-photo {
+  grid-column:2;
+  grid-row:1;
+  order:0!important;
+  min-width:0;
+  align-self:stretch;
+}
+html body #benefits .bn-card .bn-photo img {
+  width:100%;height:100%;object-fit:cover;
+}
+
+/* Tablet cards and live pinned stage retain room to breathe. */
+@media(max-width:1150px) {
+  html body .hero .cards .card {padding:24px 21px!important;min-height:260px!important;}
+  html body .hero .cards .card-title {font-size:clamp(18px,2vw,23px)!important;}
+  html body .hero .cards .card .ic {right:18px!important;top:22px!important;}
+  html body #benefits .bn-card .bn-title {font-size:clamp(18px,2.05vw,25px)!important;}
+}
+@media(max-width:760px) {
+  /* On small screens the artwork is naturally below the buttons, not
+   * compressed around them, and the yellow cards remain readable. */
+  html body .hero .actions {transform:none;}
+  html body .hero .illustration {
+    margin:12px auto 20px!important;
+    -webkit-mask-image:none;
+    mask-image:none;
+    width:calc(100% - 24px)!important;
+  }
+  html body .hero .cards .card {
+    min-height:220px!important;
+    padding:23px 22px 22px!important;
+  }
+  html body .hero .cards .card-title {
+    min-height:0;
+    margin-bottom:12px!important;
+    max-width:calc(100% - 53px)!important;
+    font-size:21px!important;
+  }
+  html body .hero .cards .card p {margin-top:5px!important;padding-top:16px!important;font-size:15px!important;}
+  html body #benefits .bn-head {margin-bottom:20px!important;}
+  html body #benefits .bn-inner {gap:22px!important;}
+  html body #benefits .bn-card .bn-strip,
+  html body #benefits .bn-card.is-flip .bn-strip {
+    padding:16px 20px 12px 24px!important;
+    height:auto!important;
+    min-height:var(--strip,52px);
+  }
+  html body #benefits .bn-card .bn-title {font-size:20px!important;}
+  html body #benefits .bn-card .bn-body,
+  html body #benefits .bn-card.is-flip .bn-body {
+    grid-template-columns:minmax(0,1fr)!important;
+    padding:0 20px 20px 24px!important;
+    gap:18px!important;
+  }
+  html body #benefits .bn-card .bn-copy {grid-column:1;grid-row:1;}
+  html body #benefits .bn-card .bn-photo,
+  html body #benefits .bn-card.is-flip .bn-photo {
+    grid-column:1;grid-row:2;order:0!important;
+    height:200px;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  html body .hero .actions {transition:none!important;}
+}
