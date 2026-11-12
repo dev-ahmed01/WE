@@ -18,7 +18,9 @@ html body .hero .hero-art {
   max-width:1520px;
   min-height:240px;
   /* Raise the complete scenes ~28px and bring the card headers ~60px into view. */
-  margin:-79px auto 30px!important;
+  /* Complete scenes stay the same size; tighten the vertical stack so the
+     four yellow card headings are visible just below the hero illustration. */
+  margin:-111px auto 2px!important;
   padding:0!important;
   pointer-events:none;
 }
@@ -203,6 +205,44 @@ html body #benefits .bn-card.is-flip .bn-photo {
 }
 html body #benefits .bn-card .bn-photo img {
   width:100%;height:100%;object-fit:cover;
+}
+
+/* Seamless section transition: blend the consultation ticket into the
+ * warm ivory page background instead of presenting a detached white panel. */
+html body #office-checklist.consult-section {
+  background:linear-gradient(180deg,#fffaf6 0%,#fffaf8 47%,#fffaf7 100%)!important;
+  padding:clamp(52px,5.4vw,76px) 0 clamp(58px,6vw,88px)!important;
+}
+html body #office-checklist.consult-section::after {
+  background:linear-gradient(180deg,
+    rgba(255,250,246,.80),transparent 27%,transparent 73%,
+    rgba(255,250,247,.84))!important;
+}
+html body #office-checklist .consult-card {
+  background:linear-gradient(140deg,rgba(255,255,255,.79),rgba(255,249,244,.67))!important;
+  border:1px solid rgba(255,255,255,.74)!important;
+  box-shadow:0 17px 45px rgba(80,48,34,.065),
+    inset 0 1px 0 rgba(255,255,255,.96)!important;
+}
+
+/* Benefits: make the expanded content genuinely taller inside the existing
+ * pinned viewport. Compact only the collapsed title strips and spacing,
+ * preserving the four-card stack animation and all existing content. */
+@media (min-width:901px) and (min-height:480px) {
+  html body #benefits.bn-live .bn-stage {--strip:46px!important;}
+  html body #benefits.bn-live .bn-inner {
+    gap:11px!important;
+    padding-bottom:8px!important;
+  }
+  html body #benefits.bn-live .bn-head {margin-bottom:10px!important;}
+  html body #benefits.bn-live .bn-card .bn-body {
+    padding-bottom:clamp(22px,2.4vh,30px)!important;
+  }
+}
+@media(max-width:900px) {
+  html body #office-checklist.consult-section {
+    padding:38px 0 50px!important;
+  }
 }
 
 /* Longer Benefits panels without altering the GSAP stacking/flip sequence.
