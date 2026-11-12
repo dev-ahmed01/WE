@@ -26,6 +26,8 @@ TODAY = datetime.date.today().isoformat()
 PHONE_TEL = "+919814953954"
 PHONE_PRETTY = "+91 98149 53954"
 BRAND_RED = "#ED2024"
+NAV_SCRIPT = (ROOT / "source/site-navigation.js").read_text(encoding="utf-8")
+NAV_STYLE = (ROOT / "source/site-navigation.css").read_text(encoding="utf-8")
 
 PAGES = [
     dict(key="home", src="WE_Home_v28_Audited.html", out="index.html", url="/"),
@@ -205,8 +207,10 @@ def make_head(page, metas, css_path, font_url, title, extra_css=()):
         parts.append(f'<link rel="stylesheet" href="{html.escape(font_url, quote=True)}">')
     parts.append(f'<link rel="stylesheet" href="{css_path}">')
     parts.append('<link rel="stylesheet" href="/assets/css/site.css">')
+    parts.append(f'<link rel="stylesheet" href="/assets/css/site-navigation.{sha(NAV_STYLE)}.css">')
     parts.append('<script src="/assets/js/config.js"></script>')
     parts.append('<script src="/assets/js/site.js" defer></script>')
+    parts.append(f'<script src="/assets/js/site-navigation.{sha(NAV_SCRIPT)}.js" defer></script>')
     return "\n".join(parts)
 
 def json_ld(page):
@@ -480,6 +484,12 @@ def patch_workspaces(b):
     return b
 
 def patch_category(b):
+    # The existing One-Person Office card used to open the enquiry form, despite a full
+    # destination page being available. Preserve the card's visuals and fix its route.
+    b = rep(b,
+            '<a aria-label="Enquire about One-Person Office" class="office-tile tile-1" data-anchor="one-person-office" data-office="One-Person Office" href="#enquiry" id="one-person-office">',
+            '<a aria-label="Explore One-Person Office" class="office-tile tile-1" data-anchor="one-person-office" href="/managed-office/one-person-office/" id="one-person-office">',
+            label="cat one-person card link")
     b = rep(b, '<a class="brand" href="#top" aria-label="Workspace by Emlen">', '<a class="brand" href="/" aria-label="Workspace by Emlen home">', label="cat brand")
     # browsers compile pattern="" with the `v` flag, where ( ) and a bare - inside [...] are syntax errors -> validation silently dropped
     b = rep(b, r'pattern="[0-9+()\s-]{8,20}"', r'pattern="[0-9+\s\-\(\)]{8,20}"', count=2, label="cat pattern")
@@ -527,6 +537,10 @@ def main():
     write("assets/js/config.js", CONFIG_JS)
     write("assets/js/site.js", SITE_JS)
     write("assets/css/site.css", SITE_CSS)
+    # Keep the cross-page navigation editable independently of the large hand-off pages.
+    # Fingerprint navigation assets: nginx caches /assets/ as immutable for a year.
+    asset("js", "site-navigation", NAV_SCRIPT)
+    asset("css", "site-navigation", NAV_STYLE)
     write("404.html", NOT_FOUND)
 
     for page in PAGES:
