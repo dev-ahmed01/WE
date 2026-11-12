@@ -586,6 +586,9 @@ def main():
         css, font_url = build_css(head, page["key"])
         if page["key"] == "workspaces":
             css += "\n/* Scoped Workspaces refinements */\n" + (SRC / "workspaces-refinements.css").read_text(encoding="utf-8")
+        if page["key"] == "category":
+            # Build-scoped, editable styles for the approved Managed Offices visuals.
+            css += "\n/* Approved Managed Offices refinements */\n" + (SRC / "managed-office-approved-refinements.css").read_text(encoding="utf-8")
         if not font_url:
             m = FONT_RE.search(head)
             font_url = html.unescape(m.group(0)) if m else None
