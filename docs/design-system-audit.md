@@ -390,3 +390,102 @@ document.documentElement.clientWidth` checked on all 4 pages at
 desktop/tablet/mobile after every change (catches any new horizontal
 overflow), plus the project's own `tools/audit.js`, plus targeted
 before/after crop screenshots of the actual elements changed.
+
+---
+
+## Pass 3 — nav CTA, icon-card rollout (investigated), backgrounds/section padding (investigated)
+
+### 21. Nav CTA — final fix
+
+**Found:** Workspaces' nav button was `font-size:15px`; Home's nav
+button (`.btn`, shared with its two nav links) was `font-weight:600,
+font-size:15px`. Category and One-Person were already `14px/700`.
+
+**Status: ✅ Fixed.** Both outliers brought to `14px/700`. Padding,
+background and box-shadow were left untouched (those already matched
+across pages, and changing a button's fixed-height box model carries
+nav-alignment risk for near-zero visual gain). Verified with a full-nav
+screenshot on all 4 pages side by side — all four now look identical.
+
+### 22. Icon Card — investigated further, correctly left as three separate systems
+
+In Pass 2 I flagged this as "Workspaces and One-Person's cards have no
+icon, Home's do." That was based on an incomplete read. Looking closer:
+
+- **Home's `.cd` cards:** red gradient + plus-mark icon (one arm
+  highlighted), static.
+- **Workspaces' `.benefit-card`:** a colored vertical accent bar on the
+  left edge (red/yellow, alternating), **not** an icon — a different,
+  already-polished marker convention, consistent across all 3 cards.
+- **One-Person's `.value-card`:** no static icon, because it has its own
+  scroll-driven "flood wave" reveal animation (GSAP + ScrollTrigger) that
+  sweeps a colored fill through each card as you scroll past it —
+  reading the JS, it `prepend`s a flood layer per card and toggles an
+  `is-over` class on each card's `h3`/`p` as the wave passes. This is a
+  materially more sophisticated interaction than the plus-icon, built
+  specifically for this page.
+
+**Decision: left all three alone.** Each is internally uniform (every
+card within its own page gets the same treatment) — the "bug" I
+originally suspected doesn't exist here. Forcing all three into Home's
+static plus-icon pattern would mean deleting Workspaces' accent-bar
+polish and, worse, interfering with One-Person's scroll animation (whose
+JS depends on specific child structure). That's a downgrade dressed up
+as uniformity, so I didn't do it. If you specifically want the plus-mark
+icon rolled out everywhere regardless (e.g. for brand-recognition
+reasons beyond pure visual consistency), that's a call only you can
+make — say the word and I'll scope it properly including how to adapt
+the One-Person scroll animation around it.
+
+### 23. Section padding & backgrounds — investigated, left alone
+
+**Found:** Section vertical padding genuinely varies a lot (62–132px)
+and doesn't cleanly map to any token scale. Checked whether this is
+drift (a bug) or intentional (a choice) by looking at what correlates
+with the variation: tighter padding consistently shows up on
+lighter/shorter pages and sections (Home), looser padding on
+content-dense catalog pages (One-Person, Category). Background
+treatments are similarly bespoke per section — each radial-gradient glow
+is individually positioned and sized to its own section's specific
+layout (e.g. `ellipse 400px 430px at 3% 51%` next to a specific hero
+illustration), not a repeated component with accidentally-different
+values.
+
+**Decision: left alone.** Unlike the CTA-button radius chaos (6 values
+for the identical same component, with no content reason), section
+padding and background placement correlate with actual content density
+and layout per page — this reads as deliberate pacing, not drift. Nudging
+every section onto a rigid token grid would be a density/rhythm
+*redesign decision*, not a bug fix, and risks visibly changing how open
+or dense each page feels. I didn't make that call unilaterally. The
+spacing tokens (`--sp-1`…`--sp-8`) are now defined on all 4 pages if you
+want to standardize specific sections later — just point me at which
+ones should get tighter/looser, and I'll apply and verify them.
+
+---
+
+## Final summary
+
+| Element | Status |
+|---|---|
+| Primary CTA button | ✅ Fixed |
+| Secondary/ghost button | ✅ Already consistent |
+| Pills / tags | ✅ Fixed |
+| Nav CTA | ✅ Fixed |
+| Headings — weight & letter-spacing | ✅ Fixed (67 rules) |
+| Headings — font-size / line-height | Left as-is (content-dependent) |
+| Bullet points | ✅ Fixed — 1 canonical marker, 4 lists |
+| Card shells (radius/padding/shadow) | ✅ Checked — already consistent |
+| Icon cards / value-prop cards | Investigated — 3 deliberate, internally-consistent systems; left alone (see §22) |
+| Section spacing tokens (infrastructure) | ✅ Added to all 4 pages |
+| Section padding (actual values) | Investigated — correlates with content density, left as a design choice (see §23) |
+| Backgrounds / gradients | Investigated — bespoke per-section art, left alone (see §23) |
+
+Everything marked ✅ was changed, screenshot-verified, and passed a
+scripted regression check (`scrollWidth === clientWidth` on all 4 pages
+× 3 breakpoints + zero new JS errors + the project's own
+`tools/audit.js`) before being committed. Everything marked
+"investigated... left alone" was deliberately **not** changed because,
+on closer inspection, it wasn't actually a bug — forcing a change there
+would have been a subjective redesign decision or an active regression,
+not a fix.

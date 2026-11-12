@@ -80,7 +80,7 @@
     .nav-links{flex:1;display:flex;justify-content:center;gap:clamp(20px,2.4vw,40px);font-size:14px;font-weight:600}
     .nav-links a{opacity:.82}
     .nav-links a:hover{color:var(--red);opacity:1}
-    .nav-cta{padding:15px 28px;font-size:15px;background:var(--yellow);color:var(--ink);box-shadow:0 12px 20px rgba(255,185,0,.18)}
+    .nav-cta{padding:15px 28px;font-size:14px;background:var(--yellow);color:var(--ink);box-shadow:0 12px 20px rgba(255,185,0,.18)}
 
     .hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);align-items:center;gap:72px;padding:72px 26px 36px;min-height:420px;position:relative;z-index:1}
     .hero h1{font:800 clamp(54px,5vw,78px)/1.03 var(--heading);letter-spacing:-.06em;margin:0;max-width:830px}
