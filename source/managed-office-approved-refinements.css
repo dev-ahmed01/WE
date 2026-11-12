@@ -38,7 +38,7 @@ html body .hero .hero-art .illustration {
   shape-rendering:geometricPrecision;
 }
 html body .hero .hero-art .illustration--left {flex-basis:33%;width:33%!important}
-html body .hero .hero-art .illustration--right {flex-basis:39%;width:39%!important}
+html body .hero .hero-art .illustration--right {flex-basis:34%;width:34%!important}
 html body .hero .hero-art .illustration > g {opacity:.67}
 html body .hero .hero-art :is(path,g) {vector-effect:non-scaling-stroke}
 
