@@ -1,0 +1,103 @@
+/* Workspaces page only: retain the approved ivory/red glass design, not red tile fills. */
+#weAm .we-am__item::before,
+#weAmPop .we-pop__tile::before { display:none !important; content:none !important; }
+#weAm .we-am__item,
+#weAmPop .we-pop__tile {
+  background:linear-gradient(150deg,rgba(255,255,255,.96),rgba(255,255,255,.79)) !important;
+  color:#161616 !important;
+  box-shadow:0 12px 32px rgba(56,37,28,.075),inset 0 1px #fff;
+}
+#weAm .we-am__item h3,
+#weAmPop .we-pop__tile h3 { color:#161616 !important;transition:color .2s ease; }
+#weAm .we-am__item .we-am__ic,
+#weAmPop .we-pop__tile .we-am__ic {
+  background:#fdf1ea !important;color:#ed2024 !important;
+  border:1.5px solid rgba(237,32,36,.22) !important;
+  transition:background .2s ease,transform .2s ease;
+}
+@media (hover:hover) and (pointer:fine) {
+  #weAm .we-am__item:hover,
+  #weAmPop .we-pop__tile:hover {
+    transform:translateY(-3px) !important;
+    background:rgba(255,255,255,.98) !important;
+    box-shadow:0 20px 40px rgba(56,37,28,.13),inset 0 1px #fff !important;
+  }
+  #weAm .we-am__item:hover .we-am__ic,
+  #weAmPop .we-pop__tile:hover .we-am__ic { background:#fff4ef !important;transform:scale(1.04); }
+}
+#weAmPop .we-pop__tile.is-focus {
+  background:rgba(255,255,255,.98) !important;
+  border-color:rgba(237,32,36,.25) !important;
+  box-shadow:0 0 0 2px rgba(237,32,36,.12),0 14px 28px rgba(56,37,28,.08) !important;
+}
+#weAmPop .we-pop__tile.is-focus h3 {color:#161616 !important;}
+#weAmPop .we-pop__tile.is-focus .we-am__ic { background:#fff4ef !important; }
+
+/* The expanded amenities are three readable vertical, individually revealed groups. */
+#weAmPop .we-pop__grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  align-items:start;
+  gap:clamp(12px,1.6vw,22px);
+}
+#weAmPop .we-pop__column {
+  min-width:0;
+  display:flex;flex-direction:column;gap:12px;
+}
+#weAmPop .we-pop__category {
+  margin:0;min-height:44px;padding:10px 8px 6px;
+  color:#ed2024;
+  font:800 clamp(16px,1.7vw,21px)/1.2 var(--heading,'Bricolage Grotesque',Arial,sans-serif);
+  letter-spacing:-.025em;
+}
+#weAmPop .we-pop__column-items {display:flex;flex-direction:column;gap:10px;}
+#weAmPop .we-pop__tile {
+  min-height:clamp(64px,7.4vh,78px);
+  width:100%;
+  padding:12px 14px;
+  gap:13px;border-radius:20px;
+}
+#weAmPop .we-pop__tile .we-am__ic {width:43px;height:43px;border-radius:14px;}
+#weAmPop .we-pop__tile .we-am__ic svg {width:23px;height:23px;}
+#weAmPop .we-pop__tile h3 {font-size:clamp(15px,1.35vw,19px);line-height:1.2;}
+#weAmPop .we-pop__head {margin-bottom:clamp(16px,2.6vh,28px);}
+#weAmPop .we-pop__foot {margin-top:clamp(16px,2.6vh,25px);}
+
+/* Stagger groups left-to-right, then the tiles down each column. */
+.we-motion #weAmPop .we-pop__column {opacity:0;transform:translateY(20px);}
+.we-motion #weAmPop.is-open .we-pop__column {
+  opacity:1;transform:none;
+  transition:opacity .5s ease calc(.18s + var(--g)*.22s),
+             transform .7s cubic-bezier(.22,1,.36,1) calc(.18s + var(--g)*.22s);
+}
+.we-motion #weAmPop .we-pop__column .we-pop__tile,
+.we-motion #weAmPop .we-pop__column .we-pop__tile.is-new {
+  opacity:0;transform:translateY(15px);
+}
+.we-motion #weAmPop.is-open .we-pop__column .we-pop__tile,
+.we-motion #weAmPop.is-open .we-pop__column .we-pop__tile.is-new {
+  opacity:1;transform:none;
+  transition:opacity .45s ease calc(.30s + var(--g)*.22s + var(--step)*.065s),
+             transform .6s cubic-bezier(.22,1,.36,1) calc(.30s + var(--g)*.22s + var(--step)*.065s);
+}
+.we-motion #weAmPop.is-open.is-settled .we-pop__column .we-pop__tile {
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+
+/* Only Jayanagar details/map; don't show the multi-location selection carousel. */
+#locations .we-lc__bar {display:none !important;}
+
+@media (max-width:850px) {
+  #weAmPop .we-pop__grid {grid-template-columns:1fr;gap:24px;}
+  #weAmPop .we-pop__column {gap:8px;}
+  #weAmPop .we-pop__category {min-height:0;}
+  #weAmPop .we-pop__column-items {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+}
+@media (max-width:560px) {
+  #weAmPop .we-pop__column-items {grid-template-columns:1fr;}
+  #weAmPop .we-pop__tile {flex-direction:row;min-height:60px;padding:11px 13px;}
+  #weAmPop .we-pop__tile .we-am__ic {width:40px;height:40px;}
+}
+@media (prefers-reduced-motion:reduce) {
+  #weAmPop .we-pop__column,#weAmPop .we-pop__tile {opacity:1 !important;transform:none !important;transition:none !important;}
+}
