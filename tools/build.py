@@ -26,6 +26,8 @@ TODAY = datetime.date.today().isoformat()
 PHONE_TEL = "+919814953954"
 PHONE_PRETTY = "+91 98149 53954"
 BRAND_RED = "#ED2024"
+NAV_SCRIPT = (ROOT / "source/site-navigation.js").read_text(encoding="utf-8")
+NAV_STYLE = (ROOT / "source/site-navigation.css").read_text(encoding="utf-8")
 
 PAGES = [
     dict(key="home", src="WE_Home_v28_Audited.html", out="index.html", url="/"),
@@ -205,10 +207,10 @@ def make_head(page, metas, css_path, font_url, title, extra_css=()):
         parts.append(f'<link rel="stylesheet" href="{html.escape(font_url, quote=True)}">')
     parts.append(f'<link rel="stylesheet" href="{css_path}">')
     parts.append('<link rel="stylesheet" href="/assets/css/site.css">')
-    parts.append('<link rel="stylesheet" href="/assets/css/site-navigation.css">')
+    parts.append(f'<link rel="stylesheet" href="/assets/css/site-navigation.{sha(NAV_STYLE)}.css">')
     parts.append('<script src="/assets/js/config.js"></script>')
     parts.append('<script src="/assets/js/site.js" defer></script>')
-    parts.append('<script src="/assets/js/site-navigation.js" defer></script>')
+    parts.append(f'<script src="/assets/js/site-navigation.{sha(NAV_SCRIPT)}.js" defer></script>')
     return "\n".join(parts)
 
 def json_ld(page):
@@ -536,8 +538,9 @@ def main():
     write("assets/js/site.js", SITE_JS)
     write("assets/css/site.css", SITE_CSS)
     # Keep the cross-page navigation editable independently of the large hand-off pages.
-    write("assets/js/site-navigation.js", (ROOT / "source/site-navigation.js").read_bytes())
-    write("assets/css/site-navigation.css", (ROOT / "source/site-navigation.css").read_bytes())
+    # Fingerprint navigation assets: nginx caches /assets/ as immutable for a year.
+    asset("js", "site-navigation", NAV_SCRIPT)
+    asset("css", "site-navigation", NAV_STYLE)
     write("404.html", NOT_FOUND)
 
     for page in PAGES:
