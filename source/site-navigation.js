@@ -1,6 +1,6 @@
-/* Workspace by Emlen | shared cross-page navigation
- * One consistent navigation layer for all four existing page templates.
- * Leaves their section markup, forms and animation scripts intact.
+/* Workspace by Emlen | primary cross-page navigation
+ * Four page routes, translucent liquid-glass surface, accessible mobile panel.
+ * Keeps all original page sections, source markup and animation bindings intact.
  */
 (function () {
   'use strict';
@@ -13,53 +13,17 @@
   ];
 
   var byPage = {
-    '/': {
-      original: 'header.nav',
-      enquire: '#enquire',
-      sections: [
-        ['Solutions', '#why'],
-        ['Find your fit', '#find-fit'],
-        ['Locations', '#locations'],
-        ['Testimonials', '#stories'],
-        ['The Emlen App', '#app']
-      ]
-    },
-    '/workspaces/': {
-      original: 'header.we-nav',
-      enquire: '#enquiry',
-      sections: [
-        ['Gallery', '#photos'],
-        ['Amenities', '#amenities'],
-        ['Workspace options', '#spaces'],
-        ['Locations', '#locations'],
-        ['Testimonials', '#testimonials'],
-        ['FAQs', '#faqs']
-      ]
-    },
-    '/managed-office/south-bangalore/': {
-      original: 'nav.nav',
-      enquire: '#enquiry',
-      sections: [
-        ['Office options', '#offices'],
-        ['Other solutions', '#other-solutions'],
-        ['Benefits', '#benefits'],
-        ['Why Emlen', '#why-us'],
-        ['FAQs', '#faq']
-      ]
-    },
-    '/managed-office/one-person-office/': {
-      original: 'header.site-nav',
-      enquire: '#enquiry',
-      sections: [
-        ['Office options', '#options'],
-        ['Customisation', '#customise'],
-        ['Benefits', '#benefits'],
-        ['How it works', '#how-it-works'],
-        ['Locations', '#locations'],
-        ['FAQs', '#faqs']
-      ]
-    }
+    '/': { original: 'header.nav', enquire: '#enquire' },
+    '/workspaces/': { original: 'header.we-nav', enquire: '#enquiry' },
+    '/managed-office/south-bangalore/': { original: 'nav.nav', enquire: '#enquiry' },
+    '/managed-office/one-person-office/': { original: 'header.site-nav', enquire: '#enquiry' }
   };
+
+  // Public contact number is already used by the site's existing Call now links.
+  var phone = 'tel:+919814953954';
+  var phoneIcon = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' +
+    '<path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.7 19.7 0 0 1 3 5.2 2 2 0 0 1 5 3h3a2 2 0 0 1 2 1.7l.5 2.9a2 2 0 0 1-.6 1.8L8.4 11a16 16 0 0 0 4.6 4.6l1.6-1.5a2 2 0 0 1 1.8-.6l2.9.5a2 2 0 0 1 1.7 2.9Z"/>' +
+    '</svg>';
 
   function start() {
     var path = window.location.pathname.replace(/\/index\.html$/, '/');
@@ -71,22 +35,12 @@
     var brand = original && original.querySelector('a img');
     if (!original || !brand || !brand.getAttribute('src')) return;
 
-    var sections = config.sections.filter(function (entry) {
-      return document.getElementById(entry[1].slice(1));
-    });
-
     function pageLinks(className) {
       return pages.map(function (page) {
         var current = page.path === path;
         return '<a class="' + className + (current ? ' is-current' : '') +
           '" href="' + page.path + '"' +
           (current ? ' aria-current="page"' : '') + '>' + page.label + '</a>';
-      }).join('');
-    }
-
-    function sectionLinks(className) {
-      return sections.map(function (entry) {
-        return '<a class="' + className + '" href="' + entry[1] + '">' + entry[0] + '</a>';
       }).join('');
     }
 
@@ -101,14 +55,8 @@
         pageLinks('em-nav__link') +
       '</nav>' +
       '<div class="em-nav__actions">' +
-        (sections.length ?
-          '<details class="em-nav__sections">' +
-            '<summary>On this page<span class="em-nav__chevron" aria-hidden="true"></span></summary>' +
-            '<div class="em-nav__sections-panel">' +
-              '<span class="em-nav__eyebrow">JUMP TO SECTION</span>' +
-              sectionLinks('em-nav__section-link') +
-            '</div>' +
-          '</details>' : '') +
+        '<a class="em-nav__call" href="' + phone + '" aria-label="Call Workspace by Emlen">' +
+          phoneIcon + '<span>Call now</span></a>' +
         '<a class="em-nav__cta" href="' + config.enquire + '">Enquire now</a>' +
         '<button type="button" class="em-nav__toggle" aria-controls="em-nav-mobile-panel"' +
           ' aria-expanded="false" aria-label="Open navigation">' +
@@ -120,16 +68,14 @@
         '<nav class="em-nav__mobile-pages" aria-label="Mobile page navigation">' +
           pageLinks('em-nav__mobile-link') +
         '</nav>' +
-        (sections.length ?
-          '<div class="em-nav__mobile-sections">' +
-            '<span class="em-nav__eyebrow">ON THIS PAGE</span>' +
-            sectionLinks('em-nav__mobile-section-link') +
-          '</div>' : '') +
-        '<a class="em-nav__mobile-cta" href="' + config.enquire + '">Enquire now</a>' +
+        '<div class="em-nav__mobile-actions">' +
+          '<a class="em-nav__mobile-call" href="' + phone + '">' + phoneIcon + 'Call now</a>' +
+          '<a class="em-nav__mobile-cta" href="' + config.enquire + '">Enquire now</a>' +
+        '</div>' +
       '</div>';
 
-    // Only replace the old visual header after the new one is ready.
-    // Keep it in the document, so existing page-specific JS can still find it.
+    // Replace only the visual header once the shared header is ready.
+    // Inert original stays in the DOM for legacy site-specific scripts.
     document.body.appendChild(header);
     original.setAttribute('inert', '');
     original.setAttribute('aria-hidden', 'true');
@@ -138,8 +84,6 @@
 
     var toggle = header.querySelector('.em-nav__toggle');
     var panel = header.querySelector('.em-nav__mobile');
-    var details = header.querySelector('.em-nav__sections');
-
     function setMobile(open) {
       panel.hidden = !open;
       toggle.setAttribute('aria-expanded', String(open));
@@ -154,34 +98,18 @@
         if (first) first.focus({ preventScroll: true });
       }
     });
-
     panel.addEventListener('click', function (event) {
       if (event.target.closest('a[href]')) setMobile(false);
     });
-
-    if (details) {
-      details.addEventListener('click', function (event) {
-        if (event.target.closest('a[href]')) details.open = false;
-      });
-    }
-
     document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') {
-        if (details) details.open = false;
-        if (!panel.hidden) {
-          setMobile(false);
-          toggle.focus({ preventScroll: true });
-        }
+      if (event.key === 'Escape' && !panel.hidden) {
+        setMobile(false);
+        toggle.focus({ preventScroll: true });
       }
     });
-
     document.addEventListener('pointerdown', function (event) {
-      if (!header.contains(event.target)) {
-        if (details) details.open = false;
-        if (!panel.hidden) setMobile(false);
-      }
+      if (!header.contains(event.target) && !panel.hidden) setMobile(false);
     });
-
     window.addEventListener('resize', function () {
       if (window.innerWidth > 1180 && !panel.hidden) setMobile(false);
     }, { passive: true });

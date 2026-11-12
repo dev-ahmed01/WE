@@ -13,7 +13,7 @@ function matchOne(pattern, label) {
 }
 
 const pages = vm.runInNewContext('(' + matchOne(/var pages = (\[[\s\S]*?\]);\s*var byPage/, 'page list') + ')');
-const pageConfig = vm.runInNewContext('(' + matchOne(/var byPage = (\{[\s\S]*?\});\s*function start/, 'page config') + ')');
+const pageConfig = vm.runInNewContext('(' + matchOne(/var byPage = (\{[\s\S]*?\});\s*\/\/ Public contact/, 'page config') + ')');
 
 for (const route of routes) {
   const htmlPath = path.join(root, route === '/' ? 'index.html' : route.slice(1) + 'index.html');
@@ -24,12 +24,13 @@ for (const route of routes) {
   if (!/href="\/assets\/css\/site-navigation\.[a-f0-9]{10}\.css"/.test(html)) throw new Error(route + ': versioned navigation CSS missing');
   if (!/src="\/assets\/js\/site-navigation\.[a-f0-9]{10}\.js"/.test(html)) throw new Error(route + ': versioned navigation JS missing');
   if (!html.includes('id="' + cfg.enquire.slice(1) + '"')) throw new Error(route + ': enquiry anchor missing');
-  for (const [name, hash] of cfg.sections) {
-    if (!html.includes('id="' + hash.slice(1) + '"')) {
-      throw new Error(route + ': missing section ' + name + ' ' + hash);
-    }
+  if (!nav.includes("var phone = 'tel:+919814953954'")) {
+    throw new Error(route + ': phone number missing in global nav');
   }
-  console.log('NAVIGATION OK: ' + route + ' (' + cfg.sections.length + ' section links)');
+  if (nav.includes('On this page') || nav.includes('em-nav__sections')) {
+    throw new Error(route + ': section dropdown must be removed');
+  }
+  console.log('NAVIGATION OK: ' + route + ' (four pages, Call now + Enquire now)');
 }
 
 for (const page of pages) {

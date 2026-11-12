@@ -22,12 +22,12 @@ Four existing public pages, with no new page types and no modifications to hero,
 ## Implemented solution
 
 - Shared cross-page primary links on **every** page: Home, Workspaces, Managed Offices, One-Person Office.
-- “On this page” dropdown for in-page anchors; only existing anchor IDs are included.
+- The redundant “On this page” dropdown is removed from the global header; in-page sections remain reachable by scrolling and existing contextual links.
 - Active-page indication with `aria-current="page"`; keyboard-visible focus styles.
 - One-Person Office category tile routes to its dedicated detail page; remaining tiles keep their existing enquiry logic because no detail pages exist for them yet.
-- Shared frosted-glass treatment, charcoal typography, red current-state, yellow enquiry CTA, and mobile hamburger panel.
-- Mobile page links, in-page anchor links, and enquiry action.
-- Escape/outside click to close menus; reduced-motion support.
+- Restored a lighter, genuinely translucent liquid-glass header: lower-alpha layered surface, backdrop blur/saturation, fine edge highlights, and softer shadow. Uses Poppins navigation type, subdued red current-state and a yellow enquiry CTA.
+- Replaced the dropdown with a direct **Call now** phone link (existing business number: `+91 98149 53954`, `tel:+919814953954`). Mobile links include both Call now and Enquire now.
+- Escape/outside click closes the mobile menu; reduced-motion support remains.
 - The old header remains in the DOM but becomes inert and visually hidden **only after** the shared replacement successfully initializes, preserving dependent page scripts and the page's existing layout geometry.
 - No new site sections or changes to the CMS, hosting, Caddy, or APIs.
 
@@ -46,8 +46,8 @@ Do **not** edit generated `public/` files by hand: `python tools/build.py` regen
 - All four pages build and pass existing link validation.
 - All four headers contain direct links to all four pages.
 - Exactly one page link shows `aria-current="page"`.
-- Desktop “On this page” dropdown jumps to a local section and closes after selection.
-- Mobile menu opens, exposes all routes and navigates across pages.
+- Desktop Call now invokes the existing contact number; no “On this page” item appears.
+- Mobile menu opens, exposes all four routes plus Call now and Enquire now, and navigates across pages.
 - Enquire now points to a real on-page form.
 - Category One-Person Office tile opens its detail page.
 - No navbar horizontal overflow at desktop or mobile viewports.
