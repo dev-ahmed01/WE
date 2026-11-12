@@ -1,0 +1,54 @@
+name: Test Contabo deployment connection
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-ssh:
+    name: Verify deployment SSH secrets and restrictions
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Install the pinned SSH credentials
+        shell: bash
+        env:
+          WE_DEPLOY_KEY: ${{ secrets.WE_DEPLOY_KEY }}
+          WE_SSH_KNOWN_HOSTS: ${{ secrets.WE_SSH_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          [[ -n "$WE_DEPLOY_KEY" ]] || { echo 'Missing WE_DEPLOY_KEY'; exit 1; }
+          [[ -n "$WE_SSH_KNOWN_HOSTS" ]] || { echo 'Missing WE_SSH_KNOWN_HOSTS'; exit 1; }
+          umask 077
+          mkdir -p "$HOME/.ssh"
+          printf '%s\n' "$WE_DEPLOY_KEY" > "$HOME/.ssh/we_actions_deploy"
+          printf '%s\n' "$WE_SSH_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/we_actions_deploy" "$HOME/.ssh/known_hosts"
+          ssh-keygen -y -f "$HOME/.ssh/we_actions_deploy" >/dev/null
+          ssh-keygen -F 91.90.83.21 >/dev/null
+
+      - name: Verify the forced command blocks shell access
+        shell: bash
+        run: |
+          set -euo pipefail
+          if result=$(ssh \
+              -i "$HOME/.ssh/we_actions_deploy" \
+              -o IdentitiesOnly=yes \
+              -o BatchMode=yes \
+              -o PasswordAuthentication=no \
+              -o StrictHostKeyChecking=yes \
+              -o ConnectTimeout=15 \
+              -T we-actions@91.90.83.21 whoami 2>&1); then
+            echo 'ERROR: Arbitrary SSH command unexpectedly succeeded'
+            exit 1
+          fi
+          if [[ "$result" != 'Denied: expected deploy <commit-sha>' ]]; then
+            echo 'ERROR: SSH refused the connection for an unexpected reason'
+            echo "$result"
+            exit 1
+          fi
+          echo 'PASS: GitHub Actions authenticated successfully'
+          echo 'PASS: Forced SSH command rejected unauthorized shell access'
+          echo 'NO DEPLOYMENT WAS ATTEMPTED'
