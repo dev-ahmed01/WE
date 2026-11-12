@@ -1,0 +1,53 @@
+name: Deploy Workspace public website
+
+# First release is manual. Automated deployment can be enabled after
+# the SSH identity, permissions and rollback path are verified.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: workspace-emlen-public-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Release validated main commit to Contabo
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: production
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Prepare pinned SSH identity
+        shell: bash
+        env:
+          WE_DEPLOY_KEY: ${{ secrets.WE_DEPLOY_KEY }}
+          WE_SSH_KNOWN_HOSTS: ${{ secrets.WE_SSH_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          [[ -n "$WE_DEPLOY_KEY" ]] || { echo "Missing WE_DEPLOY_KEY secret"; exit 1; }
+          [[ -n "$WE_SSH_KNOWN_HOSTS" ]] || { echo "Missing WE_SSH_KNOWN_HOSTS secret"; exit 1; }
+          umask 077
+          mkdir -p "$HOME/.ssh"
+          printf '%s\n' "$WE_DEPLOY_KEY" > "$HOME/.ssh/we_actions_deploy"
+          printf '%s\n' "$WE_SSH_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/we_actions_deploy" "$HOME/.ssh/known_hosts"
+          ssh-keygen -y -f "$HOME/.ssh/we_actions_deploy" >/dev/null
+          ssh-keygen -F 91.90.83.21 >/dev/null || { echo "Pinned Contabo host key not found"; exit 1; }
+
+      - name: Deploy verified commit
+        shell: bash
+        env:
+          REVISION: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          [[ "$REVISION" =~ ^[0-9a-f]{40}$ ]] || exit 1
+          ssh -i "$HOME/.ssh/we_actions_deploy" \
+            -o IdentitiesOnly=yes \
+            -o BatchMode=yes \
+            -o PasswordAuthentication=no \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=20 \
+            -T we-actions@91.90.83.21 "deploy $REVISION"
