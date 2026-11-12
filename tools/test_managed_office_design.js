@@ -33,7 +33,7 @@ fs.mkdirSync(SHOTS, {recursive:true});
      assert.equal(computed.opacity,'0.9','art kept at 90% opacity');
      assert.equal(computed.mask,'none','no fading or cropping mask');
      assert.ok(computed.paths>25,'complete vector scene retained');
-     const clarity=await art.locator('> g').first().evaluate(el=>({
+     const clarity=await art.locator(':scope > g').first().evaluate(el=>({
        opacity:getComputedStyle(el).opacity,
        strokeWidth:el.getAttribute('stroke-width')
      }));
