@@ -183,7 +183,8 @@ def make_head(page, metas, css_path, font_url, title, extra_css=()):
         '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">',
         f"<title>{html.escape(title)}</title>",
         f'<meta name="description" content="{html.escape(desc, quote=True)}">',
-        '<meta name="robots" content="index, follow, max-image-preview:large">',
+        ('<meta name="robots" content="noindex, nofollow">' if page["key"] == "workspaces" else
+         '<meta name="robots" content="index, follow, max-image-preview:large">'),
         f'<link rel="canonical" href="{url}">',
         f'<meta name="theme-color" content="{metas.get("theme-color", "#ffffff")}">',
         '<meta name="format-detection" content="telephone=no">',
@@ -467,6 +468,40 @@ def patch_home(b):
     return b + footer
 
 def patch_workspaces(b):
+    # Remove only the redundant private-office carousel and its detail panel.
+    start = '<section class="section" id="spaces">'
+    end = '<section class="section" id="locations">'
+    if b.count(start) != 1 or b.count(end) != 1 or b.index(start) >= b.index(end):
+        raise SystemExit("Workspaces section markers changed; refusing an unsafe edit")
+    b = b[:b.index(start)] + b[b.index(end):]
+    b = rep(b, '<p class="hp-sub">Flexible, professional and fully equipped spaces designed to help your business grow.</p>',
+            '', label="workspaces hero subtitle")
+    b = rep(b, 'Choose your <span class="accent">ideal location.</span>',
+            'Explore our <span class="accent">Jayanagar workspace.</span>', label="location heading")
+    b = rep(b, 'Explore our workspaces across South Bengaluru. Select a location to view its workspace, nearby landmarks and map.',
+            'Explore the workspace, nearby landmarks and neighbourhood map.', label="location description")
+    # Reorganize the existing 16 amenity tiles into three meaningful columns.
+    # Keep all original icons and content and preserve the existing modal controls.
+    tile_marker = "  all.querySelectorAll('.we-pop__tile').forEach(c=>{"
+    categories = """  const amenityGroups=[
+    {title:'Work & productivity',keys:['wifi','meeting','booth','print','power']},
+    {title:'Comfort & facilities',keys:['lounge','pantry','parking','ac','clean','locker']},
+    {title:'People & experience',keys:['reception','security','outdoor','event','community']}
+  ];
+  const amenityTiles=new Map([...all.children].map(el=>[el.dataset.key,el]));
+  all.replaceChildren();
+  amenityGroups.forEach((group,g)=>{
+    const column=document.createElement('section');column.className='we-pop__column';column.style.setProperty('--g',g);
+    const heading=document.createElement('h3');heading.className='we-pop__category';heading.textContent=group.title;
+    const items=document.createElement('div');items.className='we-pop__column-items';
+    group.keys.forEach((key,step)=>{
+      const tile=amenityTiles.get(key);if(!tile)return;
+      tile.style.setProperty('--g',g);tile.style.setProperty('--step',step);items.appendChild(tile);
+    });
+    column.append(heading,items);all.appendChild(column);
+  });
+"""
+    b = rep(b, tile_marker, categories + tile_marker, label="amenity categories")
     b = rep(b, '<a class="we-brand" href="#top" aria-label="Workspace by Emlen home">', '<a class="we-brand" href="/" aria-label="Workspace by Emlen home">', label="ws brand")
     b = rep(b, '<a href="#locations">Locations</a><a href="#faqs">Resources</a><a href="#enquiry">About Us</a>',
             '<a href="/managed-office/south-bangalore/">Managed offices</a><a href="#locations">Locations</a><a href="#faqs">Resources</a><a href="/#why">About Us</a>', label="ws nav")
@@ -549,6 +584,8 @@ def main():
         title = re.search(r"<title>(.*?)</title>", head, re.S).group(1).strip()
         title = html.unescape(title).replace(" — Animated Blueprint Hero", "")
         css, font_url = build_css(head, page["key"])
+        if page["key"] == "workspaces":
+            css += "\n/* Scoped Workspaces refinements */\n" + (SRC / "workspaces-refinements.css").read_text(encoding="utf-8")
         if not font_url:
             m = FONT_RE.search(head)
             font_url = html.unescape(m.group(0)) if m else None
@@ -577,7 +614,7 @@ def main():
         "icons": [{"src": "/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
                   {"src": "/assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png"}]}, indent=2))
     write("robots.txt", f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n")
-    urls = "".join(f"  <url><loc>{SITE_URL}{p['url']}</loc><lastmod>{TODAY}</lastmod></url>\n" for p in PAGES)
+    urls = "".join(f"  <url><loc>{SITE_URL}{p['url']}</loc><lastmod>{TODAY}</lastmod></url>\n" for p in PAGES if p["key"] != "workspaces")
     write("sitemap.xml", f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n')
     print(f"  {len(IMG_NAMES)} unique media files extracted")
 
