@@ -32,14 +32,26 @@ const routes = [
           selected: [...nav.querySelectorAll('.em-nav__links [aria-current="page"]')].map(a => a.getAttribute('href')),
           originalHidden: !!old && old.hasAttribute('inert') && old.getAttribute('aria-hidden') === 'true',
           withinViewport: box.left >= 0 && box.right <= window.innerWidth + 2,
-          sections: nav.querySelectorAll('.em-nav__section-link').length
+          callHref: nav.querySelector('.em-nav__call')?.getAttribute('href'),
+          callText: nav.querySelector('.em-nav__call')?.textContent.trim(),
+          enquireHref: nav.querySelector('.em-nav__cta')?.getAttribute('href'),
+          oldSectionsRemoved: !nav.querySelector('.em-nav__sections'),
+          glassBackdrop: getComputedStyle(nav).backdropFilter || getComputedStyle(nav).webkitBackdropFilter,
+          translucentSurface: getComputedStyle(nav).backgroundImage,
+          navFont: getComputedStyle(nav.querySelector('.em-nav__link')).fontFamily
         };
       });
       assert.deepEqual(state.routes, routes, route + ': links to all four pages');
       assert.deepEqual(state.selected, [route], route + ': active page highlighted');
       assert.ok(state.originalHidden, route + ': inaccessible duplicate header');
       assert.ok(state.withinViewport, route + ': header fits viewport');
-      assert.ok(state.sections >= 4, route + ': on-page section choices');
+      assert.equal(state.callHref, 'tel:+919814953954', route + ': Call now dials existing business number');
+      assert.equal(state.callText, 'Call now', route + ': Call now visible');
+      assert.ok(state.enquireHref.startsWith('#'), route + ': enquiry CTA preserved');
+      assert.ok(state.oldSectionsRemoved, route + ': obsolete On this page dropdown removed');
+      assert.ok(state.glassBackdrop.includes('blur('), route + ': liquid glass blur enabled');
+      assert.ok(state.translucentSurface.includes('linear-gradient('), route + ': translucent glass surface');
+      assert.ok(state.navFont.includes('Poppins'), route + ': original navigation typography');
 
       if (route === '/') {
         await desktop.screenshot({ path: path.join(SHOTS, 'home-desktop.png'), animations: 'disabled' });
@@ -48,14 +60,9 @@ const routes = [
         await desktop.screenshot({ path: path.join(SHOTS, 'managed-office-desktop.png'), animations: 'disabled' });
       }
 
-      const details = desktop.locator('.em-nav__sections');
-      await details.locator('summary').click();
-      assert.equal(await details.getAttribute('open'), '', route + ': section menu expands');
-      const firstHash = await details.locator('a[href^="#"]').first().getAttribute('href');
-      await details.locator('a[href^="#"]').first().click();
-      await desktop.waitForTimeout(100);
-      assert.equal(new URL(desktop.url()).hash, firstHash, route + ': section link jumps locally');
-      assert.equal(await details.getAttribute('open'), null, route + ': dropdown closes after selection');
+      // Existing enquiry link remains a local section jump, not a cross-page redirect.
+      const enquire = desktop.locator('.em-nav__cta');
+      assert.ok((await enquire.getAttribute('href')).startsWith('#'));
 
       await desktop.close();
 
@@ -68,6 +75,9 @@ const routes = [
       await toggle.click();
       assert.equal(await toggle.getAttribute('aria-expanded'), 'true', route + ': hamburger opens');
       assert.equal(await mobile.locator('.em-nav__mobile').isVisible(), true, route + ': mobile panel visible');
+      assert.equal(await mobile.locator('.em-nav__mobile-call').getAttribute('href'), 'tel:+919814953954', route + ': mobile Call now');
+      assert.equal(await mobile.locator('.em-nav__mobile-cta').getAttribute('href'),
+        route === '/' ? '#enquire' : '#enquiry', route + ': mobile enquiry link');
 
       if (route === '/managed-office/south-bangalore/') {
         await mobile.screenshot({ path: path.join(SHOTS, 'managed-office-mobile-menu.png'), animations: 'disabled' });
