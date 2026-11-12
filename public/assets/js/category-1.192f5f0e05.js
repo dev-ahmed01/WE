@@ -20,7 +20,7 @@ gsap.registerPlugin(ScrollTrigger);
   function measure(){
    strip=cards[0].querySelector('.bn-strip').offsetHeight||50;
    stageH=stage.clientHeight;
-   cardH=Math.round(clamp(stageH-3*strip,200,420));
+   cardH=Math.round(clamp(stageH-3*strip,250,480));
    stage.style.setProperty('--cardh',cardH+'px');
    top0=Math.max(0,Math.round((stageH-(cardH+3*strip))*.35));
    last=-1;
@@ -99,5 +99,24 @@ gsap.registerPlugin(ScrollTrigger);
       const msg=['Hello Workspace by Emlen, I downloaded your office decision checklist and would like to hear about relevant workspace options.','Name: '+f.elements.name.value,'WhatsApp: '+f.elements.phone.value,'Team size: '+f.elements.team.value].join('\n');
       sendWhatsApp(msg,status,{source:'category-checklist',name:f.elements.name.value,phone:f.elements.phone.value,teamSize:f.elements.team.value});
     }
+  });
+})();;
+/* Cursor-following spotlight on the four approved yellow feature cards.
+   No red fill, no global event listeners, and no forced animation on touch. */
+(() => {
+  if (!window.matchMedia || !window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  document.querySelectorAll('.hero .cards .card').forEach(card => {
+    card.addEventListener('pointermove', event => {
+      const rect = card.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      const x = Math.max(0,Math.min(100,(event.clientX-rect.left)*100/rect.width));
+      const y = Math.max(0,Math.min(100,(event.clientY-rect.top)*100/rect.height));
+      card.style.setProperty('--spot-x', x.toFixed(1)+'%');
+      card.style.setProperty('--spot-y', y.toFixed(1)+'%');
+    }, {passive:true});
+    card.addEventListener('pointerleave', () => {
+      card.style.removeProperty('--spot-x');
+      card.style.removeProperty('--spot-y');
+    }, {passive:true});
   });
 })();;

@@ -533,6 +533,23 @@ if(motionOff.addEventListener)motionOff.addEventListener('change',queue);queue()
   const mk=(cls,i,n,key,icon,name)=>`<div class="we-am__item we-pop__tile${cls}" data-key="${key}" style="--i:${i};--n:${n}"><span class="we-am__ic" aria-hidden="true">${icon}</span><h3>${name}</h3></div>`;
   all.innerHTML=tiles.map((t,i)=>mk('',i,0,t.dataset.key,t.querySelector('.we-am__ic').innerHTML,t.querySelector('h3').innerHTML)).join('')
     +MORE.map(([k,name,p],n)=>mk(' is-new',tiles.length+n,n,k,`<svg viewBox="0 0 24 24">${p}</svg>`,name)).join('');
+  const amenityGroups=[
+    {title:'Work & productivity',keys:['wifi','meeting','booth','print','power']},
+    {title:'Comfort & facilities',keys:['lounge','pantry','parking','ac','clean','locker']},
+    {title:'People & experience',keys:['reception','security','outdoor','event','community']}
+  ];
+  const amenityTiles=new Map([...all.children].map(el=>[el.dataset.key,el]));
+  all.replaceChildren();
+  amenityGroups.forEach((group,g)=>{
+    const column=document.createElement('section');column.className='we-pop__column';column.style.setProperty('--g',g);
+    const heading=document.createElement('h3');heading.className='we-pop__category';heading.textContent=group.title;
+    const items=document.createElement('div');items.className='we-pop__column-items';
+    group.keys.forEach((key,step)=>{
+      const tile=amenityTiles.get(key);if(!tile)return;
+      tile.style.setProperty('--g',g);tile.style.setProperty('--step',step);items.appendChild(tile);
+    });
+    column.append(heading,items);all.appendChild(column);
+  });
   all.querySelectorAll('.we-pop__tile').forEach(c=>{const set=e=>{const r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px');};
     c.addEventListener('pointerenter',set);c.addEventListener('pointerleave',set);});
   /* open / close */
