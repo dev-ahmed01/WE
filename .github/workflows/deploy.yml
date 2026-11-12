@@ -1,8 +1,12 @@
 name: Deploy Workspace public website
 
-# First release is manual. Automated deployment can be enabled after
-# the SSH identity, permissions and rollback path are verified.
+# Automatically release only after a successful push validation on main.
+# Keep manual deployment available for controlled recoveries.
 on:
+  workflow_run:
+    workflows: ["Validate public website"]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -18,7 +22,13 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     environment: production
-    if: github.ref == 'refs/heads/main'
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
     steps:
       - name: Prepare pinned SSH identity
         shell: bash
@@ -40,7 +50,7 @@ jobs:
       - name: Deploy verified commit
         shell: bash
         env:
-          REVISION: ${{ github.sha }}
+          REVISION: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
         run: |
           set -euo pipefail
           [[ "$REVISION" =~ ^[0-9a-f]{40}$ ]] || exit 1
