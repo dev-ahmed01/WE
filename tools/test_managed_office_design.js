@@ -11,7 +11,7 @@ fs.mkdirSync(SHOTS, {recursive:true});
 (async () => {
  const browser = await chromium.launch({headless:true});
  try {
-  for(const viewport of [{width:1440,height:900},{width:390,height:844}]) {
+  for(const viewport of [{width:1440,height:900},{width:1535,height:795},{width:390,height:844}]) {
    const mobile=viewport.width<760;
    const page=await browser.newPage({viewport,reducedMotion:'reduce'});
    const jsErrors=[];
@@ -33,6 +33,12 @@ fs.mkdirSync(SHOTS, {recursive:true});
      assert.equal(computed.opacity,'0.9','art kept at 90% opacity');
      assert.equal(computed.mask,'none','no fading or cropping mask');
      assert.ok(computed.paths>25,'complete vector scene retained');
+     const clarity=await art.locator('> g').first().evaluate(el=>({
+       opacity:getComputedStyle(el).opacity,
+       strokeWidth:el.getAttribute('stroke-width')
+     }));
+     assert.equal(clarity.opacity,'0.9','art contrast reinforced without changing outer opacity');
+     assert.equal(clarity.strokeWidth,'1.85','illustration strokes sharpened');
    }
    assert.ok(await left.locator('path[d^="M61 274"]').count(),'desk/plant artwork included');
    assert.ok(await right.locator('path[d^="M395 274"]').count(),'full meeting pod included');
@@ -53,6 +59,23 @@ fs.mkdirSync(SHOTS, {recursive:true});
      assert.ok(artL.x+artL.width<=first.x+12,'left illustration clears the main CTA');
      assert.ok(artR.x>=second.x+second.width-12,'right illustration clears secondary CTA');
    }
+   if(viewport.width===1535){
+     const firstTitle=await page.locator('.hero .cards .card-title').first().boundingBox();
+     const firstCard=await page.locator('.hero .cards .card').first().boundingBox();
+     const artBox=await page.locator('.hero .hero-art').boundingBox();
+     assert.ok(firstTitle.y+firstTitle.height < viewport.height-8,
+        'feature-card headings visible at initial desktop fold');
+     assert.ok(firstCard.y > viewport.height*0.68,
+        'only the feature card header is introduced near first fold');
+     assert.ok(artBox.y < firstCard.y,
+        'illustrations remain above feature cards');
+     console.log('HERO FOLD GEOMETRY',{
+       viewport:viewport.height,
+       artworkTop:Math.round(artBox.y),
+       cardTop:Math.round(firstCard.y),
+       headingBottom:Math.round(firstTitle.y+firstTitle.height)
+     });
+   }
    for(const card of await page.locator('.hero .cards .card').all()) {
       assert.equal(await card.locator('p').evaluate(el=>getComputedStyle(el).display),'block','description visible');
       const border=await card.locator('p').evaluate(el=>getComputedStyle(el).borderTopWidth);
@@ -71,7 +94,7 @@ fs.mkdirSync(SHOTS, {recursive:true});
      assert.equal(await firstCard.evaluate(el=>getComputedStyle(el,'::after').opacity),'1',
        'yellow card hover reveal is enabled');
    }
-   await page.screenshot({path:path.join(SHOTS,'managed-office-'+(mobile?'mobile':'desktop')+'-hero.png'),animations:'disabled'});
+   await page.screenshot({path:path.join(SHOTS,'managed-office-'+viewport.width+'-hero.png'),animations:'disabled'});
    const benefits=page.locator('#benefits');
    assert.equal(await benefits.locator('.bn-card').count(),4,'all four benefits preserved');
    for(const card of await benefits.locator('.bn-card').all()) {
