@@ -38,6 +38,9 @@ for (const page of pages) {
 }
 
 const category = fs.readFileSync(path.join(root, 'managed-office/south-bangalore/index.html'), 'utf8');
+if (category.includes('Explore One-Person Office plans') || category.includes('class="sl-more"')) {
+  throw new Error('Managed Offices must not display the redundant One-Person Office plans CTA');
+}
 const onePersonCard = category.match(/<a\b[^>]*id="one-person-office"[^>]*>/);
 if (!onePersonCard ||
     !onePersonCard[0].includes('href="/managed-office/one-person-office/"') ||
