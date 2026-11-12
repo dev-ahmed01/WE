@@ -22,7 +22,7 @@ fs.mkdirSync(SHOTS, {recursive:true});
    assert.equal(await page.locator('.hero .copy h1').count(),1,'original centred heading retained');
    assert.equal(await page.locator('.hero .actions a.button').count(),2,'both CTAs retained');
    assert.equal(await page.locator('.hero .copy').evaluate(el=>getComputedStyle(el).textAlign),'center','heading stays centred');
-   assert.ok((await page.locator('.hero .illustration').getAttribute('viewbox'))?.includes('1590'),'original line illustration retained');
+   assert.ok((await page.locator('.hero .illustration').getAttribute('viewBox'))?.includes('1590'),'original line illustration retained');
    const hero = await page.locator('.hero .illustration').evaluate(el=>({
       alpha:getComputedStyle(el).opacity,
       mask:getComputedStyle(el).maskImage || getComputedStyle(el).webkitMaskImage
