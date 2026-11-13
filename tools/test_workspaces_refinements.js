@@ -47,10 +47,17 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
       console.log('WORKSPACES UI OK: width=' + width);
     }
     const response = await browser.newPage();
-    const sitemap = await (await response.request.get(BASE + '/sitemap.xml')).text();
-    assert.ok(!sitemap.includes('<loc>' + BASE + '/workspaces/</loc>'));
-    assert.ok(!sitemap.includes('/workspaces/'), 'Workspaces excluded from sitemap');
-    assert.ok(sitemap.includes('/managed-office/south-bangalore/'), 'other indexed pages retained');
+    const sitemap = await response.request.get(BASE + '/sitemap.xml');
+    assert.equal(sitemap.status(), 404, 'no sitemap is published for a noindex website');
+    const robots = await (await response.request.get(BASE + '/robots.txt')).text();
+    assert.ok(!robots.includes('Sitemap:'), 'no sitemap is advertised');
+    for (const path of ['/', '/workspaces/', '/managed-office/south-bangalore/',
+                        '/managed-office/one-person-office/']) {
+      await response.goto(BASE + path);
+      const flags = (await response.locator('meta[name="robots"]').getAttribute('content'))
+        .split(',').map(x => x.trim());
+      assert.ok(flags.includes('noindex') && flags.includes('nofollow'), path + ' excluded from indexes');
+    }
     await response.close();
     console.log('WORKSPACES SEO OK');
   } finally {
