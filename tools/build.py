@@ -26,8 +26,8 @@ TODAY = datetime.date.today().isoformat()
 PHONE_TEL = "+919814953954"
 PHONE_PRETTY = "+91 98149 53954"
 BRAND_RED = "#ED2024"
-# The .co.uk site is a non-indexable public preview. Keep Googlebot able to
-# read the page/header noindex instruction instead of Disallowing all crawling.
+# The .co.uk preview is not intended for crawler visits. Deny crawling through
+# robots.txt and retain noindex/nofollow metadata if the pages are accessed.
 ROBOTS_POLICY = "noindex, nofollow, noarchive, nosnippet, noimageindex"
 NAV_SCRIPT = (ROOT / "source/site-navigation.js").read_text(encoding="utf-8")
 NAV_STYLE = (ROOT / "source/site-navigation.css").read_text(encoding="utf-8")
