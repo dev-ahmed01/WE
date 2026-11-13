@@ -642,6 +642,14 @@ def main():
     # Allow crawling so existing indexed URLs can be fetched and deindexed.
     # Search engines cannot see noindex when robots.txt blocks those URLs.
     write("robots.txt", "User-agent: *\nAllow: /\n")
+    # Root-owned Contabo release script still requires a sitemap.xml HTTP 200
+    # and a reference to this hostname. Keep a compatibility file with ZERO
+    # <url> or <loc> entries; robots.txt never advertises it.
+    write("sitemap.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        f'<!-- {SITE_URL} is intentionally noindex/nofollow; this sitemap lists no URLs. -->\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>\n'
+    ))
     print(f"  {len(IMG_NAMES)} unique media files extracted")
 
 if __name__ == "__main__":

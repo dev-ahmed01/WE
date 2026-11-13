@@ -48,7 +48,10 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
     }
     const response = await browser.newPage();
     const sitemap = await response.request.get(BASE + '/sitemap.xml');
-    assert.equal(sitemap.status(), 404, 'no sitemap is published for a noindex website');
+    assert.equal(sitemap.status(), 200, 'empty deployment-compatibility sitemap is served');
+    const sitemapText = await sitemap.text();
+    assert.ok(!sitemapText.includes('<loc>') && !sitemapText.includes('<url>'),
+      'the compatibility sitemap contains no public URLs');
     const robots = await (await response.request.get(BASE + '/robots.txt')).text();
     assert.ok(!robots.includes('Sitemap:'), 'no sitemap is advertised');
     for (const path of ['/', '/workspaces/', '/managed-office/south-bangalore/',
