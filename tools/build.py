@@ -26,6 +26,9 @@ TODAY = datetime.date.today().isoformat()
 PHONE_TEL = "+919814953954"
 PHONE_PRETTY = "+91 98149 53954"
 BRAND_RED = "#ED2024"
+# The .co.uk site is a non-indexable public preview. Keep Googlebot able to
+# read the page/header noindex instruction instead of Disallowing all crawling.
+ROBOTS_POLICY = "noindex, nofollow, noarchive, nosnippet, noimageindex"
 NAV_SCRIPT = (ROOT / "source/site-navigation.js").read_text(encoding="utf-8")
 NAV_STYLE = (ROOT / "source/site-navigation.css").read_text(encoding="utf-8")
 
@@ -183,8 +186,7 @@ def make_head(page, metas, css_path, font_url, title, extra_css=()):
         '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">',
         f"<title>{html.escape(title)}</title>",
         f'<meta name="description" content="{html.escape(desc, quote=True)}">',
-        ('<meta name="robots" content="noindex, nofollow">' if page["key"] == "workspaces" else
-         '<meta name="robots" content="index, follow, max-image-preview:large">'),
+        f'<meta name="robots" content="{ROBOTS_POLICY}">',
         f'<link rel="canonical" href="{url}">',
         f'<meta name="theme-color" content="{metas.get("theme-color", "#ffffff")}">',
         '<meta name="format-detection" content="telephone=no">',
@@ -370,7 +372,7 @@ header.nav .nav-links a,header.nav .nav-cta .btn{white-space:nowrap}
 
 NOT_FOUND = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Page not found | Workspace by Emlen</title><meta name="robots" content="noindex">
+<title>Page not found | Workspace by Emlen</title><meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>
 :root{--red:#ED2024;--ink:#161616}*{box-sizing:border-box}
@@ -636,9 +638,10 @@ def main():
         "background_color": "#ffffff", "theme_color": BRAND_RED,
         "icons": [{"src": "/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
                   {"src": "/assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png"}]}, indent=2))
-    write("robots.txt", f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n")
-    urls = "".join(f"  <url><loc>{SITE_URL}{p['url']}</loc><lastmod>{TODAY}</lastmod></url>\n" for p in PAGES if p["key"] != "workspaces")
-    write("sitemap.xml", f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n')
+    # Do not publish a sitemap for a site intentionally excluded from indexes.
+    # Allow crawling so existing indexed URLs can be fetched and deindexed.
+    # Search engines cannot see noindex when robots.txt blocks those URLs.
+    write("robots.txt", "User-agent: *\nAllow: /\n")
     print(f"  {len(IMG_NAMES)} unique media files extracted")
 
 if __name__ == "__main__":

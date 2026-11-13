@@ -1,5 +1,6 @@
 # Netlify / Cloudflare Pages: copy this file and _redirects into public/ before deploying.
 /*
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()

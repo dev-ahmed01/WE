@@ -10,8 +10,10 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
     for (const width of [1440, 390]) {
       const page = await browser.newPage({ viewport: { width, height: 900 } });
       await page.goto(BASE + '/workspaces/', { waitUntil: 'domcontentloaded' });
-      assert.equal(await page.locator('meta[name="robots"]').getAttribute('content'),
-        'noindex, nofollow', 'Workspaces is noindex and nofollow');
+      const directives = (await page.locator('meta[name="robots"]').getAttribute('content'))
+        .split(',').map(x=>x.trim());
+      assert.ok(directives.includes('noindex') && directives.includes('nofollow'),
+        'Workspaces remains noindex and nofollow');
       assert.equal(await page.locator('#spaces').count(), 0, 'redundant office carousel removed');
       assert.equal(await page.locator('.hp-sub').count(), 0, 'hero subheading removed');
       assert.match(await page.locator('#locations h2').innerText(), /Jayanagar workspace/);
@@ -45,10 +47,17 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
       console.log('WORKSPACES UI OK: width=' + width);
     }
     const response = await browser.newPage();
-    const sitemap = await (await response.request.get(BASE + '/sitemap.xml')).text();
-    assert.ok(!sitemap.includes('<loc>' + BASE + '/workspaces/</loc>'));
-    assert.ok(!sitemap.includes('/workspaces/'), 'Workspaces excluded from sitemap');
-    assert.ok(sitemap.includes('/managed-office/south-bangalore/'), 'other indexed pages retained');
+    const sitemap = await response.request.get(BASE + '/sitemap.xml');
+    assert.equal(sitemap.status(), 404, 'no sitemap is published for a noindex website');
+    const robots = await (await response.request.get(BASE + '/robots.txt')).text();
+    assert.ok(!robots.includes('Sitemap:'), 'no sitemap is advertised');
+    for (const path of ['/', '/workspaces/', '/managed-office/south-bangalore/',
+                        '/managed-office/one-person-office/']) {
+      await response.goto(BASE + path);
+      const flags = (await response.locator('meta[name="robots"]').getAttribute('content'))
+        .split(',').map(x => x.trim());
+      assert.ok(flags.includes('noindex') && flags.includes('nofollow'), path + ' excluded from indexes');
+    }
     await response.close();
     console.log('WORKSPACES SEO OK');
   } finally {

@@ -54,8 +54,8 @@ jobs:
             test -s "$OUT/$path"
             echo "OK: $path"
           done
-          grep -q 'https://workspacebyemlen.co.uk' "$OUT/sitemap.xml"
-          grep -q 'Sitemap: https://workspacebyemlen.co.uk/sitemap.xml' "$OUT/robots.txt"
+          # The .co.uk website is intentionally excluded from all indexes.
+          python tools/check_noindex.py "$OUT"
 
       - name: Validate navigation routes and script syntax
         shell: bash
