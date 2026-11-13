@@ -50,7 +50,7 @@ else:
 if (root / "sitemap.xml").exists():
     problems.append("noindex site must not publish sitemap.xml")
 
-nginx = Path("deploy/nginx.conf").read_text(encoding="utf-8")
+nginx = (Path(__file__).resolve().parent.parent / "deploy/nginx.conf").read_text(encoding="utf-8")
 header = 'add_header X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex" always;'
 if nginx.count(header) != 4:
     problems.append("nginx must set the X-Robots-Tag in server, root, assets and config locations")
