@@ -205,7 +205,7 @@
  n.textContent='0';
 })();
 
-/* Section 6: benefits. Heading lines rise first, then each photo row slides in from its own side as it scrolls into view */
+/* Section 6: benefits. Heading lines rise first, then each row's number+photo slide in from its side, then that row's own heading and finally its description/bullets settle in */
 (()=>{
  const sec=document.getElementById('benefits'); if(!sec||!window.gsap||!window.ScrollTrigger)return;
  const lines=[...sec.querySelectorAll('.bn-heading-line')];
@@ -213,14 +213,24 @@
  const rows=[...sec.querySelectorAll('.bn-row')];
  gsap.set(lines,{y:30,opacity:0});
  if(intro)gsap.set(intro,{y:20,opacity:0});
- rows.forEach(r=>gsap.set(r,{x:r.dataset.side==='right'?56:-56,opacity:0}));
  /* by request this reveal plays on every system, regardless of the OS animation setting */
  const tl=gsap.timeline({scrollTrigger:{trigger:sec,start:'top 78%',once:true}})
   .to(lines,{y:0,opacity:1,duration:.7,ease:'power3.out',stagger:.12,clearProps:'transform,opacity'});
  if(intro)tl.to(intro,{y:0,opacity:1,duration:.6,ease:'power3.out',clearProps:'transform,opacity'},'-=0.25');
  rows.forEach(r=>{
-  gsap.to(r,{x:0,opacity:1,duration:.8,ease:'power3.out',clearProps:'transform,opacity',
-   scrollTrigger:{trigger:r,start:'top 86%',once:true}});
+  const side=r.dataset.side;
+  const num=r.querySelector('.bn-row-num'),photo=r.querySelector('.bn-row-photo');
+  const heading=r.querySelector('.bn-row-heading');
+  const desc=r.querySelector('.bn-row-desc'),points=r.querySelector('.bn-row-points');
+  const dx=side==='right'?48:-48;
+  gsap.set(num,{x:dx,opacity:0});
+  gsap.set(photo,{x:-dx,opacity:0});
+  gsap.set(heading,{y:26,opacity:0});
+  gsap.set([desc,points],{y:18,opacity:0});
+  gsap.timeline({scrollTrigger:{trigger:r,start:'top 86%',once:true}})
+   .to([num,photo],{x:0,opacity:1,duration:.75,ease:'power3.out',clearProps:'transform,opacity'})
+   .to(heading,{y:0,opacity:1,duration:.6,ease:'power3.out',clearProps:'transform,opacity'},'-=0.3')
+   .to([desc,points],{y:0,opacity:1,duration:.6,ease:'power3.out',stagger:.08,clearProps:'transform,opacity'},'-=0.3');
  });
 })();
 
