@@ -47,8 +47,17 @@ else:
         problems.append("robots.txt must allow search engines to see noindex")
     if re.search(r"(?im)^(Sitemap|Disallow):", txt):
         problems.append("robots.txt must not block deindexing or advertise a sitemap")
-if (root / "sitemap.xml").exists():
-    problems.append("noindex site must not publish sitemap.xml")
+# The installed VPS release script requires sitemap.xml to exist. Keep
+# an intentionally empty compatibility sitemap, with zero advertised URLs.
+sitemap_path = root / "sitemap.xml"
+if not sitemap_path.is_file():
+    problems.append("empty compatibility sitemap.xml is missing")
+else:
+    sitemap = sitemap_path.read_text(encoding="utf-8")
+    if re.search(r"<(?:url|loc)(?:\s|>)", sitemap):
+        problems.append("noindex sitemap must contain zero URL/LOC entries")
+    if "workspacebyemlen.co.uk" not in sitemap:
+        problems.append("Contabo compatibility sitemap must reference the site in a comment")
 
 nginx = (Path(__file__).resolve().parent.parent / "deploy/nginx.conf").read_text(encoding="utf-8")
 header = 'add_header X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex" always;'
@@ -58,4 +67,4 @@ if nginx.count(header) != 4:
 if problems:
     print("\n".join("FAIL: " + message for message in problems))
     raise SystemExit(1)
-print("OK: all pages and server routes are set to noindex/nofollow, and no sitemap is published")
+print("OK: sitewide noindex/nofollow, no sitemap URLs, and no advertised sitemap")
