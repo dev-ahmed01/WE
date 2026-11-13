@@ -61,3 +61,28 @@ jobs:
             -o StrictHostKeyChecking=yes \
             -o ConnectTimeout=20 \
             -T we-actions@91.90.83.21 "deploy $REVISION"
+
+      - name: Confirm live noindex headers and empty sitemap
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in / /workspaces/ /managed-office/south-bangalore/ /managed-office/one-person-office/; do
+            response="$(curl --silent --show-error --fail --max-time 25 \
+              -H 'Cache-Control: no-cache' \
+              -D - -o /dev/null "https://workspacebyemlen.co.uk$path")"
+            printf '%s\n' "$response" | grep -Eiq '^x-robots-tag:[[:space:]]*noindex, nofollow' || {
+              echo "Missing noindex/nofollow header on $path" >&2
+              exit 1
+            }
+          done
+          sitemap="$(curl --silent --show-error --fail --max-time 25 https://workspacebyemlen.co.uk/sitemap.xml)"
+          if grep -Eq '<(url|loc)([[:space:]]|>)' <<< "$sitemap"; then
+            echo "Public sitemap unexpectedly contains crawlable URLs" >&2
+            exit 1
+          fi
+          robots="$(curl --silent --show-error --fail --max-time 25 https://workspacebyemlen.co.uk/robots.txt)"
+          if grep -Eiq '^Sitemap:' <<< "$robots"; then
+            echo "robots.txt must not advertise a sitemap" >&2
+            exit 1
+          fi
+          echo "Live .co.uk SEO suppression verified"
