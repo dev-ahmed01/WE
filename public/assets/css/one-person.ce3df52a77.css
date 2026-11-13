@@ -1870,6 +1870,7 @@ h2 { font-size:clamp(29px,2.65vw,38px); line-height:1.16; letter-spacing:-.038em
 #how-it-works .hs-step:nth-child(2){--ac:#ffb900;margin-top:var(--rise)}
 #how-it-works .hs-card{position:relative;min-height:clamp(150px,13vw,176px);padding:30px 28px 24px;border-radius:22px;background:#fff;border:1px solid #f0e6e0;box-shadow:0 18px 38px rgba(70,38,22,.1),0 2px 6px rgba(70,38,22,.05)}
 #how-it-works .hs-card::before{content:'';position:absolute;left:28px;top:0;width:48px;height:6px;border-radius:0 0 6px 6px;background:var(--ac)}
+#how-it-works .hs-step-num{position:absolute;top:-17px;right:24px;z-index:2;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--ac);color:#fff;font:800 15px/1 var(--head);letter-spacing:-.02em;box-shadow:0 10px 22px -6px rgba(0,0,0,.35),0 0 0 4px #fffaf7}
 #how-it-works .hs-card h3{margin:0 0 8px;font:800 clamp(20px,1.7vw,25px)/1.12 var(--head);letter-spacing:-.045em;color:var(--ink)}
 #how-it-works .hs-card p{margin:0;font:400 clamp(14px,1.05vw,15.5px)/1.6 var(--body);color:#4d4647;text-wrap:pretty}
 /* path: steps linking up the stairs, then up to the call button */
@@ -2065,13 +2066,14 @@ html body section#values.values-section{padding-top:56px !important;padding-bott
 html body section#options.options-section{padding-top:56px !important;padding-bottom:56px !important}
 html body section#customise.cz-section{padding-top:56px !important;padding-bottom:56px !important}
 html body section#consultation.lm-section{padding-top:56px !important;padding-bottom:56px !important}
+html body section#benefits.bn-section{padding-top:56px !important;padding-bottom:56px !important}
 html body section#locations.locations-section{padding-top:56px !important;padding-bottom:56px !important}
 html body section#why-us.why-section{padding-top:56px !important;padding-bottom:56px !important}
 html body section#faqs.faq-section{padding-top:56px !important;padding-bottom:64px !important}
 html body #how-it-works .hs-inner{padding-top:56px !important}
 @media(max-width:900px){
   html body section#values.values-section,html body section#options.options-section,html body section#customise.cz-section,
-  html body section#consultation.lm-section,html body section#locations.locations-section,html body section#why-us.why-section,
+  html body section#consultation.lm-section,html body section#benefits.bn-section,html body section#locations.locations-section,html body section#why-us.why-section,
   html body section#faqs.faq-section{padding-top:44px !important;padding-bottom:44px !important}
   html body #how-it-works .hs-inner{padding-top:44px !important}
 }
@@ -2084,7 +2086,8 @@ html body #how-it-works .hs-inner{padding-top:56px !important}
   html body #home .hero{width:calc(100% - 34px) !important}
   html body #how-it-works .hs-inner{width:calc(100% - 34px) !important}
 }
-/* 3. Locations -> Why us: soften the cream-to-white step */
+/* 3. How-it-works -> Locations -> Why us: Locations was flat white between two cream sections, so both its edges snapped. Fade it cream-white-cream to match both neighbours */
+html body section#locations.locations-section{background:linear-gradient(180deg,#fffaf7 0,#fff 150px,#fff calc(100% - 150px),#fffaf7 100%) !important}
 html body section#why-us.why-section{background:linear-gradient(180deg,#fffaf7 0,#fff 160px) !important}
 /* 4. Touch targets in the footer (mobile) */
 @media(max-width:700px){
