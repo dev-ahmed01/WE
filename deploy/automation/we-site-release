@@ -72,7 +72,7 @@ gid=$(/usr/bin/id -g deploy)
 for path in index.html workspaces/index.html managed-office/south-bangalore/index.html managed-office/one-person-office/index.html; do
   test -s "$release/generated/$path"
 done
-/usr/bin/grep -q 'https://workspacebyemlen.co.uk' "$release/generated/sitemap.xml"
+/usr/sbin/runuser -u deploy -- /usr/bin/python3 "$release/tools/check_noindex.py" "$release/generated"
 
 /usr/bin/rm -rf -- "$release/public"
 /usr/bin/mv -- "$release/generated" "$release/public"
@@ -80,7 +80,7 @@ done
 
 /usr/bin/docker run -d --name "$canary" --network emlen_ingress \
   --security-opt no-new-privileges:true "$image" >/dev/null
-for path in / /workspaces/ /managed-office/south-bangalore/ /managed-office/one-person-office/ /sitemap.xml; do
+for path in / /workspaces/ /managed-office/south-bangalore/ /managed-office/one-person-office/; do
   success=0
   for attempt in {1..12}; do
     if /usr/bin/docker exec "$caddy" wget -q -O /dev/null -T 8 "http://$canary:80$path"; then
@@ -91,6 +91,18 @@ for path in / /workspaces/ /managed-office/south-bangalore/ /managed-office/one-
   done
   if (( success != 1 )); then
     echo "Canary check failed for $path" >&2
+    exit 1
+  fi
+done
+# Confirm the actual Nginx image sends noindex response headers before
+# activating it, including static resources which have their own add_header.
+for path in / /managed-office/south-bangalore/ /assets/js/config.js; do
+  headers=$(/usr/bin/docker exec "$caddy" wget -S -O /dev/null -T 8 "http://$canary:80$path" 2>&1) || {
+    echo "Canary noindex header request failed for $path" >&2
+    exit 1
+  }
+  if ! printf '%s\n' "$headers" | /usr/bin/grep -qi 'X-Robots-Tag: noindex, nofollow'; then
+    echo "Canary missing X-Robots-Tag for $path" >&2
     exit 1
   fi
 done
@@ -114,9 +126,13 @@ done
 [[ "$health" == 'healthy' ]] || { echo "Website unhealthy after deploy: $health" >&2; exit 1; }
 
 for path in / /workspaces/ /managed-office/south-bangalore/ /managed-office/one-person-office/; do
-  /usr/bin/curl --noproxy '*' --fail --silent --show-error --max-time 15 \
+  response=$(/usr/bin/curl --noproxy '*' --fail --silent --show-error --max-time 15 \
     --resolve workspacebyemlen.co.uk:443:127.0.0.1 \
-    "https://workspacebyemlen.co.uk$path" -o /dev/null
+    -D - "https://workspacebyemlen.co.uk$path" -o /dev/null)
+  if ! printf '%s\n' "$response" | /usr/bin/grep -qi '^x-robots-tag: noindex, nofollow'; then
+    echo "Live page lacks noindex response header: $path" >&2
+    exit 1
+  fi
 done
 
 activated=1
