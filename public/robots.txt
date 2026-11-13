@@ -1,4 +1,2 @@
 User-agent: *
 Allow: /
-
-Sitemap: https://workspacebyemlen.co.uk/sitemap.xml
