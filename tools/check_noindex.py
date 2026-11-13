@@ -41,12 +41,14 @@ if not robots.is_file():
     problems.append("robots.txt is missing")
 else:
     txt = robots.read_text(encoding="utf-8")
-    # Disallowing crawlers would prevent discovery of page-level noindex and
-    # could leave URLs in Google's index as an uncrawled URL reference.
-    if not re.search(r"(?im)^Allow:\s*/\s*$", txt):
-        problems.append("robots.txt must allow search engines to see noindex")
-    if re.search(r"(?im)^(Sitemap|Disallow):", txt):
-        problems.append("robots.txt must not block deindexing or advertise a sitemap")
+    # Honor the owner's request to prevent compliant bots from crawling.
+    # robots.txt does not block noncompliant bots or guarantee deindexing.
+    if not re.search(r"(?im)^User-agent:\s*\*\s*$", txt):
+        problems.append("robots.txt must target all crawler user agents")
+    if not re.search(r"(?im)^Disallow:\s*/\s*$", txt):
+        problems.append("robots.txt must disallow crawling the entire website")
+    if re.search(r"(?im)^(?:Allow|Sitemap):", txt):
+        problems.append("robots.txt must not permit crawler access or advertise a sitemap")
 # The installed VPS release script requires sitemap.xml to exist. Keep
 # an intentionally empty compatibility sitemap, with zero advertised URLs.
 sitemap_path = root / "sitemap.xml"
@@ -67,4 +69,4 @@ if nginx.count(header) != 4:
 if problems:
     print("\n".join("FAIL: " + message for message in problems))
     raise SystemExit(1)
-print("OK: sitewide noindex/nofollow, no sitemap URLs, and no advertised sitemap")
+print("OK: sitewide crawl disallow, noindex/nofollow, and no advertised sitemap")

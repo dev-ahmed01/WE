@@ -640,8 +640,10 @@ def main():
                   {"src": "/assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png"}]}, indent=2))
     # Do not publish a sitemap for a site intentionally excluded from indexes.
     # Allow crawling so existing indexed URLs can be fetched and deindexed.
-    # Search engines cannot see noindex when robots.txt blocks those URLs.
-    write("robots.txt", "User-agent: *\nAllow: /\n")
+    # Request that standards-compliant crawlers do not fetch any page.
+    # Keep page-level noindex and X-Robots-Tag as defense in depth for
+    # requests that still reach the server; robots.txt is not access control.
+    write("robots.txt", "User-agent: *\nDisallow: /\n")
     # Root-owned Contabo release script still requires a sitemap.xml HTTP 200
     # and a reference to this hostname. Keep a compatibility file with ZERO
     # <url> or <loc> entries; robots.txt never advertises it.
