@@ -214,7 +214,8 @@ const setLoc = (i) => {
   $("#mapName").textContent = l.name;
   $("#mapNote").textContent = l.note;
   $("#mapLink").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.query)}`;
-  $("#mapFrame").src = `https://maps.google.com/maps?q=${encodeURIComponent(l.query)}&z=15&output=embed`;
+  const frame = $("#mapFrame");
+  if (frame) frame.src = `https://maps.google.com/maps?q=${encodeURIComponent(l.query)}&z=15&output=embed`;
 };
 locList.addEventListener("click", (e) => { const b = e.target.closest(".loc"); if (b) setLoc(Number(b.dataset.i)); });
 setLoc(0);
@@ -260,7 +261,10 @@ $("#enquiryForm").addEventListener("submit", (e) => {
     f.get("message") && `Note: ${f.get("message")}`,
     "Source: One Person Office page",
   ].filter(Boolean);
-  window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(lines.join("\n"))}`, "_blank", "noopener");
+  const url = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(lines.join("\n"))}`;
+  // Some embedded viewers block pop-ups, so always leave a plain link as well.
+  note.innerHTML = `Your enquiry is ready. <a class="link" href="${url}" target="_blank" rel="noopener">Send it on WhatsApp</a>`;
+  window.open(url, "_blank", "noopener");
 });
 
 /* ---------- dialogs ---------- */
