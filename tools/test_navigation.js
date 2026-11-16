@@ -68,6 +68,41 @@ async function checkTypography(page,route,mobile){
 }
 
 
+
+/* Verify every section heading, rather than only the first sample. Check the
+   specific component roles where legacy selectors previously beat the tokens. */
+async function checkTypographyCoverage(page,route,mobile){
+  const rows=await page.evaluate(()=>{
+    const roles=[
+      ['section','section h2:not(.enquiry-panel h2,.we-form-panel h2)'],
+      ['form title','.we-form-panel h2,.we-form-panel h3'],
+      ['card','.we-hl__txt h3,.cd h3,.benefit-card h3,.bn-row-heading,.bn-title,.sol-name,.office-glass strong'],
+      ['highlight','.we-form-panel .we-form-kicker,.we-form-panel .form-kicker,.metric>span:not(.star),.stat-card>span:not(.star),.stat-card.glass p,.eq-s>span'],
+      ['subheading','.faq-item summary,.faq-toggle,.faq-q span:first-child,.ql h4,.cz-label'],
+      ['bullet','.bn-points li,.bn-row-points li,.consult-points li,.lm-points li,.ap-ls li'],
+      ['body','.bn-text,.bn-row-desc,.we-hl__txt p,.we-form-intro,.form-subtitle,.section-note'],
+      ['button','.we-form-main button[type=submit],.em-nav__cta,.em-nav__call,.sol-link,.consult-call,.consult-call strong,.lm-cta-main,.lm-cta-num'],
+      ['anchor','.em-nav__link']
+    ];
+    return roles.flatMap(([role,sel])=>[...document.querySelectorAll(sel)].map(e=>{
+      const s=getComputedStyle(e);
+      return {role,text:e.textContent.trim().slice(0,70),size:parseFloat(s.fontSize),weight:s.fontWeight,family:s.fontFamily};
+    }));
+  });
+  assert.ok(rows.filter(x=>x.role==='section').length>=4,route+': section coverage');
+  for(const r of rows){
+    const label=route+' '+r.role+' '+r.text;
+    const head=['section','card','form title'].includes(r.role);
+    const size={'section':36,'card':21,'form title':21,'highlight':16,'subheading':16,'bullet':16,'body':14,'button':13,'anchor':13}[r.role];
+    const weight={'section':'700','card':'600','form title':'600','highlight':'600','subheading':'600','bullet':'400','body':'400','button':'600','anchor':'400'}[r.role];
+    assert.ok(r.family.includes(head?'Bricolage Grotesque':'Poppins'),label+' font');
+    assert.equal(r.weight,weight,label+' weight');
+    if(mobile&&r.role==='section')assert.ok(r.size>=27 && r.size<=32,label+' responsive size');
+    else assert.equal(r.size,size,label+' size');
+  }
+  console.log('TYPOGRAPHY COVERAGE OK: '+route+' '+(mobile?'mobile':'desktop')+' ('+rows.length+' elements)');
+}
+
 /* Actual form controls must share the approved visual system; never submit personal data. */
 async function checkSharedForm(page,route,mobile){
   const form=page.locator('.we-form-main');
@@ -104,6 +139,7 @@ async function checkSharedForm(page,route,mobile){
       await desktop.locator('.em-nav').waitFor({ timeout: 15000 });
       await checkPageBackground(desktop,route);
       await checkTypography(desktop,route,false);
+      await checkTypographyCoverage(desktop,route,false);
       await checkSharedForm(desktop,route,false);
       const state = await desktop.evaluate(() => {
         const nav = document.querySelector('.em-nav');
@@ -156,6 +192,7 @@ async function checkSharedForm(page,route,mobile){
       const toggle = mobile.locator('.em-nav__toggle');
       await toggle.waitFor({ state: 'visible', timeout: 15000 });
       await checkTypography(mobile,route,true);
+      await checkTypographyCoverage(mobile,route,true);
       await checkSharedForm(mobile,route,true);
       await toggle.click();
       assert.equal(await toggle.getAttribute('aria-expanded'), 'true', route + ': hamburger opens');

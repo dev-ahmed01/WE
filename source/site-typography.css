@@ -167,3 +167,39 @@ html#we-site body :is(a.btn,a.button,a.we-btn,.callback-btn,.submit-btn,.form-su
 /* Preserve the text contrast of branded red hover cards and photo labels. */
 html#we-site body .we-hl__card:hover :is(h3,p){color:#fff!important}
 html#we-site body :is(.cd,.location-label,.office-special) :is(h3,.special-heading){color:#fff}
+
+/* Role-level corrections from the computed-style audit of all four deployed pages.
+   The legacy Workspaces ID-based rules must not override the global section tokens.
+   Numeric artwork, offer numerals and icon glyphs retain their existing treatment. */
+html#we-site body #testimonials .section-title,
+html#we-site body #enquiry .enquiry-copy h2,
+html#we-site body #faqs h2 {
+  font-family:var(--we-type-heading)!important;font-size:var(--we-type-section)!important;
+  font-weight:700!important;line-height:1.16!important;letter-spacing:-.025em!important;
+}
+/* Consistent subheadings, highlights, metric labels and reviewer names. */
+html#we-site body :is(.we-form-panel .we-form-kicker,.we-form-panel .form-kicker,.kk,.we-lc__eb,.t-badge,.cz-result-kicker,.lm-eyebrow,.dp-t>small,.testimonial strong,.review-author strong,.t-card strong,.metric>span:not(.star),.stat-card>span:not(.star),.eq-s>span,footer h4,.we-lc__near h4,.we-lc__near li b) {
+  font-family:var(--we-type-body)!important;font-size:16px!important;font-weight:600!important;line-height:1.35!important;letter-spacing:0!important;
+}
+html#we-site body .we-form-panel p.we-form-kicker.we-form-kicker,
+html#we-site body #enquiry .stat-card.glass p {
+  font-family:var(--we-type-body)!important;font-size:16px!important;font-weight:600!important;line-height:1.35!important;letter-spacing:0!important;
+}
+html#we-site body :is(.we-form-panel .we-form-kicker,.we-form-panel .form-kicker){color:var(--we-type-red)!important;}
+html#we-site body .we-lc__maptop>span:not(.we-lc__dot,.we-lc__maparea){font:600 16px/1.35 var(--we-type-body)!important;letter-spacing:0!important;}
+html#we-site body :is(.t-card small,.testimonial small,.review-author small,.dp-t>span,.special-lines>span,.cz-hint,.we-lc__maparea,.we-lc__mapbot>span,.ticket-small,footer small) {
+  font-family:var(--we-type-body)!important;font-size:14px!important;font-weight:400!important;line-height:1.65!important;letter-spacing:0!important;
+}
+/* Buttons with nested text must use the same font/weight as the common CTA. */
+html#we-site body :is(.sol-link,.consult-call,.lm-cta,.mc button.cta) {
+  font-family:var(--we-type-body)!important;font-size:13px!important;font-weight:600!important;line-height:1.4!important;letter-spacing:0!important;
+}
+html#we-site body :is(.consult-call,.lm-cta) :is(strong,.lm-cta-main,.lm-cta-num,span) {
+  font-family:var(--we-type-body)!important;font-size:13px!important;font-weight:600!important;line-height:1.4!important;letter-spacing:0!important;
+}
+html#we-site body :is(.we-lc__d,.lm-offer-intro,.lm-offer-after) {
+  font-family:var(--we-type-body)!important;font-size:16px!important;font-weight:600!important;line-height:1.35!important;letter-spacing:0!important;
+}
+html#we-site body :is(.ticket-title,#mt) {font-family:var(--we-type-heading)!important;font-size:21px!important;font-weight:600!important;line-height:1.25!important;letter-spacing:-.02em!important;}
+html#we-site body .ticket-title strong {font:inherit!important;letter-spacing:inherit!important;}
+html#we-site body :is(.review-author small,.testimonial small,.t-card small,.we-form-intro,.we-lc__near h4,footer h4){color:var(--we-type-ink)!important;}
