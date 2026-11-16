@@ -69,7 +69,7 @@ fs.mkdirSync(SHOTS, {recursive:true});
      const v=await card.evaluate(el=>{const h=el.querySelector('h3'),p=el.querySelector('p'),a=el.querySelector('.we-hl__art');return {heading:getComputedStyle(h).fontSize,weight:getComputedStyle(h).fontWeight,body:getComputedStyle(p).fontSize,panel:getComputedStyle(a).backgroundColor,svg:getComputedStyle(a.querySelector('svg')).shapeRendering,artTop:a.getBoundingClientRect().top,titleTop:h.getBoundingClientRect().top};});
      assert.deepEqual([v.heading,v.weight,v.body],['21px','600','14px'],'approved typography');
      assert.equal(v.panel,'rgb(247, 241, 236)','neutral illustration panel');
-     assert.equal(v.svg,'geometricPrecision','crisp SVG');
+     assert.equal(v.svg.toLowerCase(),'geometricprecision','crisp SVG');
      assert.ok(v.artTop<v.titleTop,'illustration above title');
    }
    const columns=await page.locator('#managedHl').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length);
@@ -80,7 +80,7 @@ fs.mkdirSync(SHOTS, {recursive:true});
      await firstCard.hover();
      assert.ok((await firstCard.evaluate(el=>el.style.getPropertyValue('--mx'))).endsWith('px'),'liquid fill tracks cursor entry');
      assert.equal(await firstCard.locator('h3').evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)','red-fill hover text is white');
-     assert.notEqual(await firstCard.evaluate(el=>getComputedStyle(el,'::before').transform),'matrix(0, 0, 0, 0, 0, 0)','hover expands red liquid');
+     assert.ok(await firstCard.evaluate(el=>new DOMMatrix(getComputedStyle(el,'::before').transform).a>.95),'hover expands red liquid');
      await page.mouse.move(0,0);
    }
    await page.screenshot({path:path.join(SHOTS,'managed-office-'+viewport.width+'-hero.png'),animations:'disabled'});
