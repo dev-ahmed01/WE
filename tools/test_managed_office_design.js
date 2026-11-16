@@ -84,6 +84,39 @@ fs.mkdirSync(SHOTS, {recursive:true});
      await page.mouse.move(0,0);
    }
    await page.screenshot({path:path.join(SHOTS,'managed-office-'+viewport.width+'-hero.png'),animations:'disabled'});
+   // Check actual child icon contrast, not just the parent button role.
+   const pills=page.locator('#other-solutions .other-pill');
+   assert.equal(await pills.count(),10,'all service pills retained');
+   await pills.first().scrollIntoViewIfNeeded();
+   await page.mouse.move(0,0);
+   for(const pill of await pills.all()){
+     const style=await pill.evaluate(el=>{
+       const ar=el.querySelector('.pill-arr'),label=el.querySelector('span:first-child');
+       const s=getComputedStyle(el),a=getComputedStyle(ar),l=getComputedStyle(label);
+       const r=el.getBoundingClientRect(),ir=ar.getBoundingClientRect(),lr=label.getBoundingClientRect();
+       return {bg:s.backgroundColor,color:l.color,icon:a.color,iconBg:a.backgroundColor,
+         iconWidth:ir.width,iconHeight:ir.height,radius:s.borderRadius,
+         labelFit:lr.right<=ir.left+1,inside:ir.right<=r.right+1&&ir.left>=r.left-1};
+     });
+     assert.equal(style.bg,'rgba(90, 0, 3, 0.45)','deep translucent red, not pale wash');
+     assert.equal(style.color,'rgb(255, 255, 255)','white readable label');
+     assert.equal(style.icon,'rgb(173, 20, 25)','visible red arrow');
+     assert.equal(style.iconBg,'rgb(255, 255, 255)','white icon surface');
+     assert.equal(style.radius,'999px','shared pill geometry');
+     assert.ok(style.labelFit&&style.inside,'label and arrow fit without collision');
+     assert.equal(style.iconWidth,30,'consistent icon width');
+     assert.equal(style.iconHeight,30,'consistent icon height');
+   }
+   if(!mobile){
+     await pills.first().hover();
+     assert.equal(await pills.first().evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(90, 0, 3, 0.56)','glass hover darkens');
+     assert.equal(await pills.first().locator('.pill-arr').evaluate(el=>getComputedStyle(el).color),'rgb(173, 20, 25)','arrow stays visible on hover');
+     await page.mouse.move(0,0);
+   }
+   await page.locator('#other-solutions').screenshot({path:path.join(SHOTS,'managed-office-'+viewport.width+'-other-solutions.png'),animations:'disabled'});
+   await pills.first().click();
+   assert.equal(await page.locator('#interest-detail').inputValue(),'Coworking dedicated desk','service preselection still works');
+   assert.equal(await page.locator('#interest').inputValue(),'Other services','other service fallback retained');
    const consultation=page.locator('#office-checklist.consult-section');
    const seam=await consultation.evaluate(el=>{
       const section=getComputedStyle(el),card=getComputedStyle(el.querySelector('.consult-card'));

@@ -175,7 +175,6 @@ html#we-site body :is(.cat-pill,
 }
 html#we-site body :is(.cat-pill,
   .we-pill,
-  .other-pill,
   .motion-btn:focus-visible) {
   background-color:rgba(255,255,255,.64)!important;
   border:1px solid rgba(255,255,255,.72)!important;
@@ -300,7 +299,7 @@ html#we-site body .em-nav__link.is-current,html#we-site body .em-nav__mobile-lin
 html#we-site body :is(.consult-call,.lm-cta){gap:12px!important;padding:12px 22px!important}
 html#we-site body :is(.consult-call,.lm-cta) i{height:18px!important}
 html#we-site body #consultation .lm-cta::after{animation:none!important;display:none!important}
-html#we-site body :is(.consult-call,.lm-cta,.we-am__more,.we-lc__cta,.callback-btn,.other-pill) :is(span,strong){font:inherit!important;color:inherit!important}
+html#we-site body :is(.consult-call,.lm-cta,.we-am__more,.we-lc__cta,.callback-btn) :is(span,strong){font:inherit!important;color:inherit!important}
 html#we-site body :is(.sol-link,.ticket-unlock){padding:10px 16px!important}
 html#we-site body .we-form button[type=submit]{width:100%;margin-top:8px!important}
 html#we-site body :is(.we-am__more,.we-lc__cta) svg{width:18px;height:18px;flex:none;padding:0;background:none}
@@ -370,3 +369,32 @@ html#we-site body :is(button,a):focus-visible{outline:2px solid var(--we-button-
 html#we-site body .motion-btn:not(:focus-visible){min-height:0!important}
 /* Do not let legacy card hover animations replace a CTA's own colour transition. */
 html#we-site body #options .sol-card:hover .sol-link:not(:hover):not(:focus-visible){background:var(--we-control-bg,var(--we-button-red))!important;color:var(--we-control-fg,#fff)!important;transform:none!important;box-shadow:var(--we-control-shadow,var(--we-button-glow))!important}
+
+/* Red-panel glass variant: text and icon are independent contrast roles. */
+html#we-site body #other-solutions .other-pill {
+  box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  min-height:60px!important;height:100%!important;padding:10px 14px!important;
+  background:rgba(90,0,3,.45)!important;color:#fff!important;
+  border:1px solid rgba(255,255,255,.38)!important;border-radius:999px!important;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.18),0 6px 14px rgba(90,0,3,.12)!important;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  transition:background-color .22s ease,border-color .22s ease!important;
+}
+html#we-site body #other-solutions .other-pill > span:first-child {
+  min-width:0;overflow-wrap:break-word;font:600 13px/1.4 var(--we-type-body)!important;color:#fff!important;
+}
+html#we-site body #other-solutions .other-pill > .pill-arr {
+  display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;border-radius:50%;
+  background:#fff!important;color:#AD1419!important;font:600 18px/1 var(--we-type-body)!important;
+  transition:transform .22s ease,background-color .22s ease,color .22s ease!important;
+}
+html#we-site body #other-solutions .other-pill:is(:hover,:focus-visible) {
+  background:rgba(90,0,3,.56)!important;color:#fff!important;
+  border-color:rgba(255,255,255,.65)!important;transform:none!important;
+}
+html#we-site body #other-solutions .other-pill:is(:hover,:focus-visible) > .pill-arr {
+  transform:translate(1px,-1px);background:#fff!important;color:#AD1419!important;
+}
+html#we-site body #other-solutions .other-pill:focus-visible {outline:2px solid #fff!important;outline-offset:3px;}
+@media(max-width:640px){html#we-site body #other-solutions .other-pill{min-height:56px!important;padding:9px 12px!important;gap:8px}}
+@media(prefers-reduced-motion:reduce){html#we-site body #other-solutions .other-pill,html#we-site body #other-solutions .other-pill > .pill-arr {transition:none!important;transform:none!important}}
