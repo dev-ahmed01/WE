@@ -1,0 +1,46 @@
+/* Cross-page implementation of approved Managed Offices interaction and form rules. */
+html#we-site body :is(.btn-line,.we-btn--line,.em-nav__call,.em-nav__mobile-call,.lx-btn.is-ghost){
+  border-color:rgba(22,22,22,.22)!important;color:#161616!important;
+  background:linear-gradient(135deg,rgba(255,255,255,.9),rgba(255,255,255,.7))!important;
+  transition:border-color .25s ease,color .25s ease,box-shadow .25s ease!important;
+}
+html#we-site body :is(.btn-line,.we-btn--line,.em-nav__call,.em-nav__mobile-call,.lx-btn.is-ghost):is(:hover,:focus-visible){
+  border-color:#ED2024!important;color:#ED2024!important;
+  background:linear-gradient(135deg,rgba(255,255,255,.9),rgba(255,255,255,.7))!important;
+}
+html#we-site body .we-action-chevron{
+  display:inline-block;width:18px;height:18px;flex:0 0 18px;vertical-align:middle;stroke:currentColor;transition:transform .22s ease;
+}
+html#we-site body :is(a,button):hover > .we-action-chevron{transform:translateX(2px)}
+html#we-site body :is(.btn-red,.btn-yellow,.we-btn--red,.btn-line,.we-btn--line,.em-nav__cta,.em-nav__mobile-cta,.sol-link,.cz-cta,.ticket-unlock,.lm-cta,.we-pop__cta,.we-form button[type=submit]):has(> .we-action-chevron){
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+}
+html#we-site body .round-arrow:has(.we-action-chevron){display:grid;place-items:center}
+html#we-site body section#top.we-hero.hp.hp-b{padding-top:var(--we-workspaces-hero-top,156px)!important}
+html#we-site body :is(#eqForm,#enquiryForm,#officeEnquiry .field-grid){
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px 16px!important;align-content:start;
+}
+html#we-site body :is(#eqForm,#enquiryForm,#officeEnquiry .field-grid)>.we-field:not(:has(textarea)){grid-column:auto!important;grid-row:auto!important;min-width:0}
+html#we-site body :is(#eqForm,#enquiryForm,#officeEnquiry .field-grid)>.we-field:has(textarea){grid-column:1/-1!important}
+html#we-site body :is(#eqForm,#enquiryForm,#officeEnquiry) button[type=submit]{margin-top:18px!important}
+html#we-site body :is(#eqForm,#enquiryForm,#officeEnquiry) .form-help{margin-top:12px!important}
+html#we-site body .we-enquiry-section,html#we-site body .we-enquiry-layout{overflow:visible!important}
+html#we-site body .we-enquiry-layout{align-items:start!important}
+html#we-site body .we-sticky-enquiry{position:sticky!important;top:var(--we-sticky-top,104px);align-self:start!important;height:auto!important;min-height:0!important}
+html#we-site body #consultation .lm-copy h2{margin-bottom:12px!important}
+html#we-site body #consultation .lm-note{margin-top:0!important}
+html#we-site body #speak-dialog{width:min(540px,calc(100% - 32px));max-height:calc(100dvh - 32px);padding:0;border:0;border-radius:30px;background:none;overflow:auto;color:#161616;z-index:2000}
+html#we-site body #speak-dialog::backdrop{background:rgba(22,22,22,.35);backdrop-filter:blur(6px)}
+html#we-site body #speak-dialog .we-form-panel{position:relative;--we-section-panel:subsection}
+html#we-site body #speak-dialog .modal-close{position:absolute;top:14px;right:14px;font-size:22px!important;display:grid;place-items:center}
+html#we-site body #speak-dialog .field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px!important}
+html#we-site body #speak-dialog .field-grid .we-field{margin:0!important}
+@media(max-width:1100px){html#we-site body section#top.we-hero.hp.hp-b{padding-top:var(--we-workspaces-hero-top,132px)!important}}
+@media(max-width:640px){
+  html#we-site body section#top.we-hero.hp.hp-b{padding-top:var(--we-workspaces-hero-top,112px)!important}
+  html#we-site body :is(#eqForm,#enquiryForm,#officeEnquiry .field-grid,#speak-dialog .field-grid){grid-template-columns:1fr!important;gap:14px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  html#we-site body .we-action-chevron,html#we-site body :is(.btn-line,.we-btn--line,.em-nav__call,.em-nav__mobile-call,.lx-btn.is-ghost){transition:none!important}
+  html#we-site body :is(a,button):hover > .we-action-chevron{transform:none}
+}

@@ -570,6 +570,7 @@ from shared_forms import apply_shared_forms
 from shared_cards import apply_shared_cards
 from shared_footer import apply_shared_footer
 from managed_review import patch_managed_review
+from site_polish import apply_site_polish
 
 def patch_one_person(b):
     b = rep(b, '<h1 id="heroTitle">One Person Office</h1>', '<h1 id="heroTitle"><span class="red">One Person</span> Office</h1>', label="one person hero accent")
@@ -638,6 +639,7 @@ def main():
             css += "\n/* Approved plain property hero */\n" + (SRC / "property-hero.css").read_text(encoding="utf-8")
         if page["key"] == "category":
             css += "\n/* Client-approved Managed Offices review */\n" + (SRC / "managed-review.css").read_text(encoding="utf-8")
+        css += "\n/* Cross-page client refinements */\n" + (SRC / "site-polish.css").read_text(encoding="utf-8")
         # Exact brand red for all solid brand accents, including interaction states.
         # Preserve intentional gradient stops and semantic contrast/error colors.
         css = normalize_brand_red(css)
@@ -683,6 +685,7 @@ def main():
         body = apply_shared_footer(body, page["key"])
         if page["key"] == "category":
             body = patch_managed_review(body)
+        body = apply_site_polish(body, page["key"])
         body = normalize_brand_red(body)
         body = extract_scripts(body, page["key"])
         if page["key"] == "home":

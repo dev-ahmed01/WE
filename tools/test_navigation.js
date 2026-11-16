@@ -276,6 +276,21 @@ async function checkSharedForm(page,route,mobile){
     assert.equal(f.backgroundImage!=='none',f.kind==='SELECT',route+': '+f.id+' disclosure indicator only on select');
     if(f.kind!=='SELECT')assert.equal(f.placeholder,' ',route+': '+f.id+' no conflicting placeholder');
   }
+  const first=await form.locator('input[autocomplete=given-name]').count();
+  const last=await form.locator('input[autocomplete=family-name]').count();
+  const email=await form.locator('input[type=email]').count();
+  assert.equal(first,1,route+': first name');assert.equal(last,1,route+': optional last name');assert.equal(email,1,route+': optional work email');
+  assert.equal(await form.locator('input[autocomplete=family-name]').getAttribute('required'),null);
+  assert.equal(await form.locator('input[type=email]').getAttribute('required'),null);
+  await form.locator('button[type=submit] svg.we-action-chevron').waitFor({state:'attached'});
+  assert.equal(await form.locator('button[type=submit] svg.we-action-chevron path').getAttribute('d'),'M9 5l7 7-7 7');
+  if(route==='/workspaces/'){
+    await page.waitForFunction(()=>Math.abs(Number(document.querySelector('#top.hp-b').dataset.visibleNavGap)-80)<=1);
+  }
+  if(route==='/managed-office/one-person-office/'){
+    assert.equal(await page.locator('#consultation #open-speak').innerText(),'Book a consultation');
+    assert.equal(await page.locator('#speak-dialog').count(),1);
+  }
   const submit=await form.locator('button[type=submit]').evaluate(el=>{const s=getComputedStyle(el);return {size:s.fontSize,weight:s.fontWeight,radius:s.borderRadius};});
   assert.deepEqual(submit,{size:'13px',weight:'600',radius:'13px'},route+': common CTA typography');
 }
