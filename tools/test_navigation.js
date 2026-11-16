@@ -15,6 +15,24 @@ const routes = [
   '/managed-office/one-person-office/'
 ];
 
+
+/* Every major page background must be white at both tested breakpoints.
+   Nested component backgrounds are intentionally not included in this assertion. */
+async function checkPageBackground(page,route){
+  const state = await page.evaluate(() => {
+    const selectors = 'html,body,body > main,body > section,body > main > section,body > footer';
+    return [...document.querySelectorAll(selectors)].map(el => {
+      const style=getComputedStyle(el);
+      return {element:el.tagName+'#'+el.id+'.'+el.className, color:style.backgroundColor,image:style.backgroundImage};
+    });
+  });
+  assert.ok(state.length>=8,route+': main sections found');
+  for(const surface of state){
+    assert.equal(surface.color,'rgb(255, 255, 255)',route+': white '+surface.element);
+    assert.equal(surface.image,'none',route+': no page gradient '+surface.element);
+  }
+}
+
 (async () => {
   const browser = await chromium.launch({ headless: true });
   try {
@@ -23,6 +41,7 @@ const routes = [
       const desktop = await browser.newPage({ viewport: { width: 1440, height: 900 } });
       await desktop.goto(BASE + route, { waitUntil: 'domcontentloaded', timeout: 45000 });
       await desktop.locator('.em-nav').waitFor({ timeout: 15000 });
+      await checkPageBackground(desktop,route);
       const state = await desktop.evaluate(() => {
         const nav = document.querySelector('.em-nav');
         const box = nav.getBoundingClientRect();
@@ -70,6 +89,7 @@ const routes = [
         viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true
       });
       await mobile.goto(BASE + route, { waitUntil: 'domcontentloaded', timeout: 45000 });
+      await checkPageBackground(mobile,route);
       const toggle = mobile.locator('.em-nav__toggle');
       await toggle.waitFor({ state: 'visible', timeout: 15000 });
       await toggle.click();

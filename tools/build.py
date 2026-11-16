@@ -585,6 +585,7 @@ def main():
         raw = extract_data_uris(raw)
         head, body_tag, body = split_head_body(raw)
         metas = collect_meta(head)
+        metas["theme-color"] = "#FFFFFF"
         title = re.search(r"<title>(.*?)</title>", head, re.S).group(1).strip()
         title = html.unescape(title).replace(" — Animated Blueprint Hero", "")
         css, font_url = build_css(head, page["key"])
@@ -600,6 +601,8 @@ def main():
         if not font_url:
             m = FONT_RE.search(head)
             font_url = html.unescape(m.group(0)) if m else None
+        # Apply the same plain page surface last at build time; fingerprint it with the page CSS.
+        css += "\n/* Unified white page background */\n" + (SRC / "site-background.css").read_text(encoding="utf-8")
         css_path = asset("css", page["key"], css)
         body = PATCHES[page["key"]](body)
         if page["key"] == "one-person":
@@ -621,6 +624,16 @@ def main():
             body = body.replace(old_measure, "cardH=Math.round(clamp(stageH-3*strip,250,480));")
             hover = (SRC / "managed-office-hover.js").read_text(encoding="utf-8")
             body += "\n<script>\n" + hover + "\n</script>\n"
+        # The old dark-footer logo is white. Reuse the exact colour header logo on white.
+        if page["key"] in ("category", "one-person"):
+            logo_tag = re.search(r'<img\b[^>]*\bclass="brand-logo"[^>]*>', body)
+            if not logo_tag:
+                raise SystemExit("missing brand logo for white footer")
+            logo_path = re.search(r'\bsrc="([^"]+)"', logo_tag.group(0)).group(1)
+            footer_tag = re.compile(r'<img\b[^>]*\bclass="(?:ft-logo|footer-logo)"[^>]*>')
+            body, changed = footer_tag.subn(lambda m: re.sub(r'\bsrc="[^"]+"', lambda _: 'src="' + logo_path + '"', m.group(0)), body, count=1)
+            if changed != 1:
+                raise SystemExit("missing footer logo for white footer")
         body = extract_scripts(body, page["key"])
         if page["key"] == "home":
             logo = re.search(r'<img src="(/assets/img/workspace-by-emlen-[^"]+)"', body).group(1)

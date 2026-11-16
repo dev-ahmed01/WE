@@ -98,10 +98,11 @@ fs.mkdirSync(SHOTS, {recursive:true});
    const consultation=page.locator('#office-checklist.consult-section');
    const seam=await consultation.evaluate(el=>{
       const section=getComputedStyle(el),card=getComputedStyle(el.querySelector('.consult-card'));
-      return {background:section.backgroundImage,paddingTop:parseFloat(section.paddingTop),
+      return {background:section.backgroundImage,backgroundColor:section.backgroundColor,paddingTop:parseFloat(section.paddingTop),
         cardBackground:card.backgroundImage,cardShadow:card.boxShadow,cardBlur:card.backdropFilter,cardBorder:card.borderTopWidth};
    });
-   assert.ok(seam.background.includes('linear-gradient'),'consultation uses a continuous ivory gradient');
+   assert.equal(seam.background,'none','consultation has no page gradient');
+   assert.equal(seam.backgroundColor,'rgb(255, 255, 255)','consultation uses the unified white background');
    assert.equal(seam.cardBackground,'none','consultation sits flush on the page without a detached gradient panel');
    assert.equal(seam.cardShadow,'none','consultation has no floating-card shadow');
    assert.equal(seam.cardBlur,'none','consultation has no detached glass blur');

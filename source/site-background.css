@@ -1,0 +1,60 @@
+/* One site-wide background token. Component surfaces remain independently styled. */
+:root { --site-page-background: #FFFFFF; }
+html:root,
+html body,
+html body > main {
+  background: var(--site-page-background) !important;
+}
+/* Major page surfaces only. Never target nested section components, photos, cards or controls. */
+html body :is(
+  section.hero, section.feat#why, section.lm#find-fit, section.lc#locations,
+  section.tm#stories, section.ap#app, section.eq#enquire,
+  section#top.we-hero.hp.hp-b, section.section#photos, section.section#highlights,
+  section.section#amenities, section.section#solutions, section.section#locations,
+  section.section#testimonials, section.section#enquiry, section.section#faqs,
+  section.hero#top, section.solutions-section#offices, section.other-wrap,
+  section#office-checklist.consult-section, section#benefits.benefits-section.bn-section,
+  section#why-us.why-section, section.faq-section#faq,
+  section#home.hero-section, section#values.values-section, section#options.options-section,
+  section#customise.cz-section, section#benefits.bn-section, section#consultation.lm-section,
+  section#how-it-works.steps-section, section#locations.locations-section, section#faqs.faq-section,
+  .after-section
+) {
+  background: var(--site-page-background) !important;
+}
+/* Remove only page-wide decorative washes and section seam fades.
+   Keep the architectural drawings, their masks/timelines, and local component glows. */
+html body :is(section.solutions-section,section.why-section,section.faq-section,
+  section.benefits-section,section#office-checklist.consult-section)::before,
+html body :is(section.solutions-section,section.why-section,section.faq-section,
+  section.benefits-section,section#office-checklist.consult-section)::after,
+html body :is(section#customise,section#benefits,section#consultation,
+  section#how-it-works,section#locations.locations-section)::before,
+html body .after-section::before {
+  background: none !important;
+}
+/* White footer on every route; use the original colour logo and dark-on-white contrast. */
+html body > footer {
+  background: var(--site-page-background) !important;
+  color: #161616 !important;
+  border-top: 1px solid #E6E6E6;
+}
+html body footer.sl-footer .sl-brand { filter: none !important; }
+html body :is(footer.site-footer,footer.footer,footer.sl-footer) :is(p,small,.footer-bottom,.ft-bottom) {
+  color: #595959 !important;
+  opacity: 1;
+}
+html body :is(footer.site-footer,footer.footer,footer.sl-footer) :is(h4,.ft-brand-sub) {
+  color: #161616 !important;
+  opacity: 1;
+}
+html body :is(footer.site-footer,footer.footer,footer.sl-footer) a {
+  color: #161616 !important;
+}
+html body :is(footer.site-footer,footer.footer,footer.sl-footer) a:is(:hover,:focus-visible) {
+  color: #ED2024 !important;
+}
+html body footer.site-footer .ft-grid,
+html body footer.footer .footer-bottom {
+  border-color: #E6E6E6 !important;
+}
