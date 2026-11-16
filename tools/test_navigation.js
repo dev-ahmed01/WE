@@ -23,13 +23,19 @@ async function checkPageBackground(page,route){
     const selectors = 'html,body,body > main,body > section,body > main > section,body > footer';
     return [...document.querySelectorAll(selectors)].map(el => {
       const style=getComputedStyle(el);
-      return {element:el.tagName+'#'+el.id+'.'+el.className, color:style.backgroundColor,image:style.backgroundImage};
+      return {element:el.tagName+'#'+el.id+'.'+el.className, color:style.backgroundColor,image:style.backgroundImage,hero:el.matches('section.hero,section.hero-section,section.we-hero.hp.hp-b'),role:style.getPropertyValue('--we-section-family').trim()};
     });
   });
   assert.ok(state.length>=8,route+': main sections found');
   for(const surface of state){
     assert.equal(surface.color,'rgb(255, 255, 255)',route+': white '+surface.element);
-    assert.equal(surface.image,'none',route+': no page gradient '+surface.element);
+    if(surface.hero){
+      assert.equal(surface.role,'hero',route+': documented hero family');
+      assert.ok(surface.image.includes('radial-gradient')&&surface.image.includes('rgba(255, 185, 0, 0.065)')&&surface.image.includes('rgba(237, 32, 36, 0.055)'),route+': restrained hero atmosphere');
+    }else{
+      assert.equal(surface.image,'none',route+': white section without competing gradient '+surface.element);
+      if(surface.element.startsWith('SECTION'))assert.ok(['cards','lead-magnet','subsection'].includes(surface.role),route+': section family '+surface.element);
+    }
   }
 }
 
@@ -163,6 +169,25 @@ async function checkCardFamilies(page,route,mobile){
   console.log('CARD SYSTEM OK: '+route+' '+(mobile?'mobile':'desktop')+' ('+data.length+' cards)');
 }
 
+
+async function checkSectionPanels(page,route,mobile){
+  const items=await page.evaluate(()=>Array.from(document.querySelectorAll('#find-fit .qb,.ap .dp,#consultation .lm-banner,#other-solutions,.cz-panel,.we-gal__shell,.we-lc__mapcard,.we-form-panel')).map(el=>{
+    const s=getComputedStyle(el);return {cls:el.className,role:s.getPropertyValue('--we-section-panel').trim(),radius:s.borderRadius,bg:s.backgroundImage};
+  }));
+  for(const item of items){
+    assert.ok(['lead-magnet','subsection'].includes(item.role),route+': panel role '+item.cls);
+    assert.equal(item.radius,mobile?'25px':'30px',route+': shared panel radius '+item.cls);
+    assert.ok(item.bg.includes('linear-gradient'),route+': retained glass or brand surface '+item.cls);
+  }
+  if(route==='/workspaces/'){
+    const tiles=page.locator('#weGal .we-tile');
+    assert.ok(await tiles.count()>=5,'gallery tiles retained');
+    for(const tile of await tiles.all()){
+      assert.equal(await tile.evaluate(e=>getComputedStyle(e,'::before').content),'none','no View photo overlay');
+    }
+  }
+}
+
 /* Actual form controls must share the approved visual system; never submit personal data. */
 async function checkSharedForm(page,route,mobile){
   const form=page.locator('.we-form-main');
@@ -203,6 +228,7 @@ async function checkSharedForm(page,route,mobile){
       await checkSharedForm(desktop,route,false);
       await checkButtons(desktop,route,false);
       await checkCardFamilies(desktop,route,false);
+      await checkSectionPanels(desktop,route,false);
       const state = await desktop.evaluate(() => {
         const nav = document.querySelector('.em-nav');
         const box = nav.getBoundingClientRect();
@@ -258,6 +284,7 @@ async function checkSharedForm(page,route,mobile){
       await checkSharedForm(mobile,route,true);
       await checkButtons(mobile,route,true);
       await checkCardFamilies(mobile,route,true);
+      await checkSectionPanels(mobile,route,true);
       await toggle.click();
       assert.equal(await toggle.getAttribute('aria-expanded'), 'true', route + ': hamburger opens');
       assert.equal(await mobile.locator('.em-nav__mobile').isVisible(), true, route + ': mobile panel visible');

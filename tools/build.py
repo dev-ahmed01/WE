@@ -611,6 +611,7 @@ def main():
             css += "\n/* Approved sharper illustration cards */\n" + (SRC / "managed-office-highlight-cards.css").read_text(encoding="utf-8")
         css += "\n/* Shared button and pill system */\n" + (SRC / "site-buttons.css").read_text(encoding="utf-8")
         css += "\n/* Shared card families */\n" + (SRC / "site-cards.css").read_text(encoding="utf-8")
+        css += "\n/* Shared section families */\n" + (SRC / "site-sections.css").read_text(encoding="utf-8")
         css_path = asset("css", page["key"], css)
         body = PATCHES[page["key"]](body)
         if page["key"] == "one-person":

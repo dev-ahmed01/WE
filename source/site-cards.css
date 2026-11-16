@@ -168,20 +168,12 @@ html#we-site body .testimonial > strong{font:600 16px/1.35 var(--we-type-body)!i
 html#we-site body :is(.t-author,.review-author,.tq-p) small{
   display:block;margin-top:4px;font:400 14px/1.5 var(--we-type-body)!important;color:#161616!important
 }
-/* H. Options Card A: photo-only gallery with a compact translucent pill;
-   no change to the underlying gallery/lightbox controls. */
+/* H. Options Card A: clean photo tiles; the whole photo opens the existing lightbox. */
 html#we-site body #weGal .we-tile{
   --we-card-family:option-a;
   border-radius:var(--we-card-radius-inner)!important;
 }
-html#we-site body #weGal .we-tile::before{
-  content:"View photo";position:absolute;bottom:10px;right:10px;z-index:2;
-  border-radius:999px;padding:7px 12px;
-  background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.85);
-  backdrop-filter:blur(14px);color:#161616;
-  font:600 13px/1.35 var(--we-type-body);
-  box-shadow:0 4px 12px #0002;pointer-events:none
-}
+html#we-site body #weGal .we-tile::before{content:none!important;display:none!important}
 /* I. Options Card B: common photo enclosure and frosted content surface.
    Selected office accents and special-offer dark card stay distinct. */
 html#we-site body :is(.lk,.office-tile,.sol-card,.location-card.choose-location,.we-lc__photo){
@@ -221,7 +213,7 @@ html#we-site body #options .sol-card[data-highlight=true]{
   :root{--we-card-radius-large:26px;--we-card-radius:22px;--we-card-radius-inner:18px;--we-card-radius-small:16px;--we-card-padding:18px}
   html#we-site body :is(#homeHighlights,#weHl,#managedHl,#highlights .we-hl) .we-hl__art{height:176px}
   html#we-site body #benefits .bn-row{padding:12px}
-  html#we-site body #weGal .we-tile::before{padding:5px 8px;bottom:7px;right:7px;font-size:12px}
+
 }
 @media(prefers-reduced-motion:reduce){
   #homeHighlights .we-hl__card::before,#homeHighlights .we-hl__plus,#homeHighlights .we-hl__art,#homeHighlights .we-hl__txt :is(h3,p){transition:none!important}

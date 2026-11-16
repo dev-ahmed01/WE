@@ -1,0 +1,68 @@
+/* WE Design System — Sections & Backgrounds.
+   Keep the site's approved white canvas. Hero atmosphere is the one documented
+   page-background exception. All other brand effects are local to components. */
+:root {
+  --we-section-white:#fff;
+  --we-section-hero:radial-gradient(ellipse at 8% 24%,rgba(255,185,0,.065),transparent 54%),
+    radial-gradient(ellipse at 94% 30%,rgba(237,32,36,.055),transparent 53%);
+  --we-section-panel-radius:30px;
+  --we-section-panel-line:rgba(255,255,255,.94);
+  --we-section-panel-glass:linear-gradient(145deg,rgba(255,255,255,.93),rgba(255,255,255,.68));
+  --we-section-panel-shadow:0 18px 42px rgba(22,22,22,.075),inset 0 1px 0 rgba(255,255,255,.95);
+  --we-section-panel-blur:22px;
+}
+/* Hero Section: full-width white base, gentle atmosphere, original entry motion. */
+html#we-site body :is(section.hero,section.hero-section,section.we-hero.hp.hp-b){
+  --we-section-family:hero;
+  background-color:var(--we-section-white)!important;
+  background-image:var(--we-section-hero)!important;
+  background-repeat:no-repeat!important;
+}
+/* Card Section: keep original grid/rail dimensions, stacking and content.
+   Do not add wrapper cards or introduce new coloured section backgrounds. */
+html#we-site body :is(section.feat,section.lc,section.tm,section#photos,section#highlights,
+  section#amenities,section#solutions,section#locations,section#testimonials,
+  section#offices,section#values,section#options,section#benefits,section#how-it-works,
+  section#faq,section#faqs){
+  --we-section-family:cards;
+  background:var(--we-section-white)!important;
+}
+/* Lead Magnet: the containing section stays white, approved offer/ticket glow
+   and animation stay local. The two consultation compositions remain unchanged. */
+html#we-site body :is(section#find-fit,section#office-checklist,section#consultation,section.ap#app,section.other-wrap){
+  --we-section-family:lead-magnet;
+  background:var(--we-section-white)!important;
+}
+html#we-site body :is(#find-fit .qb,.ap .dp,#consultation .lm-banner){
+  --we-section-panel:lead-magnet;
+  border-radius:var(--we-section-panel-radius)!important;
+  border:1px solid var(--we-section-panel-line)!important;
+  background:var(--we-section-panel-glass)!important;
+  box-shadow:var(--we-section-panel-shadow)!important;
+  backdrop-filter:blur(var(--we-section-panel-blur)) saturate(125%);
+  -webkit-backdrop-filter:blur(var(--we-section-panel-blur)) saturate(125%);
+}
+/* Other Solutions is an existing brand-gradient lead/navigation magnet.
+   Preserve the red enclosure and the recently approved glass pills. */
+html#we-site body #other-solutions{
+  --we-section-panel:lead-magnet;
+  border-radius:var(--we-section-panel-radius)!important;
+}
+/* Subsection: translucent white enclosures for interactive content.
+   Existing forms keep the approved dedicated shared-form treatment. */
+html#we-site body :is(section#customise,section#why-us,section#enquiry,section.eq#enquire){
+  --we-section-family:subsection;
+  background:var(--we-section-white)!important;
+}
+html#we-site body :is(.cz-panel,.we-gal__shell,.we-lc__mapcard){
+  --we-section-panel:subsection;
+  border-radius:var(--we-section-panel-radius)!important;
+  border:1px solid var(--we-section-panel-line)!important;
+  background:var(--we-section-panel-glass)!important;
+  box-shadow:var(--we-section-panel-shadow)!important;
+  backdrop-filter:blur(var(--we-section-panel-blur)) saturate(125%);
+  -webkit-backdrop-filter:blur(var(--we-section-panel-blur)) saturate(125%);
+}
+html#we-site body .we-form-panel{--we-section-panel:subsection;}
+/* Keep the original hero glass panel/ticket and all animated geometry intact. */
+@media(max-width:640px){:root{--we-section-panel-radius:25px}}
