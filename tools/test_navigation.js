@@ -103,6 +103,26 @@ async function checkTypographyCoverage(page,route,mobile){
   console.log('TYPOGRAPHY COVERAGE OK: '+route+' '+(mobile?'mobile':'desktop')+' ('+rows.length+' elements)');
 }
 
+
+async function checkButtons(page,route,mobile){
+  const items=await page.evaluate(()=>[...document.querySelectorAll('button,a')].filter(e=>!e.closest('[inert],.em-nav-replaced')&&e.getClientRects().length&&getComputedStyle(e).visibility==='visible').map(e=>{
+    const s=getComputedStyle(e);
+    return {role:s.getPropertyValue('--we-control-role').trim(),text:e.textContent.trim().slice(0,65),font:s.fontFamily,size:s.fontSize,weight:s.fontWeight,radius:s.borderRadius,border:s.borderTopWidth,bg:s.backgroundColor,img:s.backgroundImage};
+  }).filter(x=>x.role));
+  assert.ok(items.length>=5,route+': shared button roles applied');
+  for(const i of items){
+    const label=route+' '+i.role+' '+i.text;
+    assert.ok(i.font.includes('Poppins'),label+' font');
+    if(i.role!=='icon'){assert.equal(i.size,'13px',label+' size');assert.equal(i.weight,i.role==='anchor'?'400':'600',label+' weight');}
+    if(i.role==='main'){assert.equal(i.radius,'13px',label+' radius');assert.equal(i.border,'0px',label+' border');assert.ok(['rgb(223, 32, 36)','rgb(255, 185, 0)','rgb(22, 22, 22)'].includes(i.bg),label+' approved solid color '+i.bg);}
+    if(i.role==='secondary')assert.equal(i.radius,'13px',label+' radius');
+    if(i.role.startsWith('pill'))assert.equal(i.radius,'999px',label+' pill radius');
+  }
+  const c=page.locator('.we-form-main button[type=submit]');
+  assert.equal(await c.evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(223, 32, 36)',route+': primary callback red');
+  console.log('BUTTON SYSTEM OK: '+route+' '+(mobile?'mobile':'desktop')+' ('+items.length+' controls)');
+}
+
 /* Actual form controls must share the approved visual system; never submit personal data. */
 async function checkSharedForm(page,route,mobile){
   const form=page.locator('.we-form-main');
@@ -141,6 +161,7 @@ async function checkSharedForm(page,route,mobile){
       await checkTypography(desktop,route,false);
       await checkTypographyCoverage(desktop,route,false);
       await checkSharedForm(desktop,route,false);
+      await checkButtons(desktop,route,false);
       const state = await desktop.evaluate(() => {
         const nav = document.querySelector('.em-nav');
         const box = nav.getBoundingClientRect();
@@ -194,6 +215,7 @@ async function checkSharedForm(page,route,mobile){
       await checkTypography(mobile,route,true);
       await checkTypographyCoverage(mobile,route,true);
       await checkSharedForm(mobile,route,true);
+      await checkButtons(mobile,route,true);
       await toggle.click();
       assert.equal(await toggle.getAttribute('aria-expanded'), 'true', route + ': hamburger opens');
       assert.equal(await mobile.locator('.em-nav__mobile').isVisible(), true, route + ': mobile panel visible');

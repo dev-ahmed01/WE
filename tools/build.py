@@ -608,6 +608,7 @@ def main():
         css += "\n/* Shared enquiry forms */\n" + (SRC / "site-forms.css").read_text(encoding="utf-8")
         if page["key"] == "category":
             css += "\n/* Approved sharper illustration cards */\n" + (SRC / "managed-office-highlight-cards.css").read_text(encoding="utf-8")
+        css += "\n/* Shared button and pill system */\n" + (SRC / "site-buttons.css").read_text(encoding="utf-8")
         css_path = asset("css", page["key"], css)
         body = PATCHES[page["key"]](body)
         if page["key"] == "one-person":

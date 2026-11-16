@@ -1,0 +1,369 @@
+/* WE Design System / Buttons and pills — one shared implementation.
+   Roles use existing component selectors, including JS-generated controls.
+   Preserve hrefs, state attributes, card hit targets, accordion and gallery behaviour. */
+:root {
+  --we-button-red:#DF2024; --we-button-red-hover:#AD1419;
+  --we-button-yellow:#FFB900; --we-button-yellow-hover:#E5A600;
+  --we-button-ink:#161616; --we-button-ink-hover:#303030;
+  --we-button-height:50px; --we-button-radius:13px;
+  --we-pill-height:44px; --we-icon-size:44px;
+  --we-button-glow:0 8px 18px rgba(223,32,36,.16);
+  --we-button-shadow:0 6px 16px rgba(22,22,22,.07);
+}
+html#we-site body :is(.btn-red,
+  .we-btn--red,
+  .btn-yellow,
+  .nav-cta:not(div),
+  .em-nav__cta,
+  .em-nav__mobile-cta,
+  .hero .actions .button:first-child,
+  .callback-btn,
+  .submit-btn,
+  .form-submit,
+  .solid-btn,
+  .we-form button[type=submit],
+  .cta,
+  .lk-c,
+  .dp a,
+  .we-am__more,
+  .we-pop__cta,
+  .we-lc__cta,
+  .lx-btn:not(.is-ghost),
+  .ticket-unlock,
+  .sol-link,
+  .cz-cta,
+  .consult-call,
+  .lm-cta,
+  .btn-line,
+  .we-btn--line,
+  .em-nav__call,
+  .em-nav__mobile-call,
+  .hero .actions .button:nth-child(2),
+  .lx-btn.is-ghost,
+  .ap-bt a,
+  .we-lc__nbtn,
+  .we-lb__close,
+  .we-lb__arrow,
+  .modal-close,
+  .mx,
+  .em-nav__toggle,
+  .seg button[aria-pressed=true],
+  .lx-tab[aria-selected=true],
+  .cat-pill,
+  .we-pill,
+  .other-pill,
+  .motion-btn,
+  .we-dock button,
+  .cz-seg-btn,
+  .lx-tab,
+  .seg button:not([aria-pressed=true]),
+  .pr button,
+  .cz-tile) {
+  box-sizing:border-box;
+  font:600 13px/1.4 var(--we-type-body,'Poppins',Arial,sans-serif)!important;
+  letter-spacing:0!important;text-decoration:none!important;
+  cursor:pointer;max-width:100%;
+  -webkit-tap-highlight-color:transparent;
+}
+html#we-site body :is(.btn-red,
+  .we-btn--red,
+  .btn-yellow,
+  .nav-cta:not(div),
+  .em-nav__cta,
+  .em-nav__mobile-cta,
+  .hero .actions .button:first-child,
+  .callback-btn,
+  .submit-btn,
+  .form-submit,
+  .solid-btn,
+  .we-form button[type=submit],
+  .cta,
+  .lk-c,
+  .dp a,
+  .we-am__more,
+  .we-pop__cta,
+  .we-lc__cta,
+  .lx-btn:not(.is-ghost),
+  .ticket-unlock,
+  .sol-link,
+  .cz-cta,
+  .consult-call,
+  .lm-cta) {
+  --we-control-role:main;
+  --we-control-bg:var(--we-button-red);--we-control-hover:var(--we-button-red-hover);
+  --we-control-fg:#fff;--we-control-shadow:var(--we-button-glow);
+  min-height:var(--we-button-height)!important;height:auto!important;padding:12px 22px!important;
+  border:0!important;border-radius:var(--we-button-radius)!important;
+  background:var(--we-control-bg)!important;color:var(--we-control-fg)!important;
+  box-shadow:var(--we-control-shadow)!important;
+  transition:background-color .22s ease,color .22s ease,box-shadow .22s ease!important;
+}
+html#we-site body :is(.btn-yellow,
+  .em-nav__cta,
+  .em-nav__mobile-cta,
+  .nav-cta:not(div)) {
+  --we-control-bg:var(--we-button-yellow);--we-control-hover:var(--we-button-yellow-hover);
+  --we-control-fg:var(--we-button-ink);--we-control-shadow:0 8px 18px rgba(255,185,0,.18);
+}
+html#we-site body :is(.sol-link,
+  .we-pop__close) {
+  --we-control-bg:var(--we-button-ink);--we-control-hover:var(--we-button-ink-hover);
+  --we-control-fg:#fff;--we-control-shadow:var(--we-button-shadow);
+}
+html#we-site body :is(#options .sol-card[data-highlight=true] .sol-link) {
+  --we-control-bg:var(--we-button-red);--we-control-hover:var(--we-button-red-hover);--we-control-shadow:var(--we-button-glow);
+}
+html#we-site body :is(.btn-red,
+  .we-btn--red,
+  .btn-yellow,
+  .nav-cta:not(div),
+  .em-nav__cta,
+  .em-nav__mobile-cta,
+  .hero .actions .button:first-child,
+  .callback-btn,
+  .submit-btn,
+  .form-submit,
+  .solid-btn,
+  .we-form button[type=submit],
+  .cta,
+  .lk-c,
+  .dp a,
+  .we-am__more,
+  .we-pop__cta,
+  .we-lc__cta,
+  .lx-btn:not(.is-ghost),
+  .ticket-unlock,
+  .sol-link,
+  .cz-cta,
+  .consult-call,
+  .lm-cta):is(:hover,:focus-visible) {
+  background:var(--we-control-hover)!important;color:var(--we-control-fg)!important;
+  transform:none!important;box-shadow:var(--we-control-shadow)!important;
+}
+html#we-site body :is(.btn-line,
+  .we-btn--line,
+  .em-nav__call,
+  .em-nav__mobile-call,
+  .hero .actions .button:nth-child(2),
+  .lx-btn.is-ghost,
+  .ap-bt a) {
+  --we-control-role:secondary;
+  min-height:var(--we-button-height)!important;height:auto!important;padding:12px 22px!important;
+  border:1px solid rgba(22,22,22,.22)!important;border-radius:var(--we-button-radius)!important;
+  background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(255,255,255,.38))!important;color:var(--we-button-ink)!important;
+  box-shadow:var(--we-button-shadow)!important;backdrop-filter:blur(14px);
+  transition:background .22s ease,border-color .22s ease!important;
+}
+html#we-site body :is(.btn-line,
+  .we-btn--line,
+  .em-nav__call,
+  .em-nav__mobile-call,
+  .hero .actions .button:nth-child(2),
+  .lx-btn.is-ghost,
+  .ap-bt a):is(:hover,:focus-visible) {
+  background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(255,255,255,.90))!important;
+  color:var(--we-button-ink)!important;transform:none!important;
+}
+html#we-site body :is(.cat-pill,
+  .we-pill,
+  .other-pill,
+  .motion-btn,
+  .we-dock button,
+  .cz-seg-btn,
+  .lx-tab) {
+  --we-control-role:pill-glass;
+  border-radius:999px!important;min-height:var(--we-pill-height);
+  font:600 13px/1.4 var(--we-type-body)!important;letter-spacing:0!important;
+}
+html#we-site body :is(.cat-pill,
+  .we-pill,
+  .other-pill,
+  .motion-btn:not(:not(:focus-visible))) {
+  background-color:rgba(255,255,255,.64)!important;
+  border:1px solid rgba(255,255,255,.72)!important;
+  box-shadow:var(--we-button-shadow)!important;backdrop-filter:blur(14px);
+  height:auto!important;min-height:var(--we-button-height)!important;
+}
+html#we-site body :is(.other-pill) {
+  padding:12px 18px!important;min-height:var(--we-button-height)!important;
+  background:rgba(255,255,255,.16)!important;color:#fff!important;
+  border-color:rgba(255,255,255,.62)!important;
+}
+html#we-site body :is(.other-pill):is(:hover,:focus-visible) {
+  background:rgba(255,255,255,.28)!important;color:#fff!important;transform:none!important;
+}
+html#we-site body :is(.we-pill:not(.active)):is(:hover,:focus-visible) {
+  background-color:rgba(255,255,255,.94)!important;color:var(--we-button-ink)!important;
+}
+html#we-site body :is(.we-pill__fill) {
+  background:var(--we-button-red)!important;
+}
+html#we-site body :is(.we-pill.active) {
+  border-color:rgba(255,255,255,.72)!important;
+}
+html#we-site body :is(.seg button:not([aria-pressed=true]),
+  .pr button,
+  .cz-tile) {
+  --we-control-role:pill-outline;
+  min-height:var(--we-pill-height)!important;border-radius:999px!important;
+  background:#fff!important;color:var(--we-button-ink)!important;
+  border:1px solid var(--we-button-ink)!important;box-shadow:none!important;
+  transition:background-color .22s ease,color .22s ease,border-color .22s ease!important;
+}
+html#we-site body :is(.seg button:not([aria-pressed=true]),
+  .pr button,
+  .cz-tile):is(:hover,:focus-visible) {
+  background:rgba(223,32,36,.045)!important;color:var(--we-button-red)!important;transform:none!important;
+}
+html#we-site body :is(.pr button,
+  .cz-tile) {
+  min-height:56px!important;padding:10px 16px!important;white-space:normal;
+}
+html#we-site body :is(.pr button[aria-pressed=true],
+  .cz-tile[aria-pressed=true]) {
+  background:rgba(223,32,36,.07)!important;color:var(--we-button-ink)!important;border-color:var(--we-button-red)!important;
+}
+html#we-site body :is(.seg button[aria-pressed=true],
+  .lx-tab[aria-selected=true]) {
+  --we-control-role:pill-solid;
+  border:0!important;border-radius:999px!important;background:var(--we-button-ink)!important;
+  color:#fff!important;box-shadow:none!important;min-height:var(--we-pill-height)!important;
+}
+html#we-site body :is(.lx-tab[aria-selected=true]) {
+  background:var(--we-button-red)!important;
+}
+html#we-site body :is(.seg button[aria-pressed=true]):hover {
+  background:var(--we-button-ink-hover)!important;color:#fff!important;
+}
+html#we-site body :is(.lx-tab[aria-selected=true]):hover {
+  background:var(--we-button-red-hover)!important;color:#fff!important;
+}
+/* Segmented controls keep their existing animated selection indicator. */
+html#we-site body :is(.we-dock button,
+  .cz-seg-btn,
+  .lx-tab) {
+  border-radius:999px!important;box-shadow:none!important;min-height:var(--we-pill-height)!important;
+}
+html#we-site body :is(.we-dock button) {
+  min-height:34px!important;
+}
+html#we-site body :is(.we-lc__nbtn,
+  .we-lb__close,
+  .we-lb__arrow,
+  .modal-close,
+  .mx,
+  .em-nav__toggle) {
+  --we-control-role:icon;box-sizing:border-box;
+  width:var(--we-icon-size)!important;height:var(--we-icon-size)!important;min-height:var(--we-icon-size)!important;
+  border:0!important;border-radius:50%!important;padding:0!important;
+  background:#fff!important;color:var(--we-button-red)!important;
+  box-shadow:var(--we-button-shadow)!important;
+  transition:background-color .22s ease,color .22s ease!important;
+}
+html#we-site body :is(.mx,
+  .modal-close) {
+  font-size:24px!important;line-height:1!important;
+}
+html#we-site body :is(.we-lc__nbtn,
+  .we-lb__close,
+  .we-lb__arrow,
+  .modal-close,
+  .mx,
+  .em-nav__toggle):is(:hover,:focus-visible) {
+  background:var(--we-button-red)!important;color:#fff!important;transform:none!important;
+}
+html#we-site body :is(.we-lc__nbtn svg,
+  .we-lb__arrow svg,
+  .we-lb__close svg) {
+  color:inherit;stroke:currentColor!important;transition:transform .22s ease;
+}
+html#we-site body :is(#weLcNext,.we-lb__arrow--next):hover svg{transform:translateX(2px)}
+html#we-site body :is(#weLcPrev,.we-lb__arrow--prev):hover svg{transform:translateX(-2px)}
+html#we-site body .em-nav__toggle span{background:currentColor!important}
+html#we-site body :is(.em-nav__link,
+  .em-nav__mobile-link,
+  footer a:not(:has(img)),
+  .we-lc__find,
+  .we-lc__mapbot a) {
+  --we-control-role:anchor;
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  font:400 13px/1.5 var(--we-type-body)!important;letter-spacing:0!important;
+  transition:color .22s ease!important;
+}
+html#we-site body :is(.em-nav__link,
+  .em-nav__mobile-link,
+  footer a:not(:has(img)),
+  .we-lc__find,
+  .we-lc__mapbot a):is(:hover,:focus-visible) {
+  color:var(--we-button-red)!important;transform:none!important;
+}
+/* Existing page selection remains visible; keep all native hit areas and widths. */
+html#we-site body .em-nav__link.is-current,html#we-site body .em-nav__mobile-link.is-current{color:var(--we-button-red)!important}
+html#we-site body :is(.consult-call,.lm-cta){gap:12px!important;padding:12px 22px!important}
+html#we-site body :is(.consult-call,.lm-cta) i{height:18px!important}
+html#we-site body #consultation .lm-cta::after{animation:none!important;display:none!important}
+html#we-site body :is(.consult-call,.lm-cta,.we-am__more,.we-lc__cta,.callback-btn,.other-pill) :is(span,strong){font:inherit!important;color:inherit!important}
+html#we-site body :is(.sol-link,.ticket-unlock){padding:10px 16px!important}
+html#we-site body .we-form button[type=submit]{width:100%;margin-top:8px!important}
+html#we-site body :is(.we-am__more,.we-lc__cta) svg{width:18px;height:18px;flex:none;padding:0;background:none}
+html#we-site body .we-lc__cta i{width:30px;height:30px}
+html#we-site body :is(.em-nav__cta,.em-nav__call){padding-inline:18px!important}
+html#we-site body :is(.we-form button[type=submit],.cz-cta,.we-lc__nbtn,.we-lb__arrow):disabled{opacity:.55!important;cursor:not-allowed!important}
+html#we-site body :is(button,a):focus-visible{outline:2px solid var(--we-button-red);outline-offset:3px}
+@media(max-width:600px){
+  html#we-site body .em-nav__cta{min-height:40px!important;padding:8px 12px!important}
+  html#we-site body .em-nav__toggle{width:40px!important;height:40px!important;min-height:40px!important}
+  html#we-site body :is(.em-nav__mobile-call,.em-nav__mobile-cta){padding-inline:10px!important}
+  html#we-site body :is(.consult-call,.lm-cta){padding-inline:14px!important;gap:8px!important;white-space:normal}
+}
+@media(prefers-reduced-motion:reduce){
+ html#we-site body :is(.btn-red,
+  .we-btn--red,
+  .btn-yellow,
+  .nav-cta:not(div),
+  .em-nav__cta,
+  .em-nav__mobile-cta,
+  .hero .actions .button:first-child,
+  .callback-btn,
+  .submit-btn,
+  .form-submit,
+  .solid-btn,
+  .we-form button[type=submit],
+  .cta,
+  .lk-c,
+  .dp a,
+  .we-am__more,
+  .we-pop__cta,
+  .we-lc__cta,
+  .lx-btn:not(.is-ghost),
+  .ticket-unlock,
+  .sol-link,
+  .cz-cta,
+  .consult-call,
+  .lm-cta,
+  .btn-line,
+  .we-btn--line,
+  .em-nav__call,
+  .em-nav__mobile-call,
+  .hero .actions .button:nth-child(2),
+  .lx-btn.is-ghost,
+  .ap-bt a,
+  .we-lc__nbtn,
+  .we-lb__close,
+  .we-lb__arrow,
+  .modal-close,
+  .mx,
+  .em-nav__toggle,
+  .seg button[aria-pressed=true],
+  .lx-tab[aria-selected=true],
+  .cat-pill,
+  .we-pill,
+  .other-pill,
+  .motion-btn,
+  .we-dock button,
+  .cz-seg-btn,
+  .lx-tab,
+  .seg button:not([aria-pressed=true]),
+  .pr button,
+  .cz-tile){transition:none!important}
+}
