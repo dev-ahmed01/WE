@@ -51,7 +51,7 @@ async function checkTypography(page,route,mobile){
     return {
       section:pick('section h2:not(.enquiry-panel h2)'),
       card:pick('.cd h3,.we-hl__txt h3,.hero .card-title'),
-      body:pick('.desc,.hp-b .hp-desc p,.hero .copy p:not(.eyebrow),.hero-intro'),
+      body:pick('.desc,.hp-b .hp-desc p,.solutions-desc,.hero .copy p:not(.eyebrow),.hero-intro'),
       action:pick('.em-nav__cta'),
       anchor:pick('.em-nav__link')
     };
