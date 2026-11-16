@@ -33,3 +33,29 @@ html#we-site body #managedHl .we-hl__card:hover .we-hl__txt p{color:rgba(255,255
 @media(max-width:1100px){html#we-site body #managedHl{grid-template-columns:repeat(2,minmax(0,1fr))!important}#managedHl .we-hl__art{height:190px}}
 @media(max-width:640px){html#we-site body #managedHl{grid-template-columns:1fr!important;gap:12px!important;width:calc(100% - 32px)!important}#managedHl .we-hl__card{border-radius:26px}#managedHl .we-hl__art{height:176px}}
 @media(prefers-reduced-motion:reduce){#managedHl *,#managedHl *::before,#managedHl *::after{animation:none!important;transition:none!important}#managedHl .we-hl__card{opacity:1!important}}
+
+/* Client-approved compact text panel. Keep the shared card shell, neutral
+   dotted background, two-tone marker and pointer-origin liquid animation.
+   No illustrations, new colours, or decorative elements. */
+html#we-site body #managedHl[data-card-variant="text-heading"] .we-hl__art{
+  display:grid;place-items:center start;align-content:center;
+  box-sizing:border-box;flex:none;height:auto!important;min-height:104px;
+  padding:18px 40px 18px 14px;
+}
+html#we-site body #managedHl[data-card-variant="text-heading"] .we-hl__art h3{
+  margin:0!important;max-inline-size:17ch;min-width:0;
+  font:600 21px/1.25 var(--we-type-heading,'Bricolage Grotesque',Arial,sans-serif)!important;
+  letter-spacing:-.02em!important;text-align:left;text-wrap:balance;
+  overflow-wrap:anywhere;color:var(--fg)!important;
+  transition:color .25s ease .36s;
+}
+@media(hover:hover) and (pointer:fine){
+  html#we-site body #managedHl[data-card-variant="text-heading"] .we-hl__card:hover .we-hl__art h3{
+    color:#fff!important;
+  }
+}
+@media(max-width:640px){
+  html#we-site body #managedHl[data-card-variant="text-heading"] .we-hl__art{
+    min-height:96px;padding-block:16px;
+  }
+}

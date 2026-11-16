@@ -65,7 +65,7 @@ async function checkTypography(page,route,mobile){
     };
     return {
       section:pick('section h2:not(.enquiry-panel h2)'),
-      card:pick('.cd h3,.we-hl__txt h3,.hero .card-title'),
+      card:pick('.cd h3,.we-hl__art h3,.we-hl__txt h3,.hero .card-title'),
       body:pick('.desc,.hp-b .hp-desc p,.solutions-desc,.hero .copy p:not(.eyebrow),.hero-intro'),
       action:pick('.em-nav__cta'),
       anchor:pick('.em-nav__link')
@@ -91,7 +91,7 @@ async function checkTypographyCoverage(page,route,mobile){
     const roles=[
       ['section','section h2:not(.enquiry-panel h2,.we-form-panel h2)'],
       ['form title','.we-form-panel h2,.we-form-panel h3'],
-      ['card','.we-hl__txt h3,.cd h3,.benefit-card h3,.bn-row-heading,.bn-title,.sol-name,.office-glass strong'],
+      ['card','.we-hl__art h3,.we-hl__txt h3,.cd h3,.benefit-card h3,.bn-row-heading,.bn-title,.sol-name,.office-glass strong'],
       ['highlight','.we-form-panel .we-form-kicker,.we-form-panel .form-kicker,.metric>span:not(.star),.stat-card>span:not(.star),.stat-card.glass p,.eq-s>span'],
       ['subheading','.faq-item summary,button.faq-toggle,.faq-q span:first-child,.ql h4,.cz-label'],
       ['bullet','.bn-points li,.bn-row-points li,.consult-points li,.lm-points li,.ap-ls li'],
@@ -159,7 +159,7 @@ async function checkCardFamilies(page,route,mobile){
       const s=getComputedStyle(e);
       return {family,role:s.getPropertyValue('--we-card-family').trim(),cls:e.className,
         radius:s.borderRadius,bg:s.backgroundColor,bgImage:s.backgroundImage,shadow:s.boxShadow,
-        photo:!!e.querySelector('img'),art:e.querySelectorAll('.we-hl__art svg').length};
+        photo:!!e.querySelector('img'),art:e.querySelectorAll('.we-hl__art svg').length,titlePanel:!!e.querySelector('.we-hl__art > h3')};
     }));
   });
   assert.equal(data.filter(c=>c.family==='highlight-illustration').length,4,route+': four shared illustration cards');
@@ -173,7 +173,10 @@ async function checkCardFamilies(page,route,mobile){
       assert.equal(c.bg,'rgb(255, 255, 255)',label+' white surface');
       assert.equal(c.bgImage,'none',label+' no competing fill');
     }
-    if(c.family==='highlight-illustration')assert.ok(c.art>=1,label+' meaningful vector artwork');
+    if(c.family==='highlight-illustration'){
+      if(route==='/managed-office/south-bangalore/'){assert.equal(c.art,0,label+' no artwork');assert.ok(c.titlePanel,label+' heading in panel');}
+      else assert.ok(c.art>=1,label+' meaningful vector artwork');
+    }
   }
   console.log('CARD SYSTEM OK: '+route+' '+(mobile?'mobile':'desktop')+' ('+data.length+' cards)');
 }
@@ -221,7 +224,7 @@ async function checkFaqIndicators(page,route){
 async function checkFinalConsistency(page,route,mobile){
   const state=await page.evaluate(()=>{
     const footer=document.querySelector('footer.we-universal-footer');
-    const marker=[...document.querySelectorAll('.we-hl__art')].map(e=>({width:getComputedStyle(e,'::after').width,bg:getComputedStyle(e,'::after').backgroundImage,stroke:getComputedStyle(e.querySelector('svg[stroke-width],svg [stroke-width]')).strokeWidth}));
+    const marker=[...document.querySelectorAll('.we-hl__art')].map(e=>({width:getComputedStyle(e,'::after').width,bg:getComputedStyle(e,'::after').backgroundImage,stroke:e.querySelector('svg[stroke-width],svg [stroke-width]')?getComputedStyle(e.querySelector('svg[stroke-width],svg [stroke-width]')).strokeWidth:null}));
     const sections=[...document.querySelectorAll('body > section,body > main > section')].filter(e=>!e.matches('.hero,.hero-section,.we-hero,#how-it-works,.benefits-section')).map(e=>({id:e.id||e.className,top:getComputedStyle(e).paddingTop,bottom:getComputedStyle(e).paddingBottom}));
     const faq=[...document.querySelectorAll('.faq-item summary,.faq-item button.faq-q,.faq-item button.faq-toggle')].map(e=>getComputedStyle(e).padding);
     return {footer:!!footer,footerLinks:[...footer.querySelectorAll('nav a')].map(e=>e.getAttribute('href')),marker,sections,faq,scrollWidth:document.documentElement.scrollWidth,width:innerWidth};
@@ -229,7 +232,7 @@ async function checkFinalConsistency(page,route,mobile){
   assert.ok(state.footer,route+': common footer');
   assert.deepEqual(state.footerLinks,['/','/workspaces/','/managed-office/south-bangalore/','/managed-office/one-person-office/'],route+': common footer links');
   assert.equal(state.marker.length,4,route+': four matching markers');
-  for(const m of state.marker){assert.equal(m.width,'20px');assert.ok(m.bg.includes('linear-gradient'));assert.equal(m.stroke,'2.5px');}
+  for(const m of state.marker){assert.equal(m.width,'20px');assert.ok(m.bg.includes('linear-gradient'));assert.equal(m.stroke,route==='/managed-office/south-bangalore/'?null:'2.5px');}
   for(const s of state.sections){assert.equal(s.top,mobile?'44px':'60px',route+': spacing '+s.id);assert.equal(s.bottom,s.top,route+': balanced spacing '+s.id);}
   for(const f of state.faq)assert.equal(f,mobile?'16px 18px':'20px 24px',route+': common FAQ padding');
   assert.ok(state.scrollWidth<=state.width+2,route+': no horizontal overflow');

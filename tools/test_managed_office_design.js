@@ -63,14 +63,28 @@ fs.mkdirSync(SHOTS, {recursive:true});
    const titles=await allCards.locator('h3').allTextContents();
    assert.deepEqual(titles,['Offices in prime locations','Multiple pricing plans','Flexible commitments','Move-in immediately']);
    for(const card of await allCards.all()){
-     assert.equal(await card.locator('.we-hl__art svg').count(),1,'each card has one approved illustration');
-     assert.equal(await card.locator('.we-hl__art svg .outline').first().getAttribute('stroke-width'),'2.15','sharper illustration stroke');
-     assert.equal(await card.locator('.ic').count(),0,'old plus marker replaced');
-     const v=await card.evaluate(el=>{const h=el.querySelector('h3'),p=el.querySelector('p'),a=el.querySelector('.we-hl__art');return {heading:getComputedStyle(h).fontSize,weight:getComputedStyle(h).fontWeight,body:getComputedStyle(p).fontSize,panel:getComputedStyle(a).backgroundColor,svg:getComputedStyle(a.querySelector('svg')).shapeRendering,artTop:a.getBoundingClientRect().top,titleTop:h.getBoundingClientRect().top};});
+     assert.equal(await card.locator('.we-hl__art svg').count(),0,'no illustrations');
+     assert.equal(await card.locator('.we-hl__art > h3').count(),1,'heading inside dotted panel');
+     assert.equal(await card.locator('.we-hl__txt > p').count(),1,'description below panel');
+     assert.equal(await card.locator('.we-hl__art').getAttribute('aria-hidden'),null,'heading is accessible');
+     const v=await card.evaluate(el=>{
+       const h=el.querySelector('h3'),p=el.querySelector('p'),a=el.querySelector('.we-hl__art');
+       const hr=h.getBoundingClientRect(),ar=a.getBoundingClientRect(),pr=p.getBoundingClientRect();
+       const s=getComputedStyle(a),m=getComputedStyle(a,'::after');
+       return {heading:getComputedStyle(h).fontSize,weight:getComputedStyle(h).fontWeight,
+         body:getComputedStyle(p).fontSize,panel:s.backgroundColor,texture:s.backgroundImage,
+         height:ar.height,marker:m.width,markerBg:m.backgroundImage,
+         fits:hr.left>=ar.left&&hr.top>=ar.top&&hr.bottom<=ar.bottom&&hr.right<=ar.right-33,
+         descriptionBelow:pr.top>=ar.bottom,headingColor:getComputedStyle(h).color};
+     });
      assert.deepEqual([v.heading,v.weight,v.body],['21px','600','14px'],'approved typography');
-     assert.equal(v.panel,'rgb(247, 241, 236)','neutral illustration panel');
-     assert.equal(v.svg.toLowerCase(),'geometricprecision','crisp SVG');
-     assert.ok(v.artTop<v.titleTop,'illustration above title');
+     assert.equal(v.panel,'rgb(247, 241, 236)','original neutral dotted panel');
+     assert.ok(v.texture.includes('radial-gradient'),'dotted texture preserved');
+     assert.ok(v.height>=96&&v.height<=130,'compact panel height');
+     assert.equal(v.marker,'20px','original plus marker');
+     assert.ok(v.markerBg.includes('linear-gradient'),'two-tone marker');
+     assert.equal(v.headingColor,'rgb(22, 22, 22)','normal heading colour');
+     assert.ok(v.fits&&v.descriptionBelow,'heading fits inside panel and description follows');
    }
    const columns=await page.locator('#managedHl').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length);
    assert.equal(columns,mobile?1:4,'responsive card grid');
@@ -81,6 +95,8 @@ fs.mkdirSync(SHOTS, {recursive:true});
      assert.ok((await firstCard.evaluate(el=>el.style.getPropertyValue('--mx'))).endsWith('px'),'liquid fill tracks cursor entry');
      assert.equal(await firstCard.locator('h3').evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)','red-fill hover text is white');
      assert.ok(await firstCard.evaluate(el=>new DOMMatrix(getComputedStyle(el,'::before').transform).a>.95),'hover expands red liquid');
+     assert.ok(await firstCard.locator('.we-hl__art').evaluate(el=>Math.abs(new DOMMatrix(getComputedStyle(el,'::after').transform).b)>.95),'plus rotates on hover');
+     assert.ok(await firstCard.locator('p').evaluate(el=>/^rgba?\(255, 255, 255(?:, [\d.]+)?\)$/.test(getComputedStyle(el).color)),'description stays readable on hover');
      await page.mouse.move(0,0);
    }
    await page.screenshot({path:path.join(SHOTS,'managed-office-'+viewport.width+'-hero.png'),animations:'disabled'});
