@@ -237,3 +237,32 @@ html#we-site body details.faq-item[open] summary > span.faq-toggle::before{conte
 @media(prefers-reduced-motion:reduce){
   html#we-site body .faq-item :is(.faq-q > .plus,button.faq-toggle > .faq-sign,summary > span.faq-toggle){transition:none!important}
 }
+
+/* Approved Managed Offices text-heading variant, shared by all four grids.
+   Keep existing section widths and responsive grid placement. */
+html#we-site body :is(#homeHighlights,#weHl,#managedHl)[data-card-variant="text-heading"] > .we-hl__card > .we-hl__art{
+  display:flex;flex-direction:column;align-items:stretch;justify-content:center;
+  box-sizing:border-box;flex:none;width:100%;min-width:0;height:auto!important;min-height:104px;
+  padding:18px 40px 18px 14px!important;
+  background:radial-gradient(rgba(22,22,22,.055) 1px,transparent 1.35px) 0 0/16px 16px,#f7f1ec;
+}
+html#we-site body :is(#homeHighlights,#weHl,#managedHl)[data-card-variant="text-heading"] > .we-hl__card > .we-hl__art h3{
+  margin:0!important;padding:0!important;box-sizing:border-box;display:block;
+  width:100%;max-width:100%!important;max-inline-size:100%!important;min-width:0;
+  font:600 21px/1.25 var(--we-type-heading,'Bricolage Grotesque',Arial,sans-serif)!important;
+  letter-spacing:-.02em!important;text-align:left!important;text-wrap:balance;
+  overflow-wrap:anywhere;color:#161616!important;transition:color .25s ease .36s;
+}
+@media(hover:hover) and (pointer:fine){
+  html#we-site body :is(#homeHighlights,#weHl,#managedHl)[data-card-variant="text-heading"] .we-hl__card:hover .we-hl__art{
+    background:radial-gradient(rgba(255,255,255,.22) 1px,transparent 1.4px) 0 0/16px 16px,rgba(255,255,255,.14);
+  }
+  html#we-site body :is(#homeHighlights,#weHl,#managedHl)[data-card-variant="text-heading"] .we-hl__card:hover .we-hl__art h3{color:#fff!important}
+  html#we-site body #homeHighlights[data-card-variant="text-heading"] .we-hl__card:hover{transform:translateY(-6px)}
+}
+@media(max-width:640px){
+  html#we-site body :is(#homeHighlights,#weHl,#managedHl)[data-card-variant="text-heading"] > .we-hl__card > .we-hl__art{min-height:96px;padding-block:16px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  html#we-site body [data-card-variant="text-heading"] .we-hl__art h3{transition:none!important}
+}

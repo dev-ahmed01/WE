@@ -44,3 +44,6 @@ html#we-site body #speak-dialog .field-grid .we-field{margin:0!important}
   html#we-site body .we-action-chevron,html#we-site body :is(.btn-line,.we-btn--line,.em-nav__call,.em-nav__mobile-call,.lx-btn.is-ghost){transition:none!important}
   html#we-site body :is(a,button):hover > .we-action-chevron{transform:none}
 }
+
+/* Preserve the navigation's narrow-screen visibility rule after action-icon styling. */
+@media(max-width:410px){html#we-site body .em-nav__cta{display:none!important}}

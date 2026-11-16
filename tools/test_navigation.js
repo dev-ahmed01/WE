@@ -183,10 +183,14 @@ async function checkCardFamilies(page,route,mobile){
       assert.equal(c.bgImage,'none',label+' no competing fill');
     }
     if(c.family==='highlight-illustration'){
-      if(route==='/managed-office/south-bangalore/'){assert.equal(c.art,0,label+' no artwork');assert.ok(c.titlePanel,label+' heading in panel');}
-      else assert.ok(c.art>=1,label+' meaningful vector artwork');
+      assert.equal(c.art,0,label+' no legacy artwork');assert.ok(c.titlePanel,label+' heading in dotted panel');
     }
   }
+  const panels=await page.locator('.we-hl__card').evaluateAll(els=>els.map(el=>{
+    const a=el.querySelector('.we-hl__art'),h=a.querySelector('h3'),p=el.querySelector('.we-hl__txt p'),ar=a.getBoundingClientRect(),hr=h.getBoundingClientRect(),pr=p.getBoundingClientRect();
+    return {aria:a.getAttribute('aria-hidden'),heading:getComputedStyle(h).fontSize,height:ar.height,texture:getComputedStyle(a).backgroundImage,fit:hr.right<=ar.right-33+.5&&hr.bottom<=ar.bottom+.5,desc:pr.top>=ar.bottom-.5};
+  }));
+  for(const p of panels){assert.equal(p.aria,null,route+': accessible heading');assert.equal(p.heading,'21px');assert.ok(p.height>=(mobile?95:103),route+': compact panel');assert.ok(p.texture.includes('radial-gradient'));assert.ok(p.fit&&p.desc,route+': title and description fit '+JSON.stringify(p));}
   console.log('CARD SYSTEM OK: '+route+' '+(mobile?'mobile':'desktop')+' ('+data.length+' cards)');
 }
 
@@ -241,7 +245,7 @@ async function checkFinalConsistency(page,route,mobile){
   assert.ok(state.footer,route+': common footer');
   assert.deepEqual(state.footerLinks,['/','/workspaces/','/managed-office/south-bangalore/','/managed-office/one-person-office/'],route+': common footer links');
   assert.equal(state.marker.length,4,route+': four matching markers');
-  for(const m of state.marker){assert.equal(m.width,'20px');assert.ok(m.bg.includes('linear-gradient'));assert.equal(m.stroke,route==='/managed-office/south-bangalore/'?null:'2.5px');}
+  for(const m of state.marker){assert.equal(m.width,'20px');assert.ok(m.bg.includes('linear-gradient'));assert.equal(m.stroke,null,route+': no legacy SVG artwork');}
   for(const s of state.sections){assert.equal(s.top,mobile?'44px':'60px',route+': spacing '+s.id);assert.equal(s.bottom,s.top,route+': balanced spacing '+s.id);}
   for(const f of state.faq)assert.equal(f,mobile?'16px 18px':'20px 24px',route+': common FAQ padding');
   assert.ok(state.scrollWidth<=state.width+2,route+': no horizontal overflow');
