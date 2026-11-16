@@ -55,3 +55,14 @@ html#we-site body #enquiry-form button[type=submit]{margin-top:20px!important}
 @media(max-width:760px){html#we-site body #top.hero .copy{margin-top:144px!important}html#we-site body #top.hero .hero-art{margin:18px auto 24px!important;min-height:0}html#we-site body #benefits .bn-head{margin-bottom:24px!important}html#we-site body #other-title .other-highlight{white-space:normal}}
 @media(max-width:640px){html#we-site body #enquiry-form .field-grid,html#we-site body #speak-dialog .field-grid{grid-template-columns:1fr!important;gap:14px!important}html#we-site body #enquiry-form button[type=submit]{margin-top:16px!important}}
 @media(prefers-reduced-motion:reduce){html#we-site body #top.hero .actions .button,html#we-site body #top.hero .actions .button::before,html#we-site body #offices .office-arrow svg{transition:none!important}}
+
+/* Prevent legacy field placement from creating implicit tracks. Keep the hidden
+   interest metadata outside layout while preserving it in FormData. */
+html#we-site body #enquiry-form > .field-grid{
+  display:grid!important;grid-auto-flow:row!important;grid-auto-columns:0!important;
+}
+html#we-site body #enquiry-form > .field-grid > .field{
+  grid-column:auto!important;grid-row:auto!important;min-width:0!important;
+}
+html#we-site body #enquiry-form > .field-grid > .field.full{grid-column:1/-1!important}
+html#we-site body #enquiry-form > .field-grid > input[type=hidden]{display:none!important}

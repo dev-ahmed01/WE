@@ -99,8 +99,15 @@ fs.mkdirSync(SHOTS, {recursive:true});
    assert.equal(await page.evaluate(()=>window.testLead.source),'category-consultation');
    await page.keyboard.press('Escape');
    assert.equal(await page.locator('#speak-dialog').isVisible(),false,'dialog closes');
-   const formGrid=await page.locator('#enquiry-form .field-grid').evaluate(e=>({cols:getComputedStyle(e).gridTemplateColumns.split(' ').length,gap:getComputedStyle(e).rowGap}));
-   assert.deepEqual(formGrid,{cols:mobile?1:2,gap:mobile?'14px':'20px'});
+   const formGrid=await page.locator('#enquiry-form .field-grid').evaluate(e=>{
+     const s=getComputedStyle(e);
+     const fields=[...e.querySelectorAll(':scope > .field')].map(f=>({id:f.querySelector('input,select')?.id,x:f.getBoundingClientRect().x,y:f.getBoundingClientRect().y,w:f.getBoundingClientRect().width,placement:getComputedStyle(f).gridColumn}));
+     return {cols:s.gridTemplateColumns.split(' ').length,gap:s.rowGap,tracks:s.gridTemplateColumns,fields,hidden:getComputedStyle(e.querySelector('input[type=hidden]')).display};
+   });
+   assert.equal(formGrid.cols,mobile?1:2,'exact enquiry tracks '+JSON.stringify(formGrid));
+   assert.equal(formGrid.gap,mobile?'14px':'20px');
+   assert.equal(formGrid.hidden,'none');
+   assert.ok(mobile?formGrid.fields[1].y>formGrid.fields[0].y:Math.abs(formGrid.fields[1].y-formGrid.fields[0].y)<1&&formGrid.fields[1].x>formGrid.fields[0].x,'physical field arrangement '+JSON.stringify(formGrid));
    await page.evaluate(()=>window.scrollTo(0,0));
    const allCards=page.locator('#managedHl .we-hl__card');
    const titles=await allCards.locator('h3').allTextContents();
