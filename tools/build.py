@@ -547,6 +547,8 @@ def patch_category(b):
             '<li><a href="/managed-office/one-person-office/">One Person Office</a></li></ul></div><div><h4>Contact</h4>', label="cat footer")
     return b
 
+from one_person_approved import apply_approved_sections
+
 def patch_one_person(b):
     b = rep(b, '<a aria-label="Workspace by Emlen home" class="brand" href="#home">', '<a aria-label="Workspace by Emlen home" class="brand" href="/">', label="sol brand")
     nav_old = '<a href="#locations">Locations</a><a href="#options">Workspaces</a><a href="#benefits">Benefits</a><a href="#why-us">Why us</a><a href="#faqs">FAQs</a>'
@@ -594,11 +596,14 @@ def main():
         if page["key"] == "one-person":
             # Keep opacity styling scoped to the Section 7 illustration.
             css += "\n/* One-Person Office illustration refinement */\n" + (SRC / "one-person-illustration-opacity.css").read_text(encoding="utf-8")
+            css += "\n/* Approved One-Person Office sections */\n" + (SRC / "one-person-approved-sections.css").read_text(encoding="utf-8")
         if not font_url:
             m = FONT_RE.search(head)
             font_url = html.unescape(m.group(0)) if m else None
         css_path = asset("css", page["key"], css)
         body = PATCHES[page["key"]](body)
+        if page["key"] == "one-person":
+            body = apply_approved_sections(body)
         if page["key"] == "category":
             # Replace the single full-width blueprint with two complete SVG scenes.
             # Fail closed if the original source marker changes rather than shipping
