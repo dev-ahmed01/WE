@@ -203,3 +203,6 @@ html#we-site body :is(.we-lc__d,.lm-offer-intro,.lm-offer-after) {
 html#we-site body :is(.ticket-title,#mt) {font-family:var(--we-type-heading)!important;font-size:21px!important;font-weight:600!important;line-height:1.25!important;letter-spacing:-.02em!important;}
 html#we-site body .ticket-title strong {font:inherit!important;letter-spacing:inherit!important;}
 html#we-site body :is(.review-author small,.testimonial small,.t-card small,.we-form-intro,.we-lc__near h4,footer h4){color:var(--we-type-ink)!important;}
+
+/* Approved One Person Office heading accent only. */
+html#we-site body #heroTitle > span.red {color:#ED2024!important;}
