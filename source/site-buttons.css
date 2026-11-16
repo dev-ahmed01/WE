@@ -2,12 +2,12 @@
    Roles use existing component selectors, including JS-generated controls.
    Preserve hrefs, state attributes, card hit targets, accordion and gallery behaviour. */
 :root {
-  --we-button-red:#DF2024; --we-button-red-hover:#AD1419;
+  --we-button-red:#ED2024; --we-button-red-hover:#ED2024;
   --we-button-yellow:#FFB900; --we-button-yellow-hover:#E5A600;
   --we-button-ink:#161616; --we-button-ink-hover:#303030;
   --we-button-height:50px; --we-button-radius:13px;
   --we-pill-height:44px; --we-icon-size:44px;
-  --we-button-glow:0 8px 18px rgba(223,32,36,.16);
+  --we-button-glow:0 8px 18px rgba(237,32,36,.16);
   --we-button-shadow:0 6px 16px rgba(22,22,22,.07);
 }
 html#we-site body :is(.btn-red,
@@ -210,7 +210,7 @@ html#we-site body :is(.seg button:not([aria-pressed=true]),
 html#we-site body :is(.seg button:not([aria-pressed=true]),
   .pr button,
   .cz-tile):is(:hover,:focus-visible) {
-  background:rgba(223,32,36,.045)!important;color:var(--we-button-red)!important;transform:none!important;
+  background:rgba(237,32,36,.045)!important;color:var(--we-button-red)!important;transform:none!important;
 }
 html#we-site body :is(.pr button,
   .cz-tile) {
@@ -218,7 +218,7 @@ html#we-site body :is(.pr button,
 }
 html#we-site body :is(.pr button[aria-pressed=true],
   .cz-tile[aria-pressed=true]) {
-  background:rgba(223,32,36,.07)!important;color:var(--we-button-ink)!important;border-color:var(--we-button-red)!important;
+  background:rgba(237,32,36,.07)!important;color:var(--we-button-ink)!important;border-color:var(--we-button-red)!important;
 }
 html#we-site body :is(.seg button[aria-pressed=true],
   .lx-tab[aria-selected=true]) {
@@ -398,7 +398,7 @@ html#we-site body #other-solutions .other-pill > span:first-child {
 }
 html#we-site body #other-solutions .other-pill > .pill-arr {
   position:relative;z-index:1;display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;border-radius:50%;
-  background:#fff!important;color:#AD1419!important;font:600 18px/1 var(--we-type-body)!important;
+  background:#fff!important;color:#ED2024!important;font:600 18px/1 var(--we-type-body)!important;
   transition:transform .22s ease,background-color .22s ease,color .22s ease!important;
 }
 html#we-site body #other-solutions .other-pill:is(:hover,:focus-visible) {
@@ -415,7 +415,7 @@ html#we-site body #other-solutions .other-pill:is(:hover,:focus-visible)::after 
   100%{left:120%;opacity:0}
 }
 html#we-site body #other-solutions .other-pill:is(:hover,:focus-visible) > .pill-arr {
-  transform:translate(1px,-1px);background:#fff!important;color:#AD1419!important;
+  transform:translate(1px,-1px);background:#fff!important;color:#ED2024!important;
 }
 html#we-site body #other-solutions .other-pill:focus-visible {outline:2px solid #fff!important;outline-offset:3px;}
 @media(max-width:640px){html#we-site body #other-solutions .other-pill{min-height:56px!important;padding:9px 12px!important;gap:8px}}

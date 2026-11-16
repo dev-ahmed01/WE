@@ -15,7 +15,7 @@
   --we-type-button: 13px;
   --we-type-anchor: 13px;
   --we-type-ink: #161616;
-  --we-type-red: #DF2024;
+  --we-type-red: #ED2024;
 }
 @media(max-width:760px) {
   :root { --we-type-main: clamp(32px,8.8vw,38px); --we-type-section: clamp(27px,7.2vw,32px); }

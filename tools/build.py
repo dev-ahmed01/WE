@@ -103,8 +103,14 @@ def extract_data_uris(text):
         return IMG_NAMES[h]
     return DATA_RE.sub(sub, text)
 
+def normalize_brand_red(text):
+    """Normalize legacy brand aliases, retaining original alpha values."""
+    text = re.sub(r'(#|%23)(?:df2024|ed2024)\b', lambda m: m.group(1) + BRAND_RED[1:], text, flags=re.I)
+    return re.sub(r'\b223\s*,\s*32\s*,\s*36\b', '237,32,36', text)
+
 def asset(kind, stem, content):
     """Write a fingerprinted css/js asset, return its public path."""
+    content = normalize_brand_red(content)
     name = f"{stem}.{sha(content)}.{kind}"
     folder = "css" if kind == "css" else "js"
     path = f"/assets/{folder}/{name}"
@@ -632,10 +638,10 @@ def main():
             css += "\n/* Approved plain property hero */\n" + (SRC / "property-hero.css").read_text(encoding="utf-8")
         if page["key"] == "category":
             css += "\n/* Client-approved Managed Offices review */\n" + (SRC / "managed-review.css").read_text(encoding="utf-8")
-        # Unify the previous alternate brand-red token everywhere, leaving deliberate
-        # darker hover shades and gradients intact.
-        css = re.sub(r'#df2024\b', '#ED2024', css, flags=re.I)
-        css = re.sub(r'\b223\s*,\s*32\s*,\s*36\b', '237,32,36', css)
+        # Exact brand red for all solid brand accents, including interaction states.
+        # Preserve intentional gradient stops and semantic contrast/error colors.
+        css = normalize_brand_red(css)
+        css = re.sub(r'#(?:ad1419|d81b1f|d51a1e|d91c20|dc1a20|d71920|bd151a|af1c22)\b', BRAND_RED, css, flags=re.I)
         css_path = asset("css", page["key"], css)
         body = PATCHES[page["key"]](body)
         if page["key"] == "one-person":
@@ -677,6 +683,7 @@ def main():
         body = apply_shared_footer(body, page["key"])
         if page["key"] == "category":
             body = patch_managed_review(body)
+        body = normalize_brand_red(body)
         body = extract_scripts(body, page["key"])
         if page["key"] == "home":
             logo = re.search(r'<img src="(/assets/img/workspace-by-emlen-[^"]+)"', body).group(1)

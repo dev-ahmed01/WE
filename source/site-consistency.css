@@ -39,7 +39,7 @@ html#we-site body .we-footer-brand p{margin:16px 0 0;max-width:32ch;font:400 14p
 html#we-site body .we-universal-footer h4{margin:0 0 16px;font:600 16px/1.35 var(--we-type-body)!important;letter-spacing:0!important;text-transform:none;color:#161616!important}
 html#we-site body .we-universal-footer ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
 html#we-site body .we-universal-footer a{color:#161616!important;text-decoration:none;font:400 13px/1.5 var(--we-type-body)!important}
-html#we-site body .we-universal-footer a:is(:hover,:focus-visible){color:#DF2024!important}
+html#we-site body .we-universal-footer a:is(:hover,:focus-visible){color:#ED2024!important}
 html#we-site body .we-footer-bottom{border-top:1px solid #e6e6e6;margin-top:32px;padding-top:20px}
 html#we-site body .we-footer-bottom small{font:400 13px/1.5 var(--we-type-body)!important;color:#595959!important}
 /* Same two-tone plus marker on every highlight illustration, without a new
@@ -49,7 +49,7 @@ html#we-site body .we-hl__art::after{
   content:"";display:block;position:absolute;top:13px;right:13px;width:20px;height:20px;
   border-radius:0;pointer-events:none;z-index:2;
   background:linear-gradient(#161616,#161616) center/18px 2.8px no-repeat,
-    linear-gradient(#DF2024,#DF2024) center/2.8px 18px no-repeat;
+    linear-gradient(#ED2024,#ED2024) center/2.8px 18px no-repeat;
   transform:rotate(0deg);transition:transform .35s ease,background .25s ease .3s;
 }
 html#we-site body .we-hl__art>svg[stroke-width="2"],
@@ -92,7 +92,7 @@ html#we-site body :is(#office-checklist .consult-card,#consultation .lm-banner){
 }
 html#we-site body :is(#office-checklist>.frame,#consultation>.container){width:min(1324px,calc(100% - 96px))!important;margin-inline:auto}
 html#we-site body :is(.consult-copy,.lm-copy) h2{font:700 var(--we-type-section)/1.16 var(--we-type-heading)!important;letter-spacing:-.025em!important;margin:12px 0 16px!important;max-width:14em}
-html#we-site body :is(.consult-kicker,.lm-eyebrow){font:600 16px/1.35 var(--we-type-body)!important;color:#DF2024!important;margin:0!important;letter-spacing:0!important}
+html#we-site body :is(.consult-kicker,.lm-eyebrow){font:600 16px/1.35 var(--we-type-body)!important;color:#ED2024!important;margin:0!important;letter-spacing:0!important}
 html#we-site body :is(.consult-desc,.lm-note){font:400 14px/1.65 var(--we-type-body)!important;margin:0 0 20px!important;color:#161616!important}
 html#we-site body :is(.consult-points,.lm-points){display:flex!important;flex-wrap:wrap;gap:12px 20px!important;margin:0 0 24px!important;padding:0!important;list-style:none}
 html#we-site body :is(.consult-points,.lm-points) li{font:400 16px/1.5 var(--we-type-body)!important;color:#161616!important}

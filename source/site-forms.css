@@ -56,17 +56,17 @@ html#we-site body .we-form .we-field:is(:focus-within,:has(textarea:not(:placeho
 html#we-site body .we-form .we-field select:has(option:checked[value=""]){color:transparent!important}
 html#we-site body .we-form .we-field select option{color:#161616;background:#fff}
 html#we-site body .we-form .we-field :is(input,select,textarea):focus{
-  border-color:rgba(223,32,36,.65)!important;background:rgba(255,255,255,.88)!important;
-  box-shadow:0 0 0 3px rgba(223,32,36,.07)!important;
+  border-color:rgba(237,32,36,.65)!important;background:rgba(255,255,255,.88)!important;
+  box-shadow:0 0 0 3px rgba(237,32,36,.07)!important;
 }
-html#we-site body .we-form .we-field input.bad,html#we-site body .we-form .we-field [aria-invalid="true"]{border-color:#DF2024!important}
+html#we-site body .we-form .we-field input.bad,html#we-site body .we-form .we-field [aria-invalid="true"]{border-color:#ED2024!important}
 html#we-site body .we-form button[type="submit"]{
   display:flex;align-items:center;justify-content:center;gap:8px;box-sizing:border-box;width:100%;min-height:50px;
-  padding:12px 16px!important;border:0!important;border-radius:13px!important;background:#DF2024!important;color:#fff!important;
+  padding:12px 16px!important;border:0!important;border-radius:13px!important;background:#ED2024!important;color:#fff!important;
   font:600 13px/1.4 var(--we-type-body)!important;letter-spacing:0!important;text-align:center;margin:8px 0 0!important;
   box-shadow:0 8px 18px rgba(237,32,36,.14)!important;cursor:pointer;transition:background .2s,transform .2s;
 }
-html#we-site body .we-form button[type="submit"]:hover{background:#AD1419!important;transform:translateY(-1px)}
+html#we-site body .we-form button[type="submit"]:hover{background:#ED2024!important;transform:translateY(-1px)}
 html#we-site body .we-form button[type="submit"]:disabled{opacity:.65;cursor:wait;transform:none}
 html#we-site body .we-form button[type="submit"]:focus-visible{outline:3px solid #161616;outline-offset:3px}
 html#we-site body .we-form :is(.form-note,.form-help,.form-status,.error-message,.modal-msg){
