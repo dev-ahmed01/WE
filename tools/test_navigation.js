@@ -89,7 +89,7 @@ async function checkTypographyCoverage(page,route,mobile){
       ['form title','.we-form-panel h2,.we-form-panel h3'],
       ['card','.we-hl__txt h3,.cd h3,.benefit-card h3,.bn-row-heading,.bn-title,.sol-name,.office-glass strong'],
       ['highlight','.we-form-panel .we-form-kicker,.we-form-panel .form-kicker,.metric>span:not(.star),.stat-card>span:not(.star),.stat-card.glass p,.eq-s>span'],
-      ['subheading','.faq-item summary,.faq-toggle,.faq-q span:first-child,.ql h4,.cz-label'],
+      ['subheading','.faq-item summary,button.faq-toggle,.faq-q span:first-child,.ql h4,.cz-label'],
       ['bullet','.bn-points li,.bn-row-points li,.consult-points li,.lm-points li,.ap-ls li'],
       ['body','.bn-text,.bn-row-desc,.we-hl__txt p,.we-form-intro,.form-subtitle,.section-note'],
       ['button','.we-form-main button[type=submit],.em-nav__cta,.em-nav__call,.sol-link,.consult-call,.consult-call strong,.lm-cta-main,.lm-cta-num'],
