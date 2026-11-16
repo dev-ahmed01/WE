@@ -139,3 +139,9 @@ html#we-site body :is(label,.field label,.fld span) {font-family:var(--we-type-b
 @media(max-width:760px){
   html#we-site body :is(input,select,textarea){font-size:16px!important;}
 }
+
+/* Keep the approved Managed Offices first-fold composition after reducing
+   its hero heading to the documented 48px. This affects only wide desktops. */
+@media(min-width:1480px) and (min-height:760px){
+  html#we-site body .hero#top .cards{margin-top:56px!important;}
+}
