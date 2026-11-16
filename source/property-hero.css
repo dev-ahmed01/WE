@@ -1,0 +1,81 @@
+/* Approved Workspaces hero (sections 1A and 1B only).
+   Existing design tokens and category interactions are preserved. */
+html#we-site body section#top.we-hero.hp.hp-b{
+  background:#fff!important;
+  padding:156px 0 60px!important;
+}
+html#we-site body #top.hp-b .hp-deco{display:none!important}
+html#we-site body #top.hp-b .hp-wrap{width:min(1376px,calc(100% - 86px));margin-inline:auto}
+html#we-site body #top.hp-b .hp-grid{
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+  align-items:center;gap:clamp(40px,5vw,78px);
+}
+html#we-site body #top.hp-b .hp-eyebrow{
+  display:flex;align-items:center;gap:16px;margin:0 0 24px;
+  font:600 16px/1.35 var(--we-type-body)!important;color:#161616!important;letter-spacing:0!important;
+}
+html#we-site body #top.hp-b h1{
+  font:700 var(--we-type-main)/1.1 var(--we-type-heading)!important;
+  letter-spacing:-.035em!important;margin:0;max-width:15em;
+}
+html#we-site body #top.hp-b h1 em{display:block;color:#ED2024!important;font:inherit!important}
+html#we-site body #top.hp-b .hp-sub{
+  display:block!important;margin:18px 0 0;max-width:36em;
+  font:600 16px/1.5 var(--we-type-body)!important;color:#161616!important;letter-spacing:0!important;
+}
+html#we-site body #top.hp-b .hp-right{min-width:0}
+html#we-site body #top.hp-b .hp-desc{
+  position:relative;background:none!important;box-shadow:none!important;
+  border:0!important;border-left:2px solid #ED2024!important;border-radius:0!important;
+  padding:4px 0 4px 30px!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html#we-site body #top.hp-b .hp-desc::before,html#we-site body #top.hp-b .hp-desc::after{content:none!important;display:none!important}
+html#we-site body #top.hp-b .hp-desc p{
+  font:400 14px/1.65 var(--we-type-body)!important;letter-spacing:0!important;
+  color:#161616!important;margin:0;padding:0;max-width:38em;
+}
+html#we-site body #top.hp-b .we-pills{
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin-top:52px;
+}
+html#we-site body #top.hp-b .we-pill{
+  display:flex;justify-content:center;align-items:center;box-sizing:border-box;
+  height:50px!important;min-height:50px!important;padding:8px 12px!important;
+  border:1px solid rgba(237,32,36,.19)!important;
+  background:rgba(255,255,255,.86)!important;
+  box-shadow:0 6px 16px rgba(22,22,22,.045)!important;
+  border-radius:999px!important;overflow:hidden;
+  font:600 13px/1.4 var(--we-type-body)!important;color:#161616!important;
+}
+html#we-site body #top.hp-b .hp-category-content{display:flex;align-items:center;justify-content:center;gap:10px;min-width:0;z-index:1;}
+html#we-site body #top.hp-b .hp-category-icon{
+  box-sizing:content-box;width:23px;height:23px;min-width:23px;flex:none;
+  stroke:currentColor!important;color:#ED2024;padding-right:10px;border-right:1px solid rgba(237,32,36,.20);
+}
+html#we-site body #top.hp-b .hp-category-label{min-width:0;white-space:normal;text-align:left}
+html#we-site body #top.hp-b .we-pill.active{color:#fff!important;border-color:transparent!important}
+html#we-site body #top.hp-b .we-pill.active .hp-category-icon{color:#fff;border-color:rgba(255,255,255,.35)}
+html#we-site body #top.hp-b .we-pill:not(.active):is(:hover,:focus-visible){border-color:rgba(237,32,36,.5)!important;background:#fff5f4!important;color:#161616!important}
+@media(max-width:1100px){
+  html#we-site body section#top.we-hero.hp.hp-b{padding-top:132px!important}
+  html#we-site body #top.hp-b .hp-wrap{width:calc(100% - 48px)}
+  html#we-site body #top.hp-b .hp-grid{gap:32px}
+  html#we-site body #top.hp-b .we-pills{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:36px;gap:12px}
+}
+@media(max-width:760px){
+  html#we-site body #top.hp-b .hp-grid{grid-template-columns:1fr;gap:24px}
+}
+@media(max-width:640px){
+  html#we-site body section#top.we-hero.hp.hp-b{padding:112px 0 44px!important}
+  html#we-site body #top.hp-b .hp-wrap{width:calc(100% - 36px)}
+  html#we-site body #top.hp-b .hp-eyebrow{margin-bottom:18px;gap:10px}
+  html#we-site body #top.hp-b .hp-eyebrow::before{width:25px;flex:none}
+  html#we-site body #top.hp-b .hp-sub{margin-top:14px}
+  html#we-site body #top.hp-b .hp-desc{padding-left:16px!important}
+  html#we-site body #top.hp-b .we-pills{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:28px}
+  html#we-site body #top.hp-b .we-pill{min-height:50px!important;height:auto!important;padding:9px 10px!important}
+  html#we-site body #top.hp-b .hp-category-content{gap:7px}
+  html#we-site body #top.hp-b .hp-category-icon{width:19px;height:19px;min-width:19px;padding-right:7px}
+}
+@media(prefers-reduced-motion:reduce){
+  html#we-site body #top.hp-b .we-pill{transition:none!important}
+}

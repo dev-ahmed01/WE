@@ -31,6 +31,10 @@ async function checkPageBackground(page,route){
     assert.equal(surface.color,'rgb(255, 255, 255)',route+': white '+surface.element);
     if(surface.hero){
       assert.equal(surface.role,'hero',route+': documented hero family');
+      if(route==='/workspaces/'){
+        assert.equal(surface.image,'none','approved plain property hero');
+        continue;
+      }
       // Chromium serializes alpha channels with rounding. Check both colors and
       // their numerical opacity, not the exact decimal string.
       const colors=[...surface.image.matchAll(/rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)/g)].map(m=>m.slice(1).map(Number));

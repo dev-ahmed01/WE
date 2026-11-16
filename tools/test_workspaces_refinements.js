@@ -15,7 +15,22 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
       assert.ok(directives.includes('noindex') && directives.includes('nofollow'),
         'Workspaces remains noindex and nofollow');
       assert.equal(await page.locator('#spaces').count(), 0, 'redundant office carousel removed');
-      assert.equal(await page.locator('.hp-sub').count(), 0, 'hero subheading removed');
+      const hero=page.locator('#top.hp-b');
+      assert.equal(await hero.locator('.hp-left .hp-sub').innerText(),'Flexible, Ready-to-Use Spaces for Teams of Any Size.');
+      const layout=await hero.evaluate(e=>{
+        const d=e.querySelector('.hp-desc'),g=e.querySelector('.hp-grid'),h=e.querySelector('h1'),sub=e.querySelector('.hp-sub');
+        const s=getComputedStyle(d),b=getComputedStyle(e),r=h.getBoundingClientRect(),sr=sub.getBoundingClientRect();
+        return {background:b.backgroundColor,gradient:b.backgroundImage,descBg:s.backgroundImage,shadow:s.boxShadow,blur:s.backdropFilter,leftBorder:s.borderLeftWidth,columns:getComputedStyle(g).gridTemplateColumns.split(' ').length,headingAboveSub:sr.top>=r.bottom,subSize:getComputedStyle(sub).fontSize,subWeight:getComputedStyle(sub).fontWeight};
+      });
+      assert.deepEqual(layout,{background:'rgb(255, 255, 255)',gradient:'none',descBg:'none',shadow:'none',blur:'none',leftBorder:'2px',columns:width>760?2:1,headingAboveSub:true,subSize:'16px',subWeight:'600'},'approved plain editorial layout');
+      const pills=hero.locator('.we-pill');
+      assert.deepEqual(await pills.locator('.hp-category-label').allTextContents(),['Private Office','Coworking','Meeting Rooms','Event Space','Day Pass','Virtual Office']);
+      assert.equal(await pills.locator('svg.hp-category-icon').count(),6,'six category-specific icons');
+      assert.equal(await hero.locator('.hp-deco').isVisible(),false,'no decorative background');
+      await pills.nth(2).click();
+      assert.equal(await pills.nth(2).getAttribute('aria-pressed'),'true');
+      assert.equal(await page.locator('#type').inputValue(),'Meeting Rooms','existing category enquiry preselection works');
+      assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),'no horizontal overflow');
       assert.match(await page.locator('#locations h2').innerText(), /Jayanagar workspace/);
       assert.equal(await page.locator('#locations .we-lc__bar').isVisible(), false,
         'locations carousel not visible');
