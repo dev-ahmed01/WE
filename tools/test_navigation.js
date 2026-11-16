@@ -31,7 +31,12 @@ async function checkPageBackground(page,route){
     assert.equal(surface.color,'rgb(255, 255, 255)',route+': white '+surface.element);
     if(surface.hero){
       assert.equal(surface.role,'hero',route+': documented hero family');
-      assert.ok(surface.image.includes('radial-gradient')&&surface.image.includes('rgba(255, 185, 0, 0.065)')&&surface.image.includes('rgba(237, 32, 36, 0.055)'),route+': restrained hero atmosphere');
+      // Chromium serializes alpha channels with rounding. Check both colors and
+      // their numerical opacity, not the exact decimal string.
+      const colors=[...surface.image.matchAll(/rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)/g)].map(m=>m.slice(1).map(Number));
+      assert.equal((surface.image.match(/radial-gradient\(/g)||[]).length,2,route+': two hero washes '+surface.image);
+      assert.ok(colors.some(([r,g,b,a])=>r===255&&g===185&&b===0&&Math.abs(a-.065)<.006),route+': restrained yellow wash '+surface.image);
+      assert.ok(colors.some(([r,g,b,a])=>r===237&&g===32&&b===36&&Math.abs(a-.055)<.006),route+': restrained red wash '+surface.image);
     }else{
       assert.equal(surface.image,'none',route+': white section without competing gradient '+surface.element);
       if(surface.element.startsWith('SECTION'))assert.ok(['cards','lead-magnet','subsection'].includes(surface.role),route+': section family '+surface.element);
