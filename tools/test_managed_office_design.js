@@ -99,10 +99,13 @@ fs.mkdirSync(SHOTS, {recursive:true});
    const seam=await consultation.evaluate(el=>{
       const section=getComputedStyle(el),card=getComputedStyle(el.querySelector('.consult-card'));
       return {background:section.backgroundImage,paddingTop:parseFloat(section.paddingTop),
-        cardBackground:card.backgroundImage};
+        cardBackground:card.backgroundImage,cardShadow:card.boxShadow,cardBlur:card.backdropFilter,cardBorder:card.borderTopWidth};
    });
    assert.ok(seam.background.includes('linear-gradient'),'consultation uses a continuous ivory gradient');
-   assert.ok(seam.cardBackground.includes('linear-gradient'),'consultation glass card retains a blended gradient');
+   assert.equal(seam.cardBackground,'none','consultation sits flush on the page without a detached gradient panel');
+   assert.equal(seam.cardShadow,'none','consultation has no floating-card shadow');
+   assert.equal(seam.cardBlur,'none','consultation has no detached glass blur');
+   assert.equal(seam.cardBorder,'0px','consultation has no detached panel border');
    assert.ok(seam.paddingTop>=38,'consultation gets enough separation from adjacent sections');
    const benefits=page.locator('#benefits');
    assert.equal(await benefits.locator('.bn-card').count(),4,'all four benefits preserved');
