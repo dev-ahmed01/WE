@@ -38,14 +38,15 @@ html#we-site body #managedHl .we-hl__card:hover .we-hl__txt p{color:rgba(255,255
    dotted background, two-tone marker and pointer-origin liquid animation.
    No illustrations, new colours, or decorative elements. */
 html#we-site body #managedHl[data-card-variant="text-heading"] .we-hl__art{
-  display:grid;place-items:center start;align-content:center;
-  box-sizing:border-box;flex:none;height:auto!important;min-height:104px;
+  display:flex;flex-direction:column;align-items:stretch;justify-content:center;
+  box-sizing:border-box;flex:none;width:100%;min-width:0;height:auto!important;min-height:104px;
   padding:18px 40px 18px 14px;
 }
 html#we-site body #managedHl[data-card-variant="text-heading"] .we-hl__art h3{
-  margin:0!important;max-inline-size:17ch;min-width:0;
+  margin:0!important;padding:0!important;box-sizing:border-box;display:block;
+  width:100%;max-width:100%!important;max-inline-size:100%!important;min-width:0;
   font:600 21px/1.25 var(--we-type-heading,'Bricolage Grotesque',Arial,sans-serif)!important;
-  letter-spacing:-.02em!important;text-align:left;text-wrap:balance;
+  letter-spacing:-.02em!important;text-align:left!important;text-wrap:balance;
   overflow-wrap:anywhere;color:var(--fg)!important;
   transition:color .25s ease .36s;
 }

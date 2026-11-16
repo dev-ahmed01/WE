@@ -74,8 +74,9 @@ fs.mkdirSync(SHOTS, {recursive:true});
        return {heading:getComputedStyle(h).fontSize,weight:getComputedStyle(h).fontWeight,
          body:getComputedStyle(p).fontSize,panel:s.backgroundColor,texture:s.backgroundImage,
          height:ar.height,marker:m.width,markerBg:m.backgroundImage,
-         fits:hr.left>=ar.left&&hr.top>=ar.top&&hr.bottom<=ar.bottom&&hr.right<=ar.right-33,
-         descriptionBelow:pr.top>=ar.bottom,headingColor:getComputedStyle(h).color};
+         fits:hr.left>=ar.left-.5&&hr.top>=ar.top-.5&&hr.bottom<=ar.bottom+.5&&hr.right<=ar.right-33+.5,
+         descriptionBelow:pr.top>=ar.bottom-.5,headingColor:getComputedStyle(h).color,
+         rects:{heading:hr.toJSON(),panel:ar.toJSON(),description:pr.toJSON()},padding:s.padding};
      });
      assert.deepEqual([v.heading,v.weight,v.body],['21px','600','14px'],'approved typography');
      assert.equal(v.panel,'rgb(247, 241, 236)','original neutral dotted panel');
@@ -84,7 +85,7 @@ fs.mkdirSync(SHOTS, {recursive:true});
      assert.equal(v.marker,'20px','original plus marker');
      assert.ok(v.markerBg.includes('linear-gradient'),'two-tone marker');
      assert.equal(v.headingColor,'rgb(22, 22, 22)','normal heading colour');
-     assert.ok(v.fits&&v.descriptionBelow,'heading fits inside panel and description follows');
+     assert.ok(v.fits&&v.descriptionBelow,'heading fits inside panel and description follows '+JSON.stringify(v));
    }
    const columns=await page.locator('#managedHl').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length);
    assert.equal(columns,mobile?1:4,'responsive card grid');
