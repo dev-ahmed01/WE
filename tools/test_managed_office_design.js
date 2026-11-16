@@ -94,11 +94,14 @@ fs.mkdirSync(SHOTS, {recursive:true});
        const ar=el.querySelector('.pill-arr'),label=el.querySelector('span:first-child');
        const s=getComputedStyle(el),a=getComputedStyle(ar),l=getComputedStyle(label);
        const r=el.getBoundingClientRect(),ir=ar.getBoundingClientRect(),lr=label.getBoundingClientRect();
-       return {bg:s.backgroundColor,color:l.color,icon:a.color,iconBg:a.backgroundColor,
+       return {bg:s.backgroundColor,gradient:s.backgroundImage,blur:s.backdropFilter,highlight:getComputedStyle(el,'::before').backgroundImage,color:l.color,icon:a.color,iconBg:a.backgroundColor,
          iconWidth:ir.width,iconHeight:ir.height,radius:s.borderRadius,
          labelFit:lr.right<=ir.left+1,inside:ir.right<=r.right+1&&ir.left>=r.left-1};
      });
-     assert.equal(style.bg,'rgba(90, 0, 3, 0.45)','deep translucent red, not pale wash');
+     assert.equal(style.bg,'rgba(0, 0, 0, 0)','no solid dark red fill');
+     assert.ok(style.gradient.includes('rgba(255, 255, 255, 0.27)')&&style.gradient.includes('rgba(72, 0, 0, 0.16)'),'original light frosted gradient');
+     assert.ok(style.blur.includes('blur(22px)'),'original frosted blur');
+     assert.ok(style.highlight.includes('linear-gradient'),'static glass reflection');
      assert.equal(style.color,'rgb(255, 255, 255)','white readable label');
      assert.equal(style.icon,'rgb(173, 20, 25)','visible red arrow');
      assert.equal(style.iconBg,'rgb(255, 255, 255)','white icon surface');
@@ -109,7 +112,11 @@ fs.mkdirSync(SHOTS, {recursive:true});
    }
    if(!mobile){
      await pills.first().hover();
-     assert.equal(await pills.first().evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(90, 0, 3, 0.56)','glass hover darkens');
+     assert.ok((await pills.first().evaluate(el=>getComputedStyle(el).backgroundImage)).includes('rgba(255, 255, 255, 0.32)'),'glass hover brightens');
+     assert.equal(await pills.first().evaluate(el=>getComputedStyle(el,'::after').animationName),'none','reduced-motion disables shine');
+     await page.emulateMedia({reducedMotion:'no-preference'});
+     assert.equal(await pills.first().evaluate(el=>getComputedStyle(el,'::after').animationName),'we-service-pill-shine','hover shine restored');
+     await page.emulateMedia({reducedMotion:'reduce'});
      assert.equal(await pills.first().locator('.pill-arr').evaluate(el=>getComputedStyle(el).color),'rgb(173, 20, 25)','arrow stays visible on hover');
      await page.mouse.move(0,0);
    }
