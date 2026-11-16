@@ -563,6 +563,7 @@ from one_person_approved import apply_approved_sections
 from shared_forms import apply_shared_forms
 from shared_cards import apply_shared_cards
 from shared_footer import apply_shared_footer
+from managed_review import patch_managed_review
 
 def patch_one_person(b):
     b = rep(b, '<h1 id="heroTitle">One Person Office</h1>', '<h1 id="heroTitle"><span class="red">One Person</span> Office</h1>', label="one person hero accent")
@@ -629,6 +630,12 @@ def main():
         css += "\n/* Final design consistency */\n" + (SRC / "site-consistency.css").read_text(encoding="utf-8")
         if page["key"] == "workspaces":
             css += "\n/* Approved plain property hero */\n" + (SRC / "property-hero.css").read_text(encoding="utf-8")
+        if page["key"] == "category":
+            css += "\n/* Client-approved Managed Offices review */\n" + (SRC / "managed-review.css").read_text(encoding="utf-8")
+        # Unify the previous alternate brand-red token everywhere, leaving deliberate
+        # darker hover shades and gradients intact.
+        css = re.sub(r'#df2024\b', '#ED2024', css, flags=re.I)
+        css = re.sub(r'\b223\s*,\s*32\s*,\s*36\b', '237,32,36', css)
         css_path = asset("css", page["key"], css)
         body = PATCHES[page["key"]](body)
         if page["key"] == "one-person":
@@ -668,6 +675,8 @@ def main():
         body = apply_shared_cards(body, page["key"])
         body = apply_shared_forms(body, page["key"])
         body = apply_shared_footer(body, page["key"])
+        if page["key"] == "category":
+            body = patch_managed_review(body)
         body = extract_scripts(body, page["key"])
         if page["key"] == "home":
             logo = re.search(r'<img src="(/assets/img/workspace-by-emlen-[^"]+)"', body).group(1)

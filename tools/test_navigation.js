@@ -101,7 +101,7 @@ async function checkTypographyCoverage(page,route,mobile){
     ];
     return roles.flatMap(([role,sel])=>[...document.querySelectorAll(sel)].map(e=>{
       const s=getComputedStyle(e);
-      return {role,text:e.textContent.trim().slice(0,70),size:parseFloat(s.fontSize),weight:s.fontWeight,family:s.fontFamily};
+      return {role,text:e.textContent.trim().slice(0,70),size:parseFloat(s.fontSize),weight:s.fontWeight,family:s.fontFamily,option:e.matches('#offices .office-glass strong')};
     }));
   });
   assert.ok(rows.filter(x=>x.role==='section').length>=4,route+': section coverage');
@@ -111,9 +111,9 @@ async function checkTypographyCoverage(page,route,mobile){
     const size={'section':36,'card':21,'form title':21,'highlight':16,'subheading':16,'bullet':16,'body':14,'button':13,'anchor':13}[r.role];
     const weight={'section':'700','card':'600','form title':'600','highlight':'600','subheading':'600','bullet':'400','body':'400','button':'600','anchor':'400'}[r.role];
     assert.ok(r.family.includes(head?'Bricolage Grotesque':'Poppins'),label+' font');
-    assert.equal(r.weight,weight,label+' weight');
+    assert.equal(r.weight,r.option?'500':weight,label+' weight');
     if(mobile&&r.role==='section')assert.ok(r.size>=27 && r.size<=32,label+' responsive size');
-    else assert.equal(r.size,size,label+' size');
+    else assert.equal(r.size,r.option?18:size,label+' size');
   }
   console.log('TYPOGRAPHY COVERAGE OK: '+route+' '+(mobile?'mobile':'desktop')+' ('+rows.length+' elements)');
 }
@@ -129,13 +129,14 @@ async function checkButtons(page,route,mobile){
     const label=route+' '+i.role+' '+i.text;
     assert.ok(i.font.includes('Poppins'),label+' font');
     if(i.role!=='icon'){assert.equal(i.size,'13px',label+' size');assert.equal(i.weight,i.role==='anchor'?'400':'600',label+' weight');}
-    if(i.role==='main'){assert.equal(i.radius,'13px',label+' radius');assert.equal(i.border,'0px',label+' border');assert.ok(['rgb(223, 32, 36)','rgb(255, 185, 0)','rgb(22, 22, 22)'].includes(i.bg),label+' approved solid color '+i.bg);}
+    if(i.role==='main'){assert.equal(i.radius,'13px',label+' radius');assert.equal(i.border,'0px',label+' border');assert.ok(['rgb(237, 32, 36)','rgb(255, 185, 0)','rgb(22, 22, 22)'].includes(i.bg),label+' approved solid color '+i.bg);}
     if(i.role==='secondary')assert.equal(i.radius,'13px',label+' radius');
+    if(i.role==='hero-action'){assert.equal(i.radius,'13px',label+' radius');assert.equal(i.border,'1px',label+' outline');assert.ok(i.img.includes('rgb(237, 32, 36)'),label+' directional brand fill');}
     if(i.role.startsWith('pill'))assert.equal(i.radius,'999px',label+' pill radius');
   }
   assert.equal(await page.locator('.em-nav__cta').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(255, 185, 0)',route+': yellow enquiry navigation CTA');
   const c=page.locator('.we-form-main button[type=submit]');
-  assert.equal(await c.evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(223, 32, 36)',route+': primary callback red');
+  assert.equal(await c.evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(237, 32, 36)',route+': primary callback red');
   console.log('BUTTON SYSTEM OK: '+route+' '+(mobile?'mobile':'desktop')+' ('+items.length+' controls)');
 }
 
@@ -183,7 +184,7 @@ async function checkCardFamilies(page,route,mobile){
 
 
 async function checkSectionPanels(page,route,mobile){
-  const items=await page.evaluate(()=>Array.from(document.querySelectorAll('#find-fit .qb,.ap .dp,#other-solutions,.cz-panel,.we-gal__shell,.we-lc__mapcard,.we-form-panel')).map(el=>{
+  const items=await page.evaluate(()=>Array.from(document.querySelectorAll('#find-fit .qb,.ap .dp,#other-solutions,.cz-panel,.we-gal__shell,.we-lc__mapcard,.we-form-panel:not(#speak-dialog *)')).map(el=>{
     const s=getComputedStyle(el);return {cls:el.className,role:s.getPropertyValue('--we-section-panel').trim(),radius:s.borderRadius,bg:s.backgroundImage};
   }));
   for(const item of items){
@@ -247,7 +248,7 @@ async function checkFinalConsistency(page,route,mobile){
 async function checkSharedForm(page,route,mobile){
   const form=page.locator('.we-form-main');
   assert.equal(await form.count(),1,route+': one main enquiry form');
-  const panel=page.locator('.we-form-panel');
+  const panel=page.locator('.we-form-panel:not(#speak-dialog *)');
   assert.equal(await panel.count(),1,route+': one glass enclosure');
   const box=await panel.evaluate(el=>{const s=getComputedStyle(el);return {blur:s.backdropFilter,radius:s.borderRadius,title:getComputedStyle(el.querySelector('h2,h3')).fontSize};});
   assert.ok(box.blur.includes('blur(26px)'),route+': common glass blur');

@@ -30,7 +30,7 @@ fs.mkdirSync(SHOTS, {recursive:true});
        mask:getComputedStyle(el).maskImage,
        paths:el.querySelectorAll('path').length
      }));
-     assert.equal(computed.opacity,'0.9','art kept at 90% opacity');
+     assert.equal(computed.opacity,'0.48','art reduced to 48% opacity');
      assert.equal(computed.mask,'none','no fading or cropping mask');
      assert.ok(computed.paths>25,'complete vector scene retained');
      const clarity=await art.locator(':scope > g').first().evaluate(el=>({
@@ -48,8 +48,8 @@ fs.mkdirSync(SHOTS, {recursive:true});
       'no old full-width ceiling spanning the CTAs');
    const call = page.locator('.hero .actions .button').nth(1);
    assert.equal(await call.getAttribute('href'),'tel:+919814953954','secondary Call now retains dial link');
-   assert.equal(await call.evaluate(el=>getComputedStyle(el).color),'rgb(22, 22, 22)',
-      'secondary CTA not red filled');
+   assert.equal(await call.evaluate(el=>getComputedStyle(el).color),'rgb(237, 32, 36)',
+      'secondary CTA red outline');
    assert.ok((await call.evaluate(el=>getComputedStyle(el).backgroundImage)).includes('gradient'),
       'secondary CTA uses subtle frosted glass');
    if(!mobile){
@@ -59,6 +59,49 @@ fs.mkdirSync(SHOTS, {recursive:true});
      assert.ok(artL.x+artL.width<=first.x+12,'left illustration clears the main CTA');
      assert.ok(artR.x>=second.x+second.width-12,'right illustration clears secondary CTA');
    }
+   const geometry=await page.evaluate(()=>{
+      const rect=s=>document.querySelector(s).getBoundingClientRect();
+      const nav=rect('.em-nav'),eyebrow=rect('.hero .eyebrow'),cards=rect('#managedHl');
+      const bottom=Math.max(...Array.from(document.querySelectorAll('.hero-art svg')).map(e=>e.getBoundingClientRect().bottom));
+      return {gap:eyebrow.top-nav.bottom,artGap:cards.top-bottom};
+   });
+   assert.ok(geometry.gap>=48&&geometry.gap<=90,'hero navigation spacing '+JSON.stringify(geometry));
+   assert.ok(geometry.artGap>=20,'art stays above highlight cards');
+   if(!mobile){
+     const buttons=page.locator('.hero .actions .button');
+     await buttons.first().hover();
+     assert.ok(await buttons.first().evaluate(e=>/^0(?:px|%) 100%$/.test(getComputedStyle(e).backgroundSize)),'primary red slides away');
+     assert.equal(await buttons.first().evaluate(e=>getComputedStyle(e).color),'rgb(237, 32, 36)');
+     await buttons.nth(1).hover();
+     assert.equal(await buttons.nth(1).evaluate(e=>getComputedStyle(e).backgroundSize),'100% 100%','secondary fills red');
+     assert.equal(await buttons.nth(1).evaluate(e=>getComputedStyle(e).color),'rgb(255, 255, 255)');
+     await page.mouse.move(0,0);
+   }
+   const optionStyles=await page.locator('#offices .office-glass').evaluateAll(items=>items.map(e=>{
+     const h=getComputedStyle(e.querySelector('strong')),a=e.querySelector('.office-arrow'),s=getComputedStyle(a);
+     return {size:h.fontSize,weight:h.fontWeight,red:s.backgroundColor,radius:s.borderRadius,path:a.querySelector('path')?.getAttribute('d')};
+   }));
+   assert.equal(optionStyles.length,7);
+   for(const x of optionStyles)assert.deepEqual(x,{size:'18px',weight:'500',red:'rgb(237, 32, 36)',radius:'8px',path:'M9 5l7 7-7 7'});
+   assert.equal(await page.locator('#other-title .other-highlight').innerText(),'different office solution');
+   assert.equal(await page.locator('#other-title .other-highlight').evaluate(e=>getComputedStyle(e,'::after').backgroundColor),'rgb(255, 185, 0)');
+   if(!mobile)assert.ok(await page.locator('#other-title').evaluate(e=>e.getBoundingClientRect().height<=parseFloat(getComputedStyle(e).lineHeight)+7),'single-line other services');
+   if(!mobile)assert.ok(await page.locator('#consult-heading').evaluate(e=>e.getBoundingClientRect().height<=parseFloat(getComputedStyle(e).lineHeight)+1),'single-line consultation');
+   assert.equal(await page.locator('.consult-explore').getAttribute('href'),'/workspaces/');
+   await page.locator('#open-speak').click();
+   assert.ok(await page.locator('#speak-dialog').isVisible(),'consultation dialog opens');
+   await page.locator('#speak-name').fill('Browser test');
+   await page.locator('#speak-phone').fill('9999999999');
+   await page.locator('#speak-team').selectOption('1–10 people');
+   await page.evaluate(()=>{window.EmlenLead.deliver=async(m,p,s)=>{window.testLead=p;s.textContent='Test captured';return {mode:'api'}}});
+   await page.locator('#speak-form button[type=submit]').click();
+   assert.equal(await page.locator('#speak-status').innerText(),'Test captured');
+   assert.equal(await page.evaluate(()=>window.testLead.source),'category-consultation');
+   await page.keyboard.press('Escape');
+   assert.equal(await page.locator('#speak-dialog').isVisible(),false,'dialog closes');
+   const formGrid=await page.locator('#enquiry-form .field-grid').evaluate(e=>({cols:getComputedStyle(e).gridTemplateColumns.split(' ').length,gap:getComputedStyle(e).rowGap}));
+   assert.deepEqual(formGrid,{cols:mobile?1:2,gap:mobile?'14px':'20px'});
+   await page.evaluate(()=>window.scrollTo(0,0));
    const allCards=page.locator('#managedHl .we-hl__card');
    const titles=await allCards.locator('h3').allTextContents();
    assert.deepEqual(titles,['Offices in prime locations','Multiple pricing plans','Flexible commitments','Move-in immediately']);
