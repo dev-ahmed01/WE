@@ -565,7 +565,7 @@ from shared_cards import apply_shared_cards
 from shared_footer import apply_shared_footer
 
 def patch_one_person(b):
-    b = rep(b, '<h1 id="heroTitle">One Person Office</h1>', '<h1 id="heroTitle">One Person <span class="red">Office</span></h1>', label="one person hero accent")
+    b = rep(b, '<h1 id="heroTitle">One Person Office</h1>', '<h1 id="heroTitle"><span class="red">One Person</span> Office</h1>', label="one person hero accent")
     b = rep(b, '<a aria-label="Workspace by Emlen home" class="brand" href="#home">', '<a aria-label="Workspace by Emlen home" class="brand" href="/">', label="sol brand")
     nav_old = '<a href="#locations">Locations</a><a href="#options">Workspaces</a><a href="#benefits">Benefits</a><a href="#why-us">Why us</a><a href="#faqs">FAQs</a>'
     nav_new = '<a class="nav-extra" href="/managed-office/south-bangalore/">All offices</a>' + nav_old

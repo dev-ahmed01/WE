@@ -279,7 +279,7 @@ async function checkSharedForm(page,route,mobile){
       if(route==='/managed-office/one-person-office/'){
         const title=desktop.locator('#heroTitle');
         assert.equal(await title.innerText(),'One Person Office');
-        assert.equal(await title.locator('span.red').innerText(),'Office');
+        assert.equal(await title.locator('span.red').innerText(),'One Person');
         assert.equal(await title.locator('span.red').evaluate(e=>getComputedStyle(e).color),'rgb(237, 32, 36)');
       }
       await checkTypographyCoverage(desktop,route,false);
