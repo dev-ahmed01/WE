@@ -1,0 +1,141 @@
+/* WE Design System, section 1: Typography.
+   Shared across Home, Workspaces, Managed Offices and One Person Office.
+   Apply after the page-specific styles. Preserve component layout, animations,
+   decorative lettering, metric numerals and miniature app illustrations. */
+:root {
+  --we-type-heading: 'Bricolage Grotesque', Arial, sans-serif;
+  --we-type-body: 'Poppins', Arial, sans-serif;
+  --we-type-main: 48px;
+  --we-type-section: 36px;
+  --we-type-card: 21px;
+  --we-type-subheading: 16px;
+  --we-type-highlight: 16px;
+  --we-type-bullet: 16px;
+  --we-type-copy: 14px;
+  --we-type-button: 13px;
+  --we-type-anchor: 13px;
+  --we-type-ink: #161616;
+  --we-type-red: #DF2024;
+}
+@media(max-width:760px) {
+  :root { --we-type-main: clamp(32px,8.8vw,38px); --we-type-section: clamp(27px,7.2vw,32px); }
+}
+html#we-site body {
+  font-family: var(--we-type-body);
+  font-size: var(--we-type-copy);
+  font-weight: 400;
+  color: var(--we-type-ink);
+}
+/* Main and section headings; semantic headings and existing accent spans. */
+html#we-site body h1 {
+  font-family: var(--we-type-heading) !important;
+  font-size: var(--we-type-main) !important;
+  font-weight: 700 !important;
+  color: var(--we-type-ink);
+}
+html#we-site body h2 {
+  font-family: var(--we-type-heading) !important;
+  font-size: var(--we-type-section) !important;
+  font-weight: 700 !important;
+  color: var(--we-type-ink);
+}
+html#we-site body :is(h1,h2) :is(.red,.accent,.bn-heading-line--accent,em) {
+  font-family: inherit !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  color: var(--we-type-red);
+}
+/* Card headings, including non-heading markup used by existing office cards. */
+html#we-site body :is(h3,.card-title,.special-heading,.office-glass strong,.dp-t b,.rz h3,.mc h4,.fm .ok h4,.cz-result h4,.enquiry-panel h2,.we-lb__title),
+html#we-site body #benefits .bn-card .bn-title,
+html#we-site body .hero .cards .card-title,
+html#we-site body .office-tile:not(.office-special) .office-glass strong,
+html#we-site body .office-tile.office-special .office-glass strong {
+  font-family: var(--we-type-heading) !important;
+  font-size: var(--we-type-card) !important;
+  font-weight: 600 !important;
+}
+html#we-site body h3:not(.we-am__item h3,.cd h3,.location-label h3,.tk h3,.ph h3),
+html#we-site body :is(.card-title,.office-tile:not(.office-special) .office-glass strong,.cz-result h4) {
+  color: var(--we-type-ink);
+}
+/* Preserve contrast on image overlays, red cards, and dark surfaces. */
+html#we-site body .more-solutions h2 {color:#fff;}
+html#we-site body .cd :is(h3,p),html#we-site body .location-label h3,
+html#we-site body .office-special :is(.special-heading,.office-glass strong) {color:#fff;}
+@media(hover:hover) and (pointer:fine){
+  html#we-site body .we-hl__card:hover :is(h3,p) {color:#fff;}
+}
+/* Subheadings and highlight labels: separate from typographic card titles. */
+html#we-site body :is(.ql h4,.cz-label,.faq-toggle,.faq-item summary,.faq-q span:first-child,
+  .we-am__item h3,.cz-tile-name,.hp-eyebrow,.eyebrow,.eb,.cl-cap,
+  .why-label,.why-kicker,.form-kicker,.steps-kicker,.consult-kicker,
+  .cz-eyebrow,.we-eyebrow,.mini-eyebrow,.location-landmark-title,
+  .location-photo-kicker,.location-details-kicker,.ticket-kicker,.hs-cta-line,
+  .metric small,.eq-s span,.tq-p b,.testimonial strong) {
+  font-family: var(--we-type-body) !important;
+  font-size: var(--we-type-highlight) !important;
+  font-weight: 600 !important;
+}
+/* Lists intended to be read as bullet points; don't style nav, grid or card wrappers. */
+html#we-site body :is(.pts,.ap-ls,.highlights,.bn-points,.bn-row-points,
+  .consult-points,.lm-points,.points,.benefit-text ul) li {
+  font-family: var(--we-type-body) !important;
+  font-size: var(--we-type-bullet) !important;
+  font-weight: 400 !important;
+  color: var(--we-type-ink);
+}
+/* Body copy; branded headings, examples, form hints and special offer numerals
+   retain their own contrast and component-specific effects. */
+html#we-site body :is(section,footer,.modal-panel,.mc,.we-pop) p:not(.eyebrow,.eb,.hp-eyebrow,
+  .why-label,.why-kicker,.form-kicker,.steps-kicker,.consult-kicker,.cz-label,
+  .hs-cta-line,.tk p,.ph p,.er,.form-status,.form-help,.form-note,.modal-msg,.cz-note),
+html#we-site body :is(blockquote,.faq-answer,.section-copy,.right-copy,.we-lc__copy,
+  .we-mt__ov .we-mt__tags li,.ticket p,.form-help,.form-note,.cz-note,.modal-msg,.footer-bottom,.ft-bottom),
+html#we-site body .hero .cards .card p {
+  font-family: var(--we-type-body) !important;
+  font-size: var(--we-type-copy) !important;
+  font-weight: 400 !important;
+}
+html#we-site body :is(.desc,.section-copy,.section-intro,.hero-intro,.sol-desc,.bn-text,.bn-row-desc,
+  .solutions-desc,.consult-desc,.why-desc,.section-note,.form-subtitle,.faq-answer,
+  .enquiry-copy>p,.hp-b .hp-desc p,.we-hl__txt p,.benefit-card p,.eq-c p,.ap-d,.lm-l p) {
+  color:var(--we-type-ink);
+}
+html#we-site body .we-hl__card:hover .we-hl__txt p {color:#fff;}
+/* Text links: all normal anchors, not linked cards and action pills. */
+html#we-site body a:not(.brand,.we-brand,.em-nav__brand,.office-tile,.btn,.button,
+  .we-btn,.solid-btn,.pill-btn,.ghost-btn,.nav-cta,.em-nav__cta,.em-nav__mobile-cta,
+  .em-nav__call,.em-nav__mobile-call,.callback-btn,.consult-call,.lm-cta,.ticket-unlock,
+  .other-pill,.we-pop__cta,.unlock-btn,.dp a,.ap-bt a) {
+  font-family: var(--we-type-body) !important;
+  font-size: var(--we-type-anchor) !important;
+  font-weight: 400 !important;
+}
+html#we-site body :is(.em-nav__link,.em-nav__link.is-current,.em-nav__mobile-link) {
+  font-size:var(--we-type-anchor) !important;
+  font-weight:400 !important;
+  font-family:var(--we-type-body) !important;
+}
+/* Buttons and button-like anchors, preserving icons and existing contrast. */
+html#we-site body :is(a.btn,a.button,a.we-btn,a.solid-btn,a.pill-btn,a.ghost-btn,
+  a.nav-cta,.em-nav__cta,.em-nav__mobile-cta,.em-nav__call,.em-nav__mobile-call,
+  .callback-btn,.consult-call,.lm-cta,.ticket-unlock,.other-pill,.other-pill span,
+  .we-pop__cta,.unlock-btn,.dp a,.ap-bt a,.cta,.form-submit,.submit-btn,
+  .fm button,.seg button,.pr button,.cat-pill,.we-pill,.we-am__more,.pill-btn,
+  .cz-seg-btn,.cz-cta,.sol-link,.option-link,button.btn,.checklist-cta) {
+  font-family: var(--we-type-body) !important;
+  font-size: var(--we-type-button) !important;
+  font-weight: 600 !important;
+}
+/* Form entry remains 14px. 16px on mobile avoids iOS input zoom.
+   Do not override the approved floating-label focus states. */
+html#we-site body :is(input,select,textarea) {
+  font-family: var(--we-type-body) !important;
+  font-size: var(--we-type-copy) !important;
+  font-weight: 400 !important;
+}
+html#we-site body :is(label,.field label,.fld span) {font-family:var(--we-type-body) !important;}
+@media(max-width:760px){
+  html#we-site body :is(input,select,textarea){font-size:16px!important;}
+}

@@ -603,6 +603,7 @@ def main():
             font_url = html.unescape(m.group(0)) if m else None
         # Apply the same plain page surface last at build time; fingerprint it with the page CSS.
         css += "\n/* Unified white page background */\n" + (SRC / "site-background.css").read_text(encoding="utf-8")
+        css += "\n/* WE Design System typography */\n" + (SRC / "site-typography.css").read_text(encoding="utf-8")
         css_path = asset("css", page["key"], css)
         body = PATCHES[page["key"]](body)
         if page["key"] == "one-person":
@@ -641,9 +642,11 @@ def main():
         # head-only inline script (reduced-motion class) is part of the head in the workspaces page
         head_scripts = "".join(f'<script src="{asset("js", page["key"] + "-head", m.group(2).strip() + ";")}"></script>'
                                for m in SCRIPT_RE.finditer(head))
+        # Shared font families and all design-system weights, including Light 300.
+        font_url = "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Poppins:wght@300;400;500;600;700&display=swap"
         new_head = make_head(page, metas, css_path, font_url, title) + head_scripts + json_ld(page)
         lang = "en"
-        out = f'<!doctype html>\n<html lang="{lang}">\n<head>\n{new_head}\n</head>\n{body_tag}\n{body}</body>\n</html>\n'
+        out = f'<!doctype html>\n<html id="we-site" lang="{lang}">\n<head>\n{new_head}\n</head>\n{body_tag}\n{body}</body>\n</html>\n'
         write(page["out"], out)
         print(f"  {page['out']:<52} {len(out)/1024:7.1f} KB  (css {len(css)/1024:.0f} KB)")
 
