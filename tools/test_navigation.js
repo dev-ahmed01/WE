@@ -118,6 +118,7 @@ async function checkButtons(page,route,mobile){
     if(i.role==='secondary')assert.equal(i.radius,'13px',label+' radius');
     if(i.role.startsWith('pill'))assert.equal(i.radius,'999px',label+' pill radius');
   }
+  assert.equal(await page.locator('.em-nav__cta').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(255, 185, 0)',route+': yellow enquiry navigation CTA');
   const c=page.locator('.we-form-main button[type=submit]');
   assert.equal(await c.evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(223, 32, 36)',route+': primary callback red');
   console.log('BUTTON SYSTEM OK: '+route+' '+(mobile?'mobile':'desktop')+' ('+items.length+' controls)');

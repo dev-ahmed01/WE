@@ -90,12 +90,10 @@ html#we-site body :is(.btn-red,
   .consult-call,
   .lm-cta) {
   --we-control-role:main;
-  --we-control-bg:var(--we-button-red);--we-control-hover:var(--we-button-red-hover);
-  --we-control-fg:#fff;--we-control-shadow:var(--we-button-glow);
   min-height:var(--we-button-height)!important;height:auto!important;padding:12px 22px!important;
   border:0!important;border-radius:var(--we-button-radius)!important;
-  background:var(--we-control-bg)!important;color:var(--we-control-fg)!important;
-  box-shadow:var(--we-control-shadow)!important;
+  background:var(--we-control-bg,var(--we-button-red))!important;color:var(--we-control-fg,#fff)!important;
+  box-shadow:var(--we-control-shadow,var(--we-button-glow))!important;
   transition:background-color .22s ease,color .22s ease,box-shadow .22s ease!important;
 }
 html#we-site body :is(.btn-yellow,
@@ -137,8 +135,8 @@ html#we-site body :is(.btn-red,
   .cz-cta,
   .consult-call,
   .lm-cta):is(:hover,:focus-visible) {
-  background:var(--we-control-hover)!important;color:var(--we-control-fg)!important;
-  transform:none!important;box-shadow:var(--we-control-shadow)!important;
+  background:var(--we-control-hover,var(--we-button-red-hover))!important;color:var(--we-control-fg,#fff)!important;
+  transform:none!important;box-shadow:var(--we-control-shadow,var(--we-button-glow))!important;
 }
 html#we-site body :is(.btn-line,
   .we-btn--line,
@@ -178,7 +176,7 @@ html#we-site body :is(.cat-pill,
 html#we-site body :is(.cat-pill,
   .we-pill,
   .other-pill,
-  .motion-btn:not(:not(:focus-visible))) {
+  .motion-btn:focus-visible) {
   background-color:rgba(255,255,255,.64)!important;
   border:1px solid rgba(255,255,255,.72)!important;
   box-shadow:var(--we-button-shadow)!important;backdrop-filter:blur(14px);
@@ -367,3 +365,8 @@ html#we-site body :is(button,a):focus-visible{outline:2px solid var(--we-button-
   .pr button,
   .cz-tile){transition:none!important}
 }
+
+/* Preserve the visually-hidden reduced-motion toggle until keyboard focus. */
+html#we-site body .motion-btn:not(:focus-visible){min-height:0!important}
+/* Do not let legacy card hover animations replace a CTA's own colour transition. */
+html#we-site body #options .sol-card:hover .sol-link:not(:hover):not(:focus-visible){background:var(--we-control-bg,var(--we-button-red))!important;color:var(--we-control-fg,#fff)!important;transform:none!important;box-shadow:var(--we-control-shadow,var(--we-button-glow))!important}
