@@ -548,6 +548,7 @@ def patch_category(b):
     return b
 
 from one_person_approved import apply_approved_sections
+from shared_forms import apply_shared_forms
 
 def patch_one_person(b):
     b = rep(b, '<a aria-label="Workspace by Emlen home" class="brand" href="#home">', '<a aria-label="Workspace by Emlen home" class="brand" href="/">', label="sol brand")
@@ -604,6 +605,7 @@ def main():
         # Apply the same plain page surface last at build time; fingerprint it with the page CSS.
         css += "\n/* Unified white page background */\n" + (SRC / "site-background.css").read_text(encoding="utf-8")
         css += "\n/* WE Design System typography */\n" + (SRC / "site-typography.css").read_text(encoding="utf-8")
+        css += "\n/* Shared enquiry forms */\n" + (SRC / "site-forms.css").read_text(encoding="utf-8")
         css_path = asset("css", page["key"], css)
         body = PATCHES[page["key"]](body)
         if page["key"] == "one-person":
@@ -635,6 +637,7 @@ def main():
             body, changed = footer_tag.subn(lambda m: re.sub(r'\bsrc="[^"]+"', lambda _: 'src="' + logo_path + '"', m.group(0)), body, count=1)
             if changed != 1:
                 raise SystemExit("missing footer logo for white footer")
+        body = apply_shared_forms(body, page["key"])
         body = extract_scripts(body, page["key"])
         if page["key"] == "home":
             logo = re.search(r'<img src="(/assets/img/workspace-by-emlen-[^"]+)"', body).group(1)

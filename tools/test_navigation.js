@@ -67,6 +67,33 @@ async function checkTypography(page,route,mobile){
   }
 }
 
+
+/* Actual form controls must share the approved visual system; never submit personal data. */
+async function checkSharedForm(page,route,mobile){
+  const form=page.locator('.we-form-main');
+  assert.equal(await form.count(),1,route+': one main enquiry form');
+  const panel=page.locator('.we-form-panel');
+  assert.equal(await panel.count(),1,route+': one glass enclosure');
+  const box=await panel.evaluate(el=>{const s=getComputedStyle(el);return {blur:s.backdropFilter,radius:s.borderRadius,title:getComputedStyle(el.querySelector('h2,h3')).fontSize};});
+  assert.ok(box.blur.includes('blur(26px)'),route+': common glass blur');
+  assert.equal(box.radius,mobile?'25px':'30px',route+': common enclosure radius');
+  assert.equal(box.title,'21px',route+': common form heading');
+  const fields=await form.locator('.we-field').evaluateAll(els=>els.map(el=>{
+    const c=el.querySelector('input,select,textarea'),label=el.querySelector('label,span');
+    return {id:c.id,kind:c.tagName, height:getComputedStyle(c).height,radius:getComputedStyle(c).borderRadius,
+      label:getComputedStyle(label).position,placeholder:c.getAttribute('placeholder')};
+  }));
+  assert.ok(fields.length>=5,route+': existing form fields preserved');
+  for(const f of fields){
+    assert.equal(f.radius,'13px',route+': '+f.id+' common field radius');
+    assert.equal(f.height,f.kind==='TEXTAREA'?'108px':'54px',route+': '+f.id+' common field height');
+    assert.equal(f.label,'absolute',route+': '+f.id+' internal label');
+    if(f.kind!=='SELECT')assert.equal(f.placeholder,' ',route+': '+f.id+' no conflicting placeholder');
+  }
+  const submit=await form.locator('button[type=submit]').evaluate(el=>{const s=getComputedStyle(el);return {size:s.fontSize,weight:s.fontWeight,radius:s.borderRadius};});
+  assert.deepEqual(submit,{size:'13px',weight:'600',radius:'13px'},route+': common CTA typography');
+}
+
 (async () => {
   const browser = await chromium.launch({ headless: true });
   try {
@@ -77,6 +104,7 @@ async function checkTypography(page,route,mobile){
       await desktop.locator('.em-nav').waitFor({ timeout: 15000 });
       await checkPageBackground(desktop,route);
       await checkTypography(desktop,route,false);
+      await checkSharedForm(desktop,route,false);
       const state = await desktop.evaluate(() => {
         const nav = document.querySelector('.em-nav');
         const box = nav.getBoundingClientRect();
@@ -128,6 +156,7 @@ async function checkTypography(page,route,mobile){
       const toggle = mobile.locator('.em-nav__toggle');
       await toggle.waitFor({ state: 'visible', timeout: 15000 });
       await checkTypography(mobile,route,true);
+      await checkSharedForm(mobile,route,true);
       await toggle.click();
       assert.equal(await toggle.getAttribute('aria-expanded'), 'true', route + ': hamburger opens');
       assert.equal(await mobile.locator('.em-nav__mobile').isVisible(), true, route + ': mobile panel visible');
