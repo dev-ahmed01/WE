@@ -122,7 +122,7 @@ async function checkTypographyCoverage(page,route,mobile){
 async function checkButtons(page,route,mobile){
   const items=await page.evaluate(()=>[...document.querySelectorAll('button,a')].filter(e=>!e.closest('[inert],.em-nav-replaced')&&e.getClientRects().length&&getComputedStyle(e).visibility==='visible').map(e=>{
     const s=getComputedStyle(e);
-    return {role:s.getPropertyValue('--we-control-role').trim(),text:e.textContent.trim().slice(0,65),font:s.fontFamily,size:s.fontSize,weight:s.fontWeight,radius:s.borderRadius,border:s.borderTopWidth,bg:s.backgroundColor,img:s.backgroundImage};
+    return {role:s.getPropertyValue('--we-control-role').trim(),text:e.textContent.trim().slice(0,65),font:s.fontFamily,size:s.fontSize,weight:s.fontWeight,radius:s.borderRadius,border:s.borderTopWidth,bg:s.backgroundColor,img:s.backgroundImage,borderColor:s.borderTopColor,color:s.color,secondaryHero:e.matches('#top.hero .actions .button:nth-child(2)')};
   }).filter(x=>x.role));
   assert.ok(items.length>=5,route+': shared button roles applied');
   for(const i of items){
@@ -131,7 +131,15 @@ async function checkButtons(page,route,mobile){
     if(i.role!=='icon'){assert.equal(i.size,'13px',label+' size');assert.equal(i.weight,i.role==='anchor'?'400':'600',label+' weight');}
     if(i.role==='main'){assert.equal(i.radius,'13px',label+' radius');assert.equal(i.border,'0px',label+' border');assert.ok(['rgb(237, 32, 36)','rgb(255, 185, 0)','rgb(22, 22, 22)'].includes(i.bg),label+' approved solid color '+i.bg);}
     if(i.role==='secondary')assert.equal(i.radius,'13px',label+' radius');
-    if(i.role==='hero-action'){assert.equal(i.radius,'13px',label+' radius');assert.equal(i.border,'1px',label+' outline');assert.ok(i.img.includes('rgb(237, 32, 36)'),label+' directional brand fill');}
+    if(i.role==='hero-action'){
+      assert.equal(i.radius,'13px',label+' radius');
+      assert.equal(i.border,'1px',label+' outline');
+      if(i.secondaryHero){
+        assert.notEqual(i.borderColor,'rgb(237, 32, 36)',label+' neutral border until hover');
+        assert.equal(i.color,'rgb(22, 22, 22)',label+' neutral text');
+        assert.ok(i.img.includes('gradient')&&!i.img.includes('rgb(237, 32, 36)'),label+' neutral frosted surface');
+      }else assert.ok(i.img.includes('rgb(237, 32, 36)'),label+' directional brand fill');
+    }
     if(i.role.startsWith('pill'))assert.equal(i.radius,'999px',label+' pill radius');
   }
   assert.equal(await page.locator('.em-nav__cta').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(255, 185, 0)',route+': yellow enquiry navigation CTA');
