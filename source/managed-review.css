@@ -94,6 +94,9 @@ html#we-site body #office-checklist .consult-call{gap:8px!important}
 html#we-site body #office-checklist .consult-art{align-self:center}
 /* Keep the enquiry attached to the Why Us section, not artificially
    stretched to the testimonial's height. */
+/* The section itself must not establish a scroll container: otherwise
+   the sticky enquiry cannot follow the viewport. Scope to Managed Offices. */
+html#we-site body section#why-us.why-section{overflow:visible!important}
 html#we-site body #why-us .why-grid{align-items:start!important;overflow:visible!important}
 html#we-site body #why-us #enquiry{
   display:flex;flex-direction:column;align-self:start!important;position:relative;
