@@ -109,12 +109,34 @@ fs.mkdirSync(SHOTS, {recursive:true});
      return {cols:s.gridTemplateColumns.split(' ').length,gap:s.rowGap,tracks:s.gridTemplateColumns,fields,hidden:getComputedStyle(e.querySelector('input[type=hidden]')).display};
    });
    assert.equal(formGrid.cols,mobile?1:2,'exact enquiry tracks '+JSON.stringify(formGrid));
-   assert.equal(formGrid.gap,mobile?'18px':'28px');
+   assert.equal(formGrid.gap,'14px','compact field row gap');
    assert.equal(formGrid.hidden,'none');
    assert.deepEqual(formGrid.fields.map(f=>f.id),['fullName','lastName','phone','email','team','interest']);
    assert.equal(await page.locator('#lastName').getAttribute('required'),null);
    assert.equal(await page.locator('#why-us .metric .star').count(),0,'rating star removed');
-   if(!mobile)assert.ok(await page.locator('#why-us').evaluate(e=>{const l=e.querySelector('.why-copy').getBoundingClientRect(),r=e.querySelector('#enquiry').getBoundingClientRect();return Math.abs(l.bottom-r.bottom)<=2}),'aligned form and review');
+   const compact=await page.locator('#enquiry-form').evaluate(e=>{
+     const rects=[...e.querySelectorAll('.field-grid > .field')].map(f=>f.getBoundingClientRect());
+     const cols=getComputedStyle(e.querySelector('.field-grid')).gridTemplateColumns.split(' ').length;
+     const gaps=rects.slice(cols).map((r,i)=>r.top-rects[i].bottom);
+     const panel=e.closest('#enquiry'),s=getComputedStyle(panel),nav=document.querySelector('.em-nav');
+     return {gaps,position:s.position,top:parseFloat(s.top),navBottom:nav.getBoundingClientRect().bottom,panelHeight:panel.getBoundingClientRect().height};
+   });
+   assert.ok(compact.gaps.every(g=>Math.abs(g-14)<1),'actual compact field spacing '+JSON.stringify(compact));
+   assert.equal(compact.position,mobile?'relative':'sticky','desktop section-bounded sticky form');
+   if(!mobile){
+     assert.ok(Math.abs(compact.top-compact.navBottom-20)<1,'sticky offset clears navigation');
+     await page.locator('#why-us').scrollIntoViewIfNeeded();
+     const geometry=await page.locator('#why-us .why-grid').evaluate(g=>{
+       const r=g.getBoundingClientRect(),p=g.querySelector('#enquiry'),h=p.getBoundingClientRect().height,t=parseFloat(getComputedStyle(p).top);
+       return {gridTop:r.top+scrollY,gridHeight:r.height,panelHeight:h,stickyTop:t,travel:r.height-h};
+     });
+     assert.ok(geometry.travel>8,'natural card height leaves useful sticky travel '+JSON.stringify(geometry));
+     const target=geometry.gridTop-geometry.stickyTop+geometry.travel/2;
+     await page.evaluate(y=>window.scrollTo({top:y,behavior:'instant'}),target);
+     await page.waitForFunction(()=>{const p=document.querySelector('#enquiry');return Math.abs(p.getBoundingClientRect().top-parseFloat(getComputedStyle(p).top))<=2});
+     await page.evaluate(y=>window.scrollTo({top:y,behavior:'instant'}),geometry.gridTop+geometry.gridHeight-geometry.stickyTop+30);
+     await page.waitForFunction(()=>{const p=document.querySelector('#enquiry').getBoundingClientRect(),g=document.querySelector('#why-us .why-grid').getBoundingClientRect();return p.bottom<=g.bottom+2&&p.top<parseFloat(getComputedStyle(document.querySelector('#enquiry')).top)});
+   }
    assert.equal(await page.locator('a,button').evaluateAll(els=>els.filter(e=>e.textContent.includes('↗')).length),0,'no legacy diagonal action arrow');
    assert.ok(mobile?formGrid.fields[1].y>formGrid.fields[0].y:Math.abs(formGrid.fields[1].y-formGrid.fields[0].y)<1&&formGrid.fields[1].x>formGrid.fields[0].x,'physical field arrangement '+JSON.stringify(formGrid));
    await page.evaluate(()=>window.scrollTo(0,0));

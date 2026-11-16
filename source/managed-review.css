@@ -92,14 +92,25 @@ html#we-site body #office-checklist .consult-desc{margin-top:0!important}
 html#we-site body #office-checklist .consult-callwrap{margin-top:22px!important}
 html#we-site body #office-checklist .consult-call{gap:8px!important}
 html#we-site body #office-checklist .consult-art{align-self:center}
-html#we-site body #why-us .why-grid{align-items:stretch!important}
-html#we-site body #why-us #enquiry{display:flex;flex-direction:column;align-self:stretch!important;margin:0!important;min-width:0}
-html#we-site body #enquiry-form{flex:1;display:flex;flex-direction:column;min-width:0}
-html#we-site body #enquiry-form > .field-grid{flex:1;align-content:space-between;gap:28px 20px!important}
+/* Keep the enquiry attached to the Why Us section, not artificially
+   stretched to the testimonial's height. */
+html#we-site body #why-us .why-grid{align-items:start!important;overflow:visible!important}
+html#we-site body #why-us #enquiry{
+  display:flex;flex-direction:column;align-self:start!important;position:relative;
+  height:auto!important;min-height:0!important;margin:0!important;min-width:0;
+}
+html#we-site body #enquiry-form{flex:0 0 auto;display:flex;flex-direction:column;min-width:0}
+html#we-site body #enquiry-form > .field-grid{flex:0 0 auto;align-content:start;gap:14px 16px!important}
+@media(min-width:1101px) and (min-height:640px){
+  html#we-site body #why-us #enquiry{
+    position:sticky!important;top:var(--managed-enquiry-sticky-top,104px);
+    scroll-margin-top:var(--managed-enquiry-sticky-top,104px);
+  }
+}
 html#we-site body #enquiry-form > .field-grid > .field{grid-column:auto!important;grid-row:auto!important}
 html#we-site body #enquiry-form .field:not(:has(select))::after{content:none!important;display:none!important}
-html#we-site body #enquiry-form button[type=submit]{margin-top:28px!important}
-html#we-site body #enquiry-form .form-note{margin-top:16px!important}
+html#we-site body #enquiry-form button[type=submit]{margin-top:18px!important}
+html#we-site body #enquiry-form .form-note{margin-top:12px!important}
 @media(min-width:1101px){
   html#we-site body #office-checklist #consult-heading{white-space:nowrap}
 }
@@ -109,8 +120,8 @@ html#we-site body #enquiry-form .form-note{margin-top:16px!important}
 }
 @media(max-width:640px){
   html#we-site body #top.hero .copy{margin-top:var(--managed-hero-top,144px)!important}
-  html#we-site body #enquiry-form > .field-grid{grid-template-columns:1fr!important;gap:18px!important}
-  html#we-site body #enquiry-form button[type=submit]{margin-top:22px!important}
+  html#we-site body #enquiry-form > .field-grid{grid-template-columns:1fr!important;gap:14px!important}
+  html#we-site body #enquiry-form button[type=submit]{margin-top:18px!important}
 }
 @media(prefers-reduced-motion:reduce){html#we-site body .we-action-chevron{transition:none!important}}
 
