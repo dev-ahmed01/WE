@@ -1,0 +1,228 @@
+/* WE Design System: nine card families, shared geometry and surface tokens.
+   This layer deliberately does not alter section grid order, animation measurements,
+   photo aspect ratios, carousel mechanics, or existing selection / form handlers. */
+:root{
+  --we-card-white:#fff;
+  --we-card-line:#E9E7E5;
+  --we-card-ink:#161616;
+  --we-card-radius:24px;
+  --we-card-radius-large:30px;
+  --we-card-radius-inner:20px;
+  --we-card-radius-small:18px;
+  --we-card-padding:24px;
+  --we-card-shadow:0 10px 28px rgba(22,22,22,.065),0 2px 6px rgba(22,22,22,.025);
+  --we-card-shadow-hover:0 17px 36px rgba(22,22,22,.11);
+  --we-card-glass:linear-gradient(145deg,rgba(255,255,255,.90),rgba(255,255,255,.68));
+  --we-card-glass-line:rgba(255,255,255,.86);
+  --we-card-glass-shadow:0 8px 24px rgba(22,22,22,.14),inset 0 1px 0 rgba(255,255,255,.95);
+}
+/* A. Highlight Illustration Explanation: identical white shell and dotted art
+   frame on Home, Workspaces, Managed Offices and One Person Office. */
+html#we-site body :is(#homeHighlights,#weHl,#managedHl,#highlights .we-hl) .we-hl__card{
+  --we-card-family:highlight-illustration;
+  --fg:#161616;--fg2:#161616;--art:#161616;--art-accent:#ED2024;--panel:#f7f1ec;
+  position:relative;display:flex;flex-direction:column;min-width:0;min-height:0;
+  gap:clamp(18px,3vh,26px);padding:12px 12px clamp(24px,3.6vh,32px)!important;
+  border-radius:var(--we-card-radius-large)!important;
+  background:#fff!important;border:1px solid var(--we-card-line)!important;
+  box-shadow:var(--we-card-shadow)!important;overflow:hidden;isolation:isolate;
+}
+html#we-site body :is(#homeHighlights,#weHl,#managedHl,#highlights .we-hl) .we-hl__art{
+  position:relative;display:grid;place-items:center;box-sizing:border-box;
+  height:clamp(150px,22vh,196px);padding:14px 18px;border-radius:var(--we-card-radius-inner)!important;
+  --shape:#fff;--shape-o:.85;color:var(--art);
+  background:radial-gradient(rgba(22,22,22,.055) 1px,transparent 1.35px) 0 0/16px 16px,var(--panel);
+}
+html#we-site body :is(#homeHighlights,#weHl,#managedHl,#highlights .we-hl) .we-hl__txt{padding:0 14px}
+html#we-site body :is(#homeHighlights,#weHl,#managedHl,#highlights .we-hl) .we-hl__txt h3{
+  color:var(--fg)!important;font:600 21px/1.25 var(--we-type-heading)!important;letter-spacing:-.02em!important;margin:0 0 12px!important
+}
+html#we-site body :is(#homeHighlights,#weHl,#managedHl,#highlights .we-hl) .we-hl__txt p{
+  color:var(--fg2)!important;font:400 14px/1.65 var(--we-type-body)!important;letter-spacing:0!important;margin:0!important
+}
+html#we-site body #homeHighlights{max-width:1460px;gap:16px}
+#homeHighlights .we-hl__card::before{
+  content:"";position:absolute;z-index:-1;left:var(--mx,50%);top:var(--my,100%);width:300%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,#ED2024 55%,#d11a1e);transform:translate(-50%,-50%) scale(0);
+  transition:transform .8s cubic-bezier(.65,0,.25,1),left .8s cubic-bezier(.65,0,.25,1),top .8s cubic-bezier(.65,0,.25,1);
+  pointer-events:none;
+}
+#homeHighlights .we-hl__art>svg{width:82%;height:82%;display:block;overflow:visible;shape-rendering:geometricPrecision}
+#homeHighlights .outline{stroke:currentColor;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#homeHighlights .paper{fill:var(--shape);fill-opacity:var(--shape-o)}
+#homeHighlights .fine{stroke:currentColor;stroke-opacity:.68}
+#homeHighlights .accent-fill{fill:var(--art-accent)}
+#homeHighlights .accent-stroke{stroke:var(--art-accent)}
+#homeHighlights .check{stroke:white;fill:none}
+#homeHighlights .we-hl__plus{position:absolute;right:12px;top:12px;width:18px;height:18px;transition:transform .35s ease}
+#homeHighlights .we-hl__plus .pl{width:100%;height:100%;display:block}
+#homeHighlights .we-hl__txt :is(h3,p),#homeHighlights .we-hl__art{transition:color .25s ease .3s,background-color .25s ease .3s}
+@media(hover:hover) and (pointer:fine){
+  html#we-site body :is(#homeHighlights,#weHl,#managedHl,#highlights .we-hl) .we-hl__card:hover{
+    box-shadow:0 24px 44px rgba(237,32,36,.20)!important
+  }
+  #homeHighlights .we-hl__card:hover::before{transform:translate(-50%,-50%) scale(1)}
+  html#we-site body :is(#homeHighlights,#weHl,#managedHl,#highlights .we-hl) .we-hl__card:hover .we-hl__txt :is(h3,p){color:#fff!important}
+  html#we-site body :is(#homeHighlights,#weHl,#managedHl,#highlights .we-hl) .we-hl__card:hover .we-hl__art{
+    color:#fff;--art:#fff;--art-accent:#FFB900;--shape:#fff;--shape-o:.18;
+    background:radial-gradient(rgba(255,255,255,.22) 1px,transparent 1.4px) 0 0/16px 16px,rgba(255,255,255,.14);
+  }
+  #homeHighlights .we-hl__card:hover .we-hl__plus{transform:rotate(90deg)}
+  #homeHighlights .we-hl__card:hover .we-hl__plus path:first-child{stroke:#fff}
+}
+/* B. Detailed Benefit A. Shared restrained white shell; no coloured border bars. */
+html#we-site body :is(.eq-c:not(.eq-s),.benefit-card){
+  --we-card-family:benefit-a;
+  background:var(--we-card-white)!important;border:1px solid var(--we-card-line)!important;
+  border-radius:var(--we-card-radius)!important;box-shadow:var(--we-card-shadow)!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  color:var(--we-card-ink)!important;
+  padding:var(--we-card-padding)!important;
+}
+html#we-site body :is(.eq-c:not(.eq-s),.benefit-card) h3{
+  font:600 21px/1.25 var(--we-type-heading)!important;color:var(--we-card-ink)!important;letter-spacing:-.02em!important;
+}
+html#we-site body :is(.eq-c:not(.eq-s),.benefit-card) p{
+  font:400 14px/1.65 var(--we-type-body)!important;color:var(--we-card-ink)!important;
+}
+/* C. Highlight Point: icon/label, or metric/label, on a clean white card. */
+html#we-site body :is(#weAm .we-am__item,#weAmPop .we-pop__tile,.eq-c.eq-s,.metric,.stat-card){
+  --we-card-family:highlight-point;
+  background:#fff!important;border:1px solid var(--we-card-line)!important;
+  border-radius:var(--we-card-radius-small)!important;
+  box-shadow:var(--we-card-shadow)!important;color:var(--we-card-ink)!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html#we-site body :is(#weAm .we-am__item,#weAmPop .we-pop__tile) .we-am__ic{
+  background:#fff5f4!important;color:#DF2024!important;border:1px solid rgba(223,32,36,.16)!important;border-radius:12px!important
+}
+html#we-site body :is(#weAm .we-am__item,#weAmPop .we-pop__tile) h3{color:#161616!important;font:600 16px/1.35 var(--we-type-body)!important}
+html#we-site body :is(.eq-s>span,.metric>span:not(.star),.stat-card>span:not(.star),.stat-card>p){
+  font:600 16px/1.35 var(--we-type-body)!important;white-space:normal!important;color:#161616!important
+}
+/* D. Process cards. Retain staircase geometry, labels and illustrated sequence. */
+html#we-site body #how-it-works .hs-card{
+  --we-card-family:process;background:#fff!important;
+  border:1px solid var(--we-card-line)!important;border-radius:var(--we-card-radius)!important;
+  box-shadow:var(--we-card-shadow)!important;
+}
+html#we-site body #how-it-works .hs-card h3{font:600 21px/1.25 var(--we-type-heading)!important;color:var(--we-card-ink)!important}
+html#we-site body #how-it-works .hs-card p{font:400 14px/1.65 var(--we-type-body)!important;color:var(--we-card-ink)!important}
+/* E. Detailed Benefit B. Keep the pinned stack, red/yellow reveal faces, and
+   the approved alternating single-office layout. Only unify the resting surfaces. */
+html#we-site body #benefits .bn-card{
+  --we-card-family:benefit-b;border-radius:var(--we-card-radius)!important;
+}
+html#we-site body #benefits .bn-card .bn-front{
+  background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(250,249,248,.94))!important;
+  border:1px solid var(--we-card-line)!important;
+  box-shadow:var(--we-card-shadow)!important;
+}
+html#we-site body #benefits :is(.bn-front,.bn-back,.bn-photo,.bn-row-photo){border-radius:var(--we-card-radius-inner)!important}
+html#we-site body #benefits .bn-row{
+  --we-card-family:benefit-b;
+  border:1px solid var(--we-card-line);border-radius:var(--we-card-radius);
+  background:linear-gradient(145deg,#fff,rgba(250,249,248,.94));
+  padding:16px;box-shadow:var(--we-card-shadow);
+}
+html#we-site body #benefits .bn-row-photo{box-shadow:none!important}
+html#we-site body #benefits :is(.bn-title,.bn-row-heading){font:600 21px/1.25 var(--we-type-heading)!important}
+html#we-site body #benefits :is(.bn-text,.bn-row-desc){font:400 14px/1.65 var(--we-type-body)!important}
+/* F. Accordion: common white card and unambiguous +/- indicator. Keep native
+   disclosure semantics, max-height animations and existing event handling. */
+html#we-site body .faq-item{
+  --we-card-family:accordion;
+  background:#fff!important;border:1px solid var(--we-card-line)!important;
+  border-radius:var(--we-card-radius-small)!important;box-shadow:var(--we-card-shadow)!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html#we-site body .faq-item:is([open],.open,.is-open){
+  background:#fff!important;border-color:rgba(223,32,36,.26)!important;
+  box-shadow:var(--we-card-shadow)!important
+}
+html#we-site body .faq-item :is(summary,.faq-q,.faq-toggle){
+  font:600 16px/1.4 var(--we-type-body)!important;color:#161616!important;letter-spacing:0!important;
+}
+html#we-site body .faq-item :is(.faq-sign,.plus){
+  color:#DF2024!important;background:#fff5f4!important;
+  flex:none;border-radius:50%!important;width:30px!important;height:30px!important;
+  font:500 19px/1 var(--we-type-body)!important;display:grid;place-items:center;
+}
+html#we-site body .faq-item :is(.faq-answer,.faq-a p){
+  font:400 14px/1.65 var(--we-type-body)!important;color:#161616!important;
+}
+/* G. Testimonial cards. Preserve the marquee, review timing and existing content. */
+html#we-site body :is(.tq,.t-card,.testimonial){
+  --we-card-family:testimonial;
+  background:#fff!important;border:1px solid var(--we-card-line)!important;
+  border-radius:var(--we-card-radius)!important;box-shadow:var(--we-card-shadow)!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html#we-site body :is(.tq,.t-card,.testimonial) :is(blockquote,#reviewQuote){
+  font:400 14px/1.65 var(--we-type-body)!important;color:#161616!important;
+}
+html#we-site body :is(.tq,.t-card,.testimonial) :is(.t-author strong,.review-author strong,.tq-p b){
+  font:600 16px/1.35 var(--we-type-body)!important;color:#161616!important;
+}
+html#we-site body .testimonial > strong{font:600 16px/1.35 var(--we-type-body)!important;color:#161616!important}
+html#we-site body :is(.t-author,.review-author,.tq-p) small{
+  display:block;margin-top:4px;font:400 14px/1.5 var(--we-type-body)!important;color:#161616!important
+}
+/* H. Options Card A: photo-only gallery with a compact translucent pill;
+   no change to the underlying gallery/lightbox controls. */
+html#we-site body #weGal .we-tile{
+  --we-card-family:option-a;
+  border-radius:var(--we-card-radius-inner)!important;
+}
+html#we-site body #weGal .we-tile::before{
+  content:"View photo";position:absolute;bottom:10px;right:10px;z-index:2;
+  border-radius:999px;padding:7px 12px;
+  background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.85);
+  backdrop-filter:blur(14px);color:#161616;
+  font:600 13px/1.35 var(--we-type-body);
+  box-shadow:0 4px 12px #0002;pointer-events:none
+}
+/* I. Options Card B: common photo enclosure and frosted content surface.
+   Selected office accents and special-offer dark card stay distinct. */
+html#we-site body :is(.lk,.office-tile,.sol-card,.location-card.choose-location,.we-lc__photo){
+  --we-card-family:option-b;
+  border-radius:var(--we-card-radius)!important;
+  box-shadow:var(--we-card-shadow)!important;
+}
+html#we-site body :is(.lk-g,.office-tile:not(.office-special) .office-glass,#options .sol-card .sol-glass,.location-card.choose-location .location-label,.we-lc__card){
+  border-radius:var(--we-card-radius-inner)!important;
+  background:var(--we-card-glass)!important;border:1px solid var(--we-card-glass-line)!important;
+  backdrop-filter:blur(22px) saturate(140%)!important;-webkit-backdrop-filter:blur(22px) saturate(140%)!important;
+  box-shadow:var(--we-card-glass-shadow)!important;color:#161616!important;
+}
+html#we-site body :is(.lk-g h3,.office-tile:not(.office-special) .office-glass strong,#options .sol-name,.location-card.choose-location .location-label h3){
+  font:600 21px/1.25 var(--we-type-heading)!important;color:#161616!important;
+}
+html#we-site body :is(.lk-a,.sol-desc){font:400 14px/1.65 var(--we-type-body)!important;color:#161616!important}
+html#we-site body :is(.office-tile:not(.office-special) .office-arrow,.location-label .round-arrow){
+  width:44px!important;height:44px!important;flex:0 0 44px;display:grid;place-items:center;
+  border-radius:50%;background:#DF2024!important;color:#fff!important;font-size:20px!important
+}
+html#we-site body #options .sol-card[data-highlight=true]{
+  box-shadow:0 0 0 2px #DF2024,var(--we-card-shadow-hover)!important;
+}
+@media(hover:hover) and (pointer:fine){
+  html#we-site body :is(#weAm .we-am__item,#weAmPop .we-pop__tile,.lk,.office-tile,.sol-card,.location-card.choose-location):hover{
+    box-shadow:var(--we-card-shadow-hover)!important
+  }
+  html#we-site body #options .sol-card[data-highlight=true]:hover{
+    box-shadow:0 0 0 2px #DF2024,var(--we-card-shadow-hover)!important
+  }
+}
+@media(max-width:1100px){
+  html#we-site body :is(#homeHighlights,#weHl,#managedHl,#highlights .we-hl) .we-hl__art{height:190px}
+}
+@media(max-width:640px){
+  :root{--we-card-radius-large:26px;--we-card-radius:22px;--we-card-radius-inner:18px;--we-card-radius-small:16px;--we-card-padding:18px}
+  html#we-site body :is(#homeHighlights,#weHl,#managedHl,#highlights .we-hl) .we-hl__art{height:176px}
+  html#we-site body #benefits .bn-row{padding:12px}
+  html#we-site body #weGal .we-tile::before{padding:5px 8px;bottom:7px;right:7px;font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){
+  #homeHighlights .we-hl__card::before,#homeHighlights .we-hl__plus,#homeHighlights .we-hl__art,#homeHighlights .we-hl__txt :is(h3,p){transition:none!important}
+}

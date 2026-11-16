@@ -549,6 +549,7 @@ def patch_category(b):
 
 from one_person_approved import apply_approved_sections
 from shared_forms import apply_shared_forms
+from shared_cards import apply_shared_cards
 
 def patch_one_person(b):
     b = rep(b, '<a aria-label="Workspace by Emlen home" class="brand" href="#home">', '<a aria-label="Workspace by Emlen home" class="brand" href="/">', label="sol brand")
@@ -609,6 +610,7 @@ def main():
         if page["key"] == "category":
             css += "\n/* Approved sharper illustration cards */\n" + (SRC / "managed-office-highlight-cards.css").read_text(encoding="utf-8")
         css += "\n/* Shared button and pill system */\n" + (SRC / "site-buttons.css").read_text(encoding="utf-8")
+        css += "\n/* Shared card families */\n" + (SRC / "site-cards.css").read_text(encoding="utf-8")
         css_path = asset("css", page["key"], css)
         body = PATCHES[page["key"]](body)
         if page["key"] == "one-person":
@@ -645,6 +647,7 @@ def main():
             body, changed = footer_tag.subn(lambda m: re.sub(r'\bsrc="[^"]+"', lambda _: 'src="' + logo_path + '"', m.group(0)), body, count=1)
             if changed != 1:
                 raise SystemExit("missing footer logo for white footer")
+        body = apply_shared_cards(body, page["key"])
         body = apply_shared_forms(body, page["key"])
         body = extract_scripts(body, page["key"])
         if page["key"] == "home":

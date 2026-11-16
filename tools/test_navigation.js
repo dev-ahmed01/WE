@@ -124,6 +124,45 @@ async function checkButtons(page,route,mobile){
   console.log('BUTTON SYSTEM OK: '+route+' '+(mobile?'mobile':'desktop')+' ('+items.length+' controls)');
 }
 
+
+/* Verify the actual card surfaces and role coverage at both breakpoints.
+   Existing interaction tests remain responsible for navigation and animations. */
+async function checkCardFamilies(page,route,mobile){
+  const data=await page.evaluate(()=>{
+    const families={
+      'highlight-illustration':'.we-hl__card',
+      'benefit-a':'.eq-c:not(.eq-s),.benefit-card',
+      'highlight-point':'#weAm .we-am__item,.eq-c.eq-s,.metric,.stat-card',
+      'process':'#how-it-works .hs-card',
+      'benefit-b':'#benefits .bn-card,#benefits .bn-row',
+      'accordion':'.faq-item',
+      'testimonial':'.tq,.t-card,.testimonial',
+      'option-a':'#weGal .we-tile',
+      'option-b':'.lk,.office-tile,.sol-card,.location-card.choose-location,.we-lc__photo'
+    };
+    return Object.entries(families).flatMap(([family,sel])=>[...document.querySelectorAll(sel)].filter(e=>e.getClientRects().length).map(e=>{
+      const s=getComputedStyle(e);
+      return {family,role:s.getPropertyValue('--we-card-family').trim(),cls:e.className,
+        radius:s.borderRadius,bg:s.backgroundColor,bgImage:s.backgroundImage,shadow:s.boxShadow,
+        photo:!!e.querySelector('img'),art:e.querySelectorAll('.we-hl__art svg').length};
+    }));
+  });
+  assert.equal(data.filter(c=>c.family==='highlight-illustration').length,4,route+': four shared illustration cards');
+  for(const c of data){
+    const label=route+' '+c.family+' '+c.cls;
+    assert.equal(c.role,c.family,label+' shared family');
+    const radii={'highlight-illustration':mobile?'26px':'30px','highlight-point':mobile?'16px':'18px',
+      'accordion':mobile?'16px':'18px','option-a':mobile?'18px':'20px'};
+    assert.equal(c.radius,radii[c.family]||(mobile?'22px':'24px'),label+' shared radius');
+    if(['highlight-illustration','benefit-a','highlight-point','process','accordion','testimonial'].includes(c.family)){
+      assert.equal(c.bg,'rgb(255, 255, 255)',label+' white surface');
+      assert.equal(c.bgImage,'none',label+' no competing fill');
+    }
+    if(c.family==='highlight-illustration')assert.ok(c.art>=1,label+' meaningful vector artwork');
+  }
+  console.log('CARD SYSTEM OK: '+route+' '+(mobile?'mobile':'desktop')+' ('+data.length+' cards)');
+}
+
 /* Actual form controls must share the approved visual system; never submit personal data. */
 async function checkSharedForm(page,route,mobile){
   const form=page.locator('.we-form-main');
@@ -163,6 +202,7 @@ async function checkSharedForm(page,route,mobile){
       await checkTypographyCoverage(desktop,route,false);
       await checkSharedForm(desktop,route,false);
       await checkButtons(desktop,route,false);
+      await checkCardFamilies(desktop,route,false);
       const state = await desktop.evaluate(() => {
         const nav = document.querySelector('.em-nav');
         const box = nav.getBoundingClientRect();
@@ -217,6 +257,7 @@ async function checkSharedForm(page,route,mobile){
       await checkTypographyCoverage(mobile,route,true);
       await checkSharedForm(mobile,route,true);
       await checkButtons(mobile,route,true);
+      await checkCardFamilies(mobile,route,true);
       await toggle.click();
       assert.equal(await toggle.getAttribute('aria-expanded'), 'true', route + ': hamburger opens');
       assert.equal(await mobile.locator('.em-nav__mobile').isVisible(), true, route + ': mobile panel visible');

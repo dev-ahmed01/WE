@@ -1,0 +1,1 @@
+(()=>{const grid=document.querySelector('#homeHighlights');if(!grid)return;[...grid.querySelectorAll('.we-hl__card')].forEach(c=>{const set=e=>{const r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px')};c.addEventListener('pointerenter',set);c.addEventListener('pointerleave',set)});})();
