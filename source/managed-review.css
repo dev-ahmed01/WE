@@ -66,3 +66,50 @@ html#we-site body #enquiry-form > .field-grid > .field{
 }
 html#we-site body #enquiry-form > .field-grid > .field.full{grid-column:1/-1!important}
 html#we-site body #enquiry-form > .field-grid > input[type=hidden]{display:none!important}
+
+/* Final client refinements: exact gap measured against the fixed nav. */
+html#we-site body #top.hero .copy{margin-top:var(--managed-hero-top,159px)!important}
+html#we-site body #top.hero .actions .button:nth-child(2){
+  background:linear-gradient(135deg,rgba(255,255,255,.9),rgba(255,255,255,.7))!important;
+  border-color:rgba(22,22,22,.22)!important;color:#161616!important;
+  transition:border-color .25s ease,color .25s ease,box-shadow .25s ease!important;
+}
+html#we-site body #top.hero .actions .button:nth-child(2):is(:hover,:focus-visible){
+  border-color:#ED2024!important;color:#ED2024!important;
+  background:linear-gradient(135deg,rgba(255,255,255,.9),rgba(255,255,255,.7))!important;
+}
+/* Same right-facing chevron across actions, not form disclosure markers. */
+html#we-site body .we-action-chevron{display:block;width:18px;height:18px;flex:none;stroke:currentColor;transition:transform .22s ease}
+html#we-site body :is(.actions .button,.callback-btn,.consult-call,#speak-form button) :is(.arr,.we-cta-chevron,span:has(> .we-action-chevron)){display:inline-grid;place-items:center;vertical-align:middle;width:18px;height:18px;flex:none;margin-left:4px;color:inherit!important;transform:none!important}
+html#we-site body :is(.actions .button,.callback-btn,.consult-call,.other-pill):is(:hover,:focus-visible) .we-action-chevron{transform:translateX(2px)}
+html#we-site body #other-solutions .other-pill > .pill-arr{border-radius:8px!important;background:#fff!important;color:#ED2024!important;width:30px!important;height:30px!important;flex:0 0 30px}
+html#we-site body #other-solutions .other-pill:is(:hover,:focus-visible) > .pill-arr{background:#fff!important;color:#ED2024!important}
+html#we-site body #other-solutions .pill-arr .we-action-chevron{width:18px;height:18px}
+html#we-site body #office-checklist .consult-card{align-items:center!important;gap:32px!important;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr)!important}
+html#we-site body #office-checklist .consult-copy{align-self:center;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:0}
+html#we-site body #office-checklist .consult-heading-row{width:100%;margin:0 0 22px!important}
+html#we-site body #office-checklist .consult-desc{margin-top:0!important}
+html#we-site body #office-checklist .consult-callwrap{margin-top:22px!important}
+html#we-site body #office-checklist .consult-call{gap:8px!important}
+html#we-site body #office-checklist .consult-art{align-self:center}
+html#we-site body #why-us .why-grid{align-items:stretch!important}
+html#we-site body #why-us #enquiry{display:flex;flex-direction:column;align-self:stretch!important;margin:0!important;min-width:0}
+html#we-site body #enquiry-form{flex:1;display:flex;flex-direction:column;min-width:0}
+html#we-site body #enquiry-form > .field-grid{flex:1;align-content:space-between;gap:28px 20px!important}
+html#we-site body #enquiry-form > .field-grid > .field{grid-column:auto!important;grid-row:auto!important}
+html#we-site body #enquiry-form .field:not(:has(select))::after{content:none!important;display:none!important}
+html#we-site body #enquiry-form button[type=submit]{margin-top:28px!important}
+html#we-site body #enquiry-form .form-note{margin-top:16px!important}
+@media(min-width:1101px){
+  html#we-site body #office-checklist #consult-heading{white-space:nowrap}
+}
+@media(max-width:900px){
+  html#we-site body #office-checklist .consult-card{grid-template-columns:1fr!important;gap:28px!important}
+  html#we-site body #enquiry-form > .field-grid{align-content:start}
+}
+@media(max-width:640px){
+  html#we-site body #top.hero .copy{margin-top:var(--managed-hero-top,144px)!important}
+  html#we-site body #enquiry-form > .field-grid{grid-template-columns:1fr!important;gap:18px!important}
+  html#we-site body #enquiry-form button[type=submit]{margin-top:22px!important}
+}
+@media(prefers-reduced-motion:reduce){html#we-site body .we-action-chevron{transition:none!important}}

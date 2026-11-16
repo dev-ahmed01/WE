@@ -48,8 +48,8 @@ fs.mkdirSync(SHOTS, {recursive:true});
       'no old full-width ceiling spanning the CTAs');
    const call = page.locator('.hero .actions .button').nth(1);
    assert.equal(await call.getAttribute('href'),'tel:+919814953954','secondary Call now retains dial link');
-   assert.equal(await call.evaluate(el=>getComputedStyle(el).color),'rgb(237, 32, 36)',
-      'secondary CTA red outline');
+   assert.equal(await call.evaluate(el=>getComputedStyle(el).color),'rgb(22, 22, 22)',
+      'secondary CTA neutral before hover');
    assert.ok((await call.evaluate(el=>getComputedStyle(el).backgroundImage)).includes('gradient'),
       'secondary CTA uses subtle frosted glass');
    if(!mobile){
@@ -59,13 +59,14 @@ fs.mkdirSync(SHOTS, {recursive:true});
      assert.ok(artL.x+artL.width<=first.x+12,'left illustration clears the main CTA');
      assert.ok(artR.x>=second.x+second.width-12,'right illustration clears secondary CTA');
    }
+   await page.waitForFunction(()=>{const n=document.querySelector('.em-nav'),e=document.querySelector('#top .eyebrow');return Math.abs(e.getBoundingClientRect().top+scrollY-n.getBoundingClientRect().bottom-80)<=1});
    const geometry=await page.evaluate(()=>{
       const rect=s=>document.querySelector(s).getBoundingClientRect();
       const nav=rect('.em-nav'),eyebrow=rect('.hero .eyebrow'),cards=rect('#managedHl');
       const bottom=Math.max(...Array.from(document.querySelectorAll('.hero-art svg')).map(e=>e.getBoundingClientRect().bottom));
       return {gap:eyebrow.top-nav.bottom,artGap:cards.top-bottom};
    });
-   assert.ok(geometry.gap>=48&&geometry.gap<=90,'hero navigation spacing '+JSON.stringify(geometry));
+   assert.ok(Math.abs(geometry.gap-80)<=1,'hero navigation spacing '+JSON.stringify(geometry));
    assert.ok(geometry.artGap>=20,'art stays above highlight cards');
    if(!mobile){
      const buttons=page.locator('.hero .actions .button');
@@ -73,8 +74,8 @@ fs.mkdirSync(SHOTS, {recursive:true});
      assert.ok(await buttons.first().evaluate(e=>/^0(?:px|%) 100%$/.test(getComputedStyle(e).backgroundSize)),'primary red slides away');
      assert.equal(await buttons.first().evaluate(e=>getComputedStyle(e).color),'rgb(237, 32, 36)');
      await buttons.nth(1).hover();
-     assert.equal(await buttons.nth(1).evaluate(e=>getComputedStyle(e).backgroundSize),'100% 100%','secondary fills red');
-     assert.equal(await buttons.nth(1).evaluate(e=>getComputedStyle(e).color),'rgb(255, 255, 255)');
+     assert.equal(await buttons.nth(1).evaluate(e=>getComputedStyle(e).borderTopColor),'rgb(237, 32, 36)','secondary outline on hover');
+     assert.equal(await buttons.nth(1).evaluate(e=>getComputedStyle(e).color),'rgb(237, 32, 36)');
      await page.mouse.move(0,0);
    }
    const optionStyles=await page.locator('#offices .office-glass').evaluateAll(items=>items.map(e=>{
@@ -87,7 +88,9 @@ fs.mkdirSync(SHOTS, {recursive:true});
    assert.equal(await page.locator('#other-title .other-highlight').evaluate(e=>getComputedStyle(e,'::after').backgroundColor),'rgb(255, 185, 0)');
    if(!mobile)assert.ok(await page.locator('#other-title').evaluate(e=>e.getBoundingClientRect().height<=parseFloat(getComputedStyle(e).lineHeight)+7),'single-line other services');
    if(!mobile)assert.ok(await page.locator('#consult-heading').evaluate(e=>e.getBoundingClientRect().height<=parseFloat(getComputedStyle(e).lineHeight)+1),'single-line consultation');
-   assert.equal(await page.locator('.consult-explore').getAttribute('href'),'/workspaces/');
+   assert.equal(await page.locator('.consult-explore').count(),0,'single consultation CTA');
+   assert.equal((await page.locator('#open-speak').innerText()).trim(),'Book a consultation');
+   assert.equal(await page.locator('#open-speak svg.we-action-chevron').count(),1);
    await page.locator('#open-speak').click();
    assert.ok(await page.locator('#speak-dialog').isVisible(),'consultation dialog opens');
    await page.locator('#speak-name').fill('Browser test');
@@ -105,8 +108,13 @@ fs.mkdirSync(SHOTS, {recursive:true});
      return {cols:s.gridTemplateColumns.split(' ').length,gap:s.rowGap,tracks:s.gridTemplateColumns,fields,hidden:getComputedStyle(e.querySelector('input[type=hidden]')).display};
    });
    assert.equal(formGrid.cols,mobile?1:2,'exact enquiry tracks '+JSON.stringify(formGrid));
-   assert.equal(formGrid.gap,mobile?'14px':'20px');
+   assert.equal(formGrid.gap,mobile?'18px':'28px');
    assert.equal(formGrid.hidden,'none');
+   assert.deepEqual(formGrid.fields.map(f=>f.id),['fullName','lastName','phone','email','team','interest']);
+   assert.equal(await page.locator('#lastName').getAttribute('required'),null);
+   assert.equal(await page.locator('#why-us .metric .star').count(),0,'rating star removed');
+   if(!mobile)assert.ok(await page.locator('#why-us').evaluate(e=>{const l=e.querySelector('.why-copy').getBoundingClientRect(),r=e.querySelector('#enquiry').getBoundingClientRect();return Math.abs(l.bottom-r.bottom)<=2}),'aligned form and review');
+   assert.equal(await page.locator('a,button').evaluateAll(els=>els.filter(e=>e.textContent.includes('↗')).length),0,'no legacy diagonal action arrow');
    assert.ok(mobile?formGrid.fields[1].y>formGrid.fields[0].y:Math.abs(formGrid.fields[1].y-formGrid.fields[0].y)<1&&formGrid.fields[1].x>formGrid.fields[0].x,'physical field arrangement '+JSON.stringify(formGrid));
    await page.evaluate(()=>window.scrollTo(0,0));
    const allCards=page.locator('#managedHl .we-hl__card');
@@ -170,7 +178,7 @@ fs.mkdirSync(SHOTS, {recursive:true});
      assert.ok(style.blur.includes('blur(22px)'),'original frosted blur');
      assert.ok(style.highlight.includes('linear-gradient'),'static glass reflection');
      assert.equal(style.color,'rgb(255, 255, 255)','white readable label');
-     assert.equal(style.icon,'rgb(173, 20, 25)','visible red arrow');
+     assert.equal(style.icon,'rgb(237, 32, 36)','visible red arrow');
      assert.equal(style.iconBg,'rgb(255, 255, 255)','white icon surface');
      assert.equal(style.radius,'999px','shared pill geometry');
      assert.ok(style.labelFit&&style.inside,'label and arrow fit without collision');
@@ -184,7 +192,7 @@ fs.mkdirSync(SHOTS, {recursive:true});
      await page.emulateMedia({reducedMotion:'no-preference'});
      assert.equal(await pills.first().evaluate(el=>getComputedStyle(el,'::after').animationName),'we-service-pill-shine','hover shine restored');
      await page.emulateMedia({reducedMotion:'reduce'});
-     assert.equal(await pills.first().locator('.pill-arr').evaluate(el=>getComputedStyle(el).color),'rgb(173, 20, 25)','arrow stays visible on hover');
+     assert.equal(await pills.first().locator('.pill-arr').evaluate(el=>getComputedStyle(el).color),'rgb(237, 32, 36)','arrow stays visible on hover');
      await page.mouse.move(0,0);
    }
    await page.locator('#other-solutions').screenshot({path:path.join(SHOTS,'managed-office-'+viewport.width+'-other-solutions.png'),animations:'disabled'});
