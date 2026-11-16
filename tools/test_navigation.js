@@ -176,7 +176,7 @@ async function checkCardFamilies(page,route,mobile){
 
 
 async function checkSectionPanels(page,route,mobile){
-  const items=await page.evaluate(()=>Array.from(document.querySelectorAll('#find-fit .qb,.ap .dp,#consultation .lm-banner,#other-solutions,.cz-panel,.we-gal__shell,.we-lc__mapcard,.we-form-panel')).map(el=>{
+  const items=await page.evaluate(()=>Array.from(document.querySelectorAll('#find-fit .qb,.ap .dp,#other-solutions,.cz-panel,.we-gal__shell,.we-lc__mapcard,.we-form-panel')).map(el=>{
     const s=getComputedStyle(el);return {cls:el.className,role:s.getPropertyValue('--we-section-panel').trim(),radius:s.borderRadius,bg:s.backgroundImage};
   }));
   for(const item of items){
@@ -211,6 +211,29 @@ async function checkFaqIndicators(page,route){
   await button.click();
   assert.equal(await expanded(),false,route+': FAQ collapsed');
   assert.equal((await state()).symbol,'"+"',route+': plus restored');
+}
+
+
+async function checkFinalConsistency(page,route,mobile){
+  const state=await page.evaluate(()=>{
+    const footer=document.querySelector('footer.we-universal-footer');
+    const marker=[...document.querySelectorAll('.we-hl__art')].map(e=>({width:getComputedStyle(e,'::after').width,bg:getComputedStyle(e,'::after').backgroundImage,stroke:getComputedStyle(e.querySelector('svg[stroke-width],svg [stroke-width]')).strokeWidth}));
+    const sections=[...document.querySelectorAll('body > section,body > main > section')].filter(e=>!e.matches('.hero,.hero-section,.we-hero,#how-it-works,.benefits-section')).map(e=>({id:e.id||e.className,top:getComputedStyle(e).paddingTop,bottom:getComputedStyle(e).paddingBottom}));
+    const faq=[...document.querySelectorAll('.faq-item summary,.faq-item button.faq-q,.faq-item button.faq-toggle')].map(e=>getComputedStyle(e).padding);
+    return {footer:!!footer,footerLinks:[...footer.querySelectorAll('nav a')].map(e=>e.getAttribute('href')),marker,sections,faq,scrollWidth:document.documentElement.scrollWidth,width:innerWidth};
+  });
+  assert.ok(state.footer,route+': common footer');
+  assert.deepEqual(state.footerLinks,['/','/workspaces/','/managed-office/south-bangalore/','/managed-office/one-person-office/'],route+': common footer links');
+  assert.equal(state.marker.length,4,route+': four matching markers');
+  for(const m of state.marker){assert.equal(m.width,'20px');assert.ok(m.bg.includes('linear-gradient'));assert.equal(m.stroke,'2.5px');}
+  for(const s of state.sections){assert.equal(s.top,mobile?'44px':'60px',route+': spacing '+s.id);assert.equal(s.bottom,s.top,route+': balanced spacing '+s.id);}
+  for(const f of state.faq)assert.equal(f,mobile?'16px 18px':'20px 24px',route+': common FAQ padding');
+  assert.ok(state.scrollWidth<=state.width+2,route+': no horizontal overflow');
+  if(route.includes('/managed-office/')){
+    const panel=page.locator('#office-checklist .consult-card,#consultation .lm-banner');
+    const v=await panel.evaluate(e=>({bg:getComputedStyle(e).backgroundImage,border:getComputedStyle(e).borderTopWidth,shadow:getComputedStyle(e).boxShadow,blur:getComputedStyle(e).backdropFilter}));
+    assert.deepEqual(v,{bg:'none',border:'0px',shadow:'none',blur:'none'},route+': common flat consultation');
+  }
 }
 
 /* Actual form controls must share the approved visual system; never submit personal data. */
@@ -255,6 +278,7 @@ async function checkSharedForm(page,route,mobile){
       await checkCardFamilies(desktop,route,false);
       await checkSectionPanels(desktop,route,false);
       await checkFaqIndicators(desktop,route);
+      await checkFinalConsistency(desktop,route,false);
       const state = await desktop.evaluate(() => {
         const nav = document.querySelector('.em-nav');
         const box = nav.getBoundingClientRect();
@@ -312,6 +336,7 @@ async function checkSharedForm(page,route,mobile){
       await checkCardFamilies(mobile,route,true);
       await checkSectionPanels(mobile,route,true);
       await checkFaqIndicators(mobile,route);
+      await checkFinalConsistency(mobile,route,true);
       await toggle.click();
       assert.equal(await toggle.getAttribute('aria-expanded'), 'true', route + ': hamburger opens');
       assert.equal(await mobile.locator('.em-nav__mobile').isVisible(), true, route + ': mobile panel visible');

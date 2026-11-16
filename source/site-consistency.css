@@ -1,0 +1,161 @@
+/* Final consistency pass: shared rhythm, footer, illustration markers,
+   FAQ spacing, consultation composition and a single glass material scale. */
+:root{
+  --we-section-space:60px;
+  --we-section-space-mobile:44px;
+  --we-faq-pad-x:24px;
+  --we-faq-pad-y:20px;
+  --we-faq-gap:12px;
+  --we-glass-blur:22px;
+  --we-glass-strong-blur:26px;
+  --we-glass-saturation:125%;
+  --we-glass-surface:linear-gradient(145deg,rgba(255,255,255,.93),rgba(255,255,255,.68));
+  --we-glass-edge:rgba(255,255,255,.94);
+  --we-glass-shadow:0 18px 42px rgba(22,22,22,.075),inset 0 1px 0 rgba(255,255,255,.95);
+  --we-glass-overlay-shadow:0 8px 24px rgba(22,22,22,.14),inset 0 1px 0 rgba(255,255,255,.95);
+}
+/* Keep first-fold hero geometry and pinned scene internals unchanged. */
+html#we-site body section:is(.feat,.lc,.tm,#find-fit,section.ap#app,section.eq#enquire,
+  #photos,#highlights,#amenities,#solutions,#locations,#testimonials,#enquiry,
+  #offices,.other-wrap,#office-checklist,#values,#options,#customise,#consultation,#why-us,#faq,#faqs){
+  padding-block:var(--we-section-space)!important;
+}
+html#we-site body section#benefits:not(.benefits-section){padding-block:var(--we-section-space)!important}
+html#we-site body #benefits.benefits-section:not(.bn-live) .bn-inner{padding-block:var(--we-section-space)!important}
+html#we-site body #how-it-works .hs-inner{padding-block:var(--we-section-space)!important}
+/* Universal footer: home-style brand, navigation, contact; same links across
+   pages with a route-local enquiry destination. No legacy footer inheritance. */
+html#we-site body footer.we-universal-footer{
+  display:block!important;width:100%;background:#fff!important;color:#161616!important;
+  border-top:1px solid #e6e6e6!important;padding:48px 0 24px!important;margin:0!important;
+}
+html#we-site body .we-footer-inner{width:min(1324px,calc(100% - 96px));margin:0 auto}
+html#we-site body .we-footer-grid{
+  display:grid;grid-template-columns:minmax(0,1.5fr) repeat(3,minmax(0,1fr));
+  gap:32px;align-items:start
+}
+html#we-site body .we-footer-brand img{display:block;width:min(100%,270px);height:auto;filter:none!important}
+html#we-site body .we-footer-brand p{margin:16px 0 0;max-width:32ch;font:400 14px/1.65 var(--we-type-body)!important;color:#595959!important}
+html#we-site body .we-universal-footer h4{margin:0 0 16px;font:600 16px/1.35 var(--we-type-body)!important;letter-spacing:0!important;text-transform:none;color:#161616!important}
+html#we-site body .we-universal-footer ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+html#we-site body .we-universal-footer a{color:#161616!important;text-decoration:none;font:400 13px/1.5 var(--we-type-body)!important}
+html#we-site body .we-universal-footer a:is(:hover,:focus-visible){color:#DF2024!important}
+html#we-site body .we-footer-bottom{border-top:1px solid #e6e6e6;margin-top:32px;padding-top:20px}
+html#we-site body .we-footer-bottom small{font:400 13px/1.5 var(--we-type-body)!important;color:#595959!important}
+/* Same two-tone plus marker on every highlight illustration, without a new
+   focus target. Use pseudo-element so existing SVG accessibility is preserved. */
+html#we-site body .we-hl__art .we-hl__plus{display:none!important}
+html#we-site body .we-hl__art::after{
+  content:"";display:block;position:absolute;top:13px;right:13px;width:20px;height:20px;
+  border-radius:0;pointer-events:none;z-index:2;
+  background:linear-gradient(#161616,#161616) center/18px 2.8px no-repeat,
+    linear-gradient(#DF2024,#DF2024) center/2.8px 18px no-repeat;
+  transform:rotate(0deg);transition:transform .35s ease,background .25s ease .3s;
+}
+html#we-site body .we-hl__art>svg[stroke-width="2"],
+html#we-site body .we-hl__art>svg [stroke-width="1.9"],
+html#we-site body .we-hl__art>svg [stroke-width="1.95"],
+html#we-site body .we-hl__art>svg [stroke-width="2"],
+html#we-site body .we-hl__art>svg [stroke-width="2.15"]{stroke-width:2.5!important}
+html#we-site body .we-hl__art>svg [stroke-width="1.35"],
+html#we-site body .we-hl__art>svg [stroke-width="1.4"]{stroke-width:1.65!important}
+html#we-site body .we-hl__art>svg [stroke-width="2.4"],
+html#we-site body .we-hl__art>svg [stroke-width="2.45"],
+html#we-site body .we-hl__art>svg [stroke-width="2.5"]{stroke-width:2.8!important}
+@media(hover:hover) and (pointer:fine){
+  html#we-site body .we-hl__card:hover .we-hl__art::after{
+    transform:rotate(90deg);
+    background:linear-gradient(#fff,#fff) center/18px 2.8px no-repeat,
+      linear-gradient(#FFB900,#FFB900) center/2.8px 18px no-repeat;
+  }
+}
+/* All three accordion implementations share geometry and typography;
+   the previously released real +/- indicator and ARIA states remain intact. */
+html#we-site body .faq-list{gap:var(--we-faq-gap)!important}
+html#we-site body .faq-item :is(summary,button.faq-q,button.faq-toggle){
+  box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;
+  min-height:70px!important;padding:var(--we-faq-pad-y) var(--we-faq-pad-x)!important;
+  gap:16px!important;font:600 16px/1.4 var(--we-type-body)!important;text-align:left;
+}
+html#we-site body .faq-item :is(.faq-q,button.faq-toggle)>span:first-child{font:inherit!important;letter-spacing:0!important}
+html#we-site body .faq-item .faq-answer{padding:0 var(--we-faq-pad-x) var(--we-faq-pad-y)!important;max-width:none!important}
+html#we-site body .faq-item .faq-a p{margin:0!important;padding:0 var(--we-faq-pad-x) var(--we-faq-pad-y)!important}
+html#we-site body .faq-item .faq-a{padding:0!important}
+html#we-site body .faq-item :is(.faq-answer,.faq-a p){font:400 14px/1.65 var(--we-type-body)!important;color:#161616!important}
+/* Approved flat consultation composition: one common layout, no detached
+   enclosing surface. Both original ticket constructions and content remain. */
+html#we-site body :is(#office-checklist .consult-card,#consultation .lm-banner){
+  display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,.95fr)!important;
+  align-items:center;gap:44px!important;padding:0!important;overflow:visible!important;
+  background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html#we-site body :is(#office-checklist>.frame,#consultation>.container){width:min(1324px,calc(100% - 96px))!important;margin-inline:auto}
+html#we-site body :is(.consult-copy,.lm-copy) h2{font:700 var(--we-type-section)/1.16 var(--we-type-heading)!important;letter-spacing:-.025em!important;margin:12px 0 16px!important;max-width:14em}
+html#we-site body :is(.consult-kicker,.lm-eyebrow){font:600 16px/1.35 var(--we-type-body)!important;color:#DF2024!important;margin:0!important;letter-spacing:0!important}
+html#we-site body :is(.consult-desc,.lm-note){font:400 14px/1.65 var(--we-type-body)!important;margin:0 0 20px!important;color:#161616!important}
+html#we-site body :is(.consult-points,.lm-points){display:flex!important;flex-wrap:wrap;gap:12px 20px!important;margin:0 0 24px!important;padding:0!important;list-style:none}
+html#we-site body :is(.consult-points,.lm-points) li{font:400 16px/1.5 var(--we-type-body)!important;color:#161616!important}
+html#we-site body :is(#office-checklist .consult-art,#consultation .lm-offer){
+  width:min(100%,510px)!important;max-width:510px!important;justify-self:center;margin:10px auto!important;
+}
+html#we-site body #office-checklist .consult-art{height:280px!important}
+html#we-site body #office-checklist .ticket{
+  inset:0!important;transform:rotate(-1.6deg);padding:28px 28px 0!important;
+  border-radius:26px!important;background:linear-gradient(150deg,#ffd04d,#ffb900 55%,#f5a800)!important;
+  --perf-y:calc(100% - 70px);--ticket-notch:14px;
+}
+html#we-site body #office-checklist .ticket-back{inset:0!important;border-radius:26px!important;transform:rotate(4deg) translate(8px,8px)!important;background:linear-gradient(150deg,#ed2024,#a50f15)!important}
+html#we-site body #office-checklist .ticket p,
+html#we-site body #consultation .lm-offer-intro{font:600 16px/1.35 var(--we-type-body)!important;color:#161616!important;margin:0!important}
+html#we-site body #office-checklist .ticket b,
+html#we-site body #consultation .lm-offer-big{font:800 clamp(44px,5vw,72px)/1 var(--we-type-heading)!important;letter-spacing:-.06em!important;color:#161616!important;white-space:nowrap}
+html#we-site body #office-checklist .ticket b{margin:auto 0!important}
+html#we-site body #office-checklist .ticket-perf{margin:0 -28px!important;border-top:2px dashed rgba(22,22,22,.34)!important}
+html#we-site body #office-checklist .ticket small{font:600 16px/1.35 var(--we-type-body)!important;display:flex;align-items:center;min-height:68px;margin:0!important}
+html#we-site body #consultation .lm-ticket{--stub:70px;min-height:280px;border-radius:26px!important}
+html#we-site body #consultation .lm-ticket-top{flex:1;justify-content:space-between;padding:28px!important}
+html#we-site body #consultation .lm-ticket-stub{min-height:70px;padding:0 28px!important}
+html#we-site body #consultation .lm-offer-after{font:600 16px/1.35 var(--we-type-body)!important;color:#161616!important}
+html#we-site body #office-checklist .ticket::after{
+  content:"";position:absolute;pointer-events:none;top:-30%;left:-45%;width:50%;height:160%;
+  transform:rotate(18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+  animation:we-consult-sheen 6s ease-in-out 1.8s infinite;
+}
+@keyframes we-consult-sheen{0%,56%{left:-55%;opacity:0}62%{opacity:1}82%,100%{left:130%;opacity:0}}
+/* Shared glass material; strong form and navigation glass retain 26px,
+   overlays and decorative glass use 22px. Brand pills retain their own tint. */
+html#we-site body :is(.cz-panel,.we-gal__shell,.we-lc__mapcard,#find-fit .qb,.ap .dp){
+  background:var(--we-glass-surface)!important;border-color:var(--we-glass-edge)!important;
+  box-shadow:var(--we-glass-shadow)!important;
+  backdrop-filter:blur(var(--we-glass-blur)) saturate(var(--we-glass-saturation))!important;
+  -webkit-backdrop-filter:blur(var(--we-glass-blur)) saturate(var(--we-glass-saturation))!important;
+}
+html#we-site body :is(.lk-g,.office-tile:not(.office-special) .office-glass,#options .sol-card .sol-glass,.location-label,.we-lc__card,.hero-panel){
+  backdrop-filter:blur(var(--we-glass-blur)) saturate(var(--we-glass-saturation))!important;
+  -webkit-backdrop-filter:blur(var(--we-glass-blur)) saturate(var(--we-glass-saturation))!important;
+  border-color:var(--we-glass-edge)!important;box-shadow:var(--we-glass-overlay-shadow)!important
+}
+html#we-site body :is(.we-form-panel,.em-nav){
+  backdrop-filter:blur(var(--we-glass-strong-blur)) saturate(var(--we-glass-saturation))!important;
+  -webkit-backdrop-filter:blur(var(--we-glass-strong-blur)) saturate(var(--we-glass-saturation))!important;
+}
+@media(max-width:900px){
+  html#we-site body .we-footer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  html#we-site body :is(#office-checklist .consult-card,#consultation .lm-banner){grid-template-columns:1fr!important;gap:28px!important}
+}
+@media(max-width:640px){
+  :root{--we-section-space:var(--we-section-space-mobile);--we-faq-pad-x:18px;--we-faq-pad-y:16px;--we-faq-gap:10px}
+  html#we-site body .we-footer-inner{width:calc(100% - 36px)}
+  html#we-site body .we-footer-grid{gap:24px 18px}
+  html#we-site body .we-footer-brand{grid-column:1/-1}
+  html#we-site body footer.we-universal-footer{padding:32px 0 20px!important}
+  html#we-site body .faq-item :is(summary,button.faq-q,button.faq-toggle){min-height:62px!important;gap:12px!important}
+  html#we-site body :is(#office-checklist>.frame,#consultation>.container){width:calc(100% - 36px)!important}
+  html#we-site body #office-checklist .consult-art{height:238px!important}
+  html#we-site body #consultation .lm-ticket{min-height:238px}
+}
+@media(prefers-reduced-motion:reduce){
+  html#we-site body .we-hl__art::after{transition:none!important}
+  html#we-site body #office-checklist .ticket::after{animation:none!important;display:none!important}
+}
