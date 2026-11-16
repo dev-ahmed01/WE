@@ -74,6 +74,7 @@ fs.mkdirSync(SHOTS, {recursive:true});
      assert.ok(await buttons.first().evaluate(e=>/^0(?:px|%) 100%$/.test(getComputedStyle(e).backgroundSize)),'primary red slides away');
      assert.equal(await buttons.first().evaluate(e=>getComputedStyle(e).color),'rgb(237, 32, 36)');
      await buttons.nth(1).hover();
+     await page.waitForFunction(()=>getComputedStyle(document.querySelector('#top.hero .actions .button:nth-child(2)')).borderTopColor==='rgb(237, 32, 36)');
      assert.equal(await buttons.nth(1).evaluate(e=>getComputedStyle(e).borderTopColor),'rgb(237, 32, 36)','secondary outline on hover');
      assert.equal(await buttons.nth(1).evaluate(e=>getComputedStyle(e).color),'rgb(237, 32, 36)');
      await page.mouse.move(0,0);

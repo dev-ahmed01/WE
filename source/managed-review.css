@@ -113,3 +113,6 @@ html#we-site body #enquiry-form .form-note{margin-top:16px!important}
   html#we-site body #enquiry-form button[type=submit]{margin-top:22px!important}
 }
 @media(prefers-reduced-motion:reduce){html#we-site body .we-action-chevron{transition:none!important}}
+
+/* Respect reduced motion on the secondary action as well as the primary. */
+@media(prefers-reduced-motion:reduce){html#we-site body #top.hero .actions .button:nth-child(2){transition:none!important}}
