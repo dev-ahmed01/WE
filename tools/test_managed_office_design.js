@@ -17,8 +17,8 @@ fs.mkdirSync(SHOTS, {recursive:true});
    const jsErrors=[];
    page.on('pageerror',e=>jsErrors.push(e.message));
    await page.goto(BASE + '/managed-office/south-bangalore/',{waitUntil:'domcontentloaded',timeout:45000});
-   await page.locator('.hero .cards .card').first().waitFor();
-   assert.equal(await page.locator('.hero .cards .card').count(),4,'original four feature cards retained');
+   await page.locator('#managedHl .we-hl__card').first().waitFor();
+   assert.equal(await page.locator('#managedHl .we-hl__card').count(),4,'original four feature cards retained');
    assert.equal(await page.locator('.hero .copy h1').count(),1,'original centred heading retained');
    assert.equal(await page.locator('.hero .actions a.button').count(),2,'both CTAs retained');
    assert.equal(await page.locator('.hero .copy').evaluate(el=>getComputedStyle(el).textAlign),'center','heading stays centred');
@@ -59,40 +59,29 @@ fs.mkdirSync(SHOTS, {recursive:true});
      assert.ok(artL.x+artL.width<=first.x+12,'left illustration clears the main CTA');
      assert.ok(artR.x>=second.x+second.width-12,'right illustration clears secondary CTA');
    }
-   if(viewport.width===1535){
-     const firstTitle=await page.locator('.hero .cards .card-title').first().boundingBox();
-     const firstCard=await page.locator('.hero .cards .card').first().boundingBox();
-     const artBox=await page.locator('.hero .hero-art').boundingBox();
-     assert.ok(firstTitle.y+firstTitle.height < viewport.height-40,
-        'yellow feature-card headings have clear breathing room above the desktop fold');
-     assert.ok(firstCard.y > viewport.height*0.68,
-        'only the feature card header is introduced near first fold');
-     assert.ok(artBox.y < firstCard.y,
-        'illustrations remain above feature cards');
-     console.log('HERO FOLD GEOMETRY',{
-       viewport:viewport.height,
-       artworkTop:Math.round(artBox.y),
-       cardTop:Math.round(firstCard.y),
-       headingBottom:Math.round(firstTitle.y+firstTitle.height)
-     });
+   const allCards=page.locator('#managedHl .we-hl__card');
+   const titles=await allCards.locator('h3').allTextContents();
+   assert.deepEqual(titles,['Offices in prime locations','Multiple pricing plans','Flexible commitments','Move-in immediately']);
+   for(const card of await allCards.all()){
+     assert.equal(await card.locator('.we-hl__art svg').count(),1,'each card has one approved illustration');
+     assert.equal(await card.locator('.we-hl__art svg .outline').first().getAttribute('stroke-width'),'2.15','sharper illustration stroke');
+     assert.equal(await card.locator('.ic').count(),0,'old plus marker replaced');
+     const v=await card.evaluate(el=>{const h=el.querySelector('h3'),p=el.querySelector('p'),a=el.querySelector('.we-hl__art');return {heading:getComputedStyle(h).fontSize,weight:getComputedStyle(h).fontWeight,body:getComputedStyle(p).fontSize,panel:getComputedStyle(a).backgroundColor,svg:getComputedStyle(a.querySelector('svg')).shapeRendering,artTop:a.getBoundingClientRect().top,titleTop:h.getBoundingClientRect().top};});
+     assert.deepEqual([v.heading,v.weight,v.body],['21px','600','14px'],'approved typography');
+     assert.equal(v.panel,'rgb(247, 241, 236)','neutral illustration panel');
+     assert.equal(v.svg,'geometricPrecision','crisp SVG');
+     assert.ok(v.artTop<v.titleTop,'illustration above title');
    }
-   for(const card of await page.locator('.hero .cards .card').all()) {
-      assert.equal(await card.locator('p').evaluate(el=>getComputedStyle(el).display),'block','description visible');
-      const border=await card.locator('p').evaluate(el=>getComputedStyle(el).borderTopWidth);
-      assert.notEqual(border,'0px','visible dividing rule');
-      assert.equal(await card.locator('.ic').count(),1,'plus icon retained');
-      assert.equal(await card.locator('.ic').evaluate(el=>getComputedStyle(el).position),
-        'absolute','red/black plus mark remains in the top-right');
-      assert.ok((await card.evaluate(el=>getComputedStyle(el).backgroundImage)).includes('gradient'),'yellow gradient retained');
-   }
+   const columns=await page.locator('#managedHl').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length);
+   assert.equal(columns,mobile?1:4,'responsive card grid');
    if(!mobile){
-     const firstCard=page.locator('.hero .cards .card').first();
+     const firstCard=allCards.first();
      await firstCard.scrollIntoViewIfNeeded();
      await firstCard.hover();
-     assert.ok((await firstCard.evaluate(el=>el.style.getPropertyValue('--spot-x'))).endsWith('%'),
-       'yellow card spotlight tracks the pointer');
-     assert.equal(await firstCard.evaluate(el=>getComputedStyle(el,'::after').opacity),'1',
-       'yellow card hover reveal is enabled');
+     assert.ok((await firstCard.evaluate(el=>el.style.getPropertyValue('--mx'))).endsWith('px'),'liquid fill tracks cursor entry');
+     assert.equal(await firstCard.locator('h3').evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)','red-fill hover text is white');
+     assert.notEqual(await firstCard.evaluate(el=>getComputedStyle(el,'::before').transform),'matrix(0, 0, 0, 0, 0, 0)','hover expands red liquid');
+     await page.mouse.move(0,0);
    }
    await page.screenshot({path:path.join(SHOTS,'managed-office-'+viewport.width+'-hero.png'),animations:'disabled'});
    const consultation=page.locator('#office-checklist.consult-section');

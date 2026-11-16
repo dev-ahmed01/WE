@@ -606,6 +606,8 @@ def main():
         css += "\n/* Unified white page background */\n" + (SRC / "site-background.css").read_text(encoding="utf-8")
         css += "\n/* WE Design System typography */\n" + (SRC / "site-typography.css").read_text(encoding="utf-8")
         css += "\n/* Shared enquiry forms */\n" + (SRC / "site-forms.css").read_text(encoding="utf-8")
+        if page["key"] == "category":
+            css += "\n/* Approved sharper illustration cards */\n" + (SRC / "managed-office-highlight-cards.css").read_text(encoding="utf-8")
         css_path = asset("css", page["key"], css)
         body = PATCHES[page["key"]](body)
         if page["key"] == "one-person":
@@ -625,7 +627,12 @@ def main():
             if body.count(old_measure) != 1:
                 raise SystemExit("benefits pinned-stage measurement changed; refusing unsafe build")
             body = body.replace(old_measure, "cardH=Math.round(clamp(stageH-3*strip,250,480));")
-            hover = (SRC / "managed-office-hover.js").read_text(encoding="utf-8")
+            highlights = (SRC / "managed-office-highlight-cards.html").read_text(encoding="utf-8")
+            cards_pattern = r'<div class="cards">\s*(?:<article class="card">[\s\S]*?</article>\s*){4}</div>'
+            body, replaced = re.subn(cards_pattern, lambda _: highlights, body, count=1)
+            if replaced != 1:
+                raise SystemExit("Managed Offices hero cards marker changed")
+            hover = (SRC / "managed-office-highlight-cards.js").read_text(encoding="utf-8")
             body += "\n<script>\n" + hover + "\n</script>\n"
         # The old dark-footer logo is white. Reuse the exact colour header logo on white.
         if page["key"] in ("category", "one-person"):
