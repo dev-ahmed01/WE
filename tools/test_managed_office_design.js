@@ -59,14 +59,14 @@ fs.mkdirSync(SHOTS, {recursive:true});
      assert.ok(artL.x+artL.width<=first.x+12,'left illustration clears the main CTA');
      assert.ok(artR.x>=second.x+second.width-12,'right illustration clears secondary CTA');
    }
-   await page.waitForFunction(()=>{const n=document.querySelector('.em-nav'),e=document.querySelector('#top .eyebrow');return Math.abs(e.getBoundingClientRect().top+scrollY-n.getBoundingClientRect().bottom-80)<=1});
+   await page.waitForFunction(()=>{const n=document.querySelector('.em-nav'),e=document.querySelector('#top .eyebrow');const s=getComputedStyle(e),ctx=document.createElement('canvas').getContext('2d');ctx.font=s.fontWeight+' '+s.fontSize+' '+s.fontFamily;let label=e.textContent.trim();if(s.textTransform==='uppercase')label=label.toUpperCase();else if(s.textTransform==='lowercase')label=label.toLowerCase();const m=ctx.measureText(label),line=parseFloat(s.lineHeight);const ink=Number.isFinite(m.fontBoundingBoxAscent)&&Number.isFinite(m.fontBoundingBoxDescent)?Math.max(0,(line-m.fontBoundingBoxAscent-m.fontBoundingBoxDescent)/2+m.fontBoundingBoxAscent-m.actualBoundingBoxAscent):5;return Math.abs(e.getBoundingClientRect().top+scrollY-n.getBoundingClientRect().bottom+ink-80)<=1});
    const geometry=await page.evaluate(()=>{
       const rect=s=>document.querySelector(s).getBoundingClientRect();
       const nav=rect('.em-nav'),eyebrow=rect('.hero .eyebrow'),cards=rect('#managedHl');
       const bottom=Math.max(...Array.from(document.querySelectorAll('.hero-art svg')).map(e=>e.getBoundingClientRect().bottom));
-      return {gap:eyebrow.top-nav.bottom,artGap:cards.top-bottom};
+      const e=document.querySelector('.hero .eyebrow');const s=getComputedStyle(e),ctx=document.createElement('canvas').getContext('2d');ctx.font=s.fontWeight+' '+s.fontSize+' '+s.fontFamily;let label=e.textContent.trim();if(s.textTransform==='uppercase')label=label.toUpperCase();else if(s.textTransform==='lowercase')label=label.toLowerCase();const m=ctx.measureText(label),line=parseFloat(s.lineHeight);const ink=Number.isFinite(m.fontBoundingBoxAscent)&&Number.isFinite(m.fontBoundingBoxDescent)?Math.max(0,(line-m.fontBoundingBoxAscent-m.fontBoundingBoxDescent)/2+m.fontBoundingBoxAscent-m.actualBoundingBoxAscent):5;return {gap:eyebrow.top-nav.bottom+ink,lineBoxGap:eyebrow.top-nav.bottom,artGap:cards.top-bottom};
    });
-   assert.ok(Math.abs(geometry.gap-80)<=1,'hero navigation spacing '+JSON.stringify(geometry));
+   assert.ok(Math.abs(geometry.gap-80)<=1,'visible hero navigation spacing '+JSON.stringify(geometry));
    assert.ok(geometry.artGap>=20,'art stays above highlight cards');
    if(!mobile){
      const buttons=page.locator('.hero .actions .button');
@@ -113,6 +113,10 @@ fs.mkdirSync(SHOTS, {recursive:true});
    assert.equal(formGrid.hidden,'none');
    assert.deepEqual(formGrid.fields.map(f=>f.id),['fullName','lastName','phone','email','team','interest']);
    assert.equal(await page.locator('#lastName').getAttribute('required'),null);
+   for(const selector of ['#enquiry-form','#speak-form']){
+     const controls=await page.locator(selector+' .we-field').evaluateAll(els=>els.map(el=>{const c=el.querySelector('input,select,textarea');return {id:c.id,tag:c.tagName,marker:getComputedStyle(el,'::after').display,bg:getComputedStyle(c).backgroundImage};}));
+     for(const control of controls){assert.equal(control.marker,'none','no field-wrapper arrow '+control.id);assert.equal(control.bg!=='none',control.tag==='SELECT','dropdown marker only on select '+control.id);}
+   }
    assert.equal(await page.locator('#why-us .metric .star').count(),0,'rating star removed');
    const compact=await page.locator('#enquiry-form').evaluate(e=>{
      const rects=[...e.querySelectorAll('.field-grid > .field')].map(f=>f.getBoundingClientRect());

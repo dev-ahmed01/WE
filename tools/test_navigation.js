@@ -265,13 +265,15 @@ async function checkSharedForm(page,route,mobile){
   const fields=await form.locator('.we-field').evaluateAll(els=>els.map(el=>{
     const c=el.querySelector('input,select,textarea'),label=el.querySelector('label,span');
     return {id:c.id,kind:c.tagName, height:getComputedStyle(c).height,radius:getComputedStyle(c).borderRadius,
-      label:getComputedStyle(label).position,placeholder:c.getAttribute('placeholder')};
+      label:getComputedStyle(label).position,placeholder:c.getAttribute('placeholder'),marker:getComputedStyle(el,'::after').display,backgroundImage:getComputedStyle(c).backgroundImage};
   }));
   assert.ok(fields.length>=5,route+': existing form fields preserved');
   for(const f of fields){
     assert.equal(f.radius,'13px',route+': '+f.id+' common field radius');
     assert.equal(f.height,f.kind==='TEXTAREA'?'108px':'54px',route+': '+f.id+' common field height');
     assert.equal(f.label,'absolute',route+': '+f.id+' internal label');
+    assert.equal(f.marker,'none',route+': '+f.id+' no wrapper disclosure arrow');
+    assert.equal(f.backgroundImage!=='none',f.kind==='SELECT',route+': '+f.id+' disclosure indicator only on select');
     if(f.kind!=='SELECT')assert.equal(f.placeholder,' ',route+': '+f.id+' no conflicting placeholder');
   }
   const submit=await form.locator('button[type=submit]').evaluate(el=>{const s=getComputedStyle(el);return {size:s.fontSize,weight:s.fontWeight,radius:s.borderRadius};});
