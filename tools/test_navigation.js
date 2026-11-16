@@ -193,6 +193,26 @@ async function checkSectionPanels(page,route,mobile){
   }
 }
 
+
+async function checkFaqIndicators(page,route){
+  if(route==='/')return;
+  const questions=page.locator('.faq-item');
+  assert.ok(await questions.count()>0,route+': FAQ questions retained');
+  const button=questions.first().locator('summary,button.faq-q,button.faq-toggle').first();
+  const icon=button.locator('.plus,.faq-sign,span.faq-toggle').first();
+  const state=()=>icon.evaluate(e=>{const p=getComputedStyle(e,'::before'),s=getComputedStyle(e);return {symbol:p.content,transform:s.transform,w:s.width,h:s.height};});
+  const expanded=()=>button.evaluate(e=>e.tagName==='SUMMARY'?e.parentElement.open:e.getAttribute('aria-expanded')==='true');
+  if(await expanded())await button.click();
+  assert.equal((await state()).symbol,'"+"',route+': collapsed plus');
+  await button.scrollIntoViewIfNeeded();
+  await button.click();
+  assert.equal(await expanded(),true,route+': FAQ expanded');
+  assert.deepEqual(await state(),{symbol:'"−"',transform:'none',w:'30px',h:'30px'},route+': expanded minus, not rotated cross');
+  await button.click();
+  assert.equal(await expanded(),false,route+': FAQ collapsed');
+  assert.equal((await state()).symbol,'"+"',route+': plus restored');
+}
+
 /* Actual form controls must share the approved visual system; never submit personal data. */
 async function checkSharedForm(page,route,mobile){
   const form=page.locator('.we-form-main');
@@ -234,6 +254,7 @@ async function checkSharedForm(page,route,mobile){
       await checkButtons(desktop,route,false);
       await checkCardFamilies(desktop,route,false);
       await checkSectionPanels(desktop,route,false);
+      await checkFaqIndicators(desktop,route);
       const state = await desktop.evaluate(() => {
         const nav = document.querySelector('.em-nav');
         const box = nav.getBoundingClientRect();
@@ -290,6 +311,7 @@ async function checkSharedForm(page,route,mobile){
       await checkButtons(mobile,route,true);
       await checkCardFamilies(mobile,route,true);
       await checkSectionPanels(mobile,route,true);
+      await checkFaqIndicators(mobile,route);
       await toggle.click();
       assert.equal(await toggle.getAttribute('aria-expanded'), 'true', route + ': hamburger opens');
       assert.equal(await mobile.locator('.em-nav__mobile').isVisible(), true, route + ': mobile panel visible');

@@ -218,3 +218,22 @@ html#we-site body #options .sol-card[data-highlight=true]{
 @media(prefers-reduced-motion:reduce){
   #homeHighlights .we-hl__card::before,#homeHighlights .we-hl__plus,#homeHighlights .we-hl__art,#homeHighlights .we-hl__txt :is(h3,p){transition:none!important}
 }
+
+/* FAQ indicators: real plus/minus glyphs, never a rotated cross.
+   State comes from the existing native disclosure or ARIA-expanded controls. */
+html#we-site body .faq-item :is(.faq-q > .plus,button.faq-toggle > .faq-sign,summary > span.faq-toggle){
+  display:grid!important;place-items:center;flex:0 0 30px;
+  width:30px!important;height:30px!important;border-radius:50%!important;
+  background:#fff5f4!important;color:#DF2024!important;
+  font-size:0!important;line-height:1!important;
+  transform:none!important;rotate:none!important;transition:background-color .2s ease!important;
+}
+html#we-site body .faq-item :is(.faq-q > .plus,button.faq-toggle > .faq-sign,summary > span.faq-toggle)::before{
+  content:"+";display:block;font:600 19px/1 var(--we-type-body,'Poppins',sans-serif);
+  color:#DF2024;transform:none!important;
+}
+html#we-site body .faq-item :is(.faq-q[aria-expanded="true"] > .plus,button.faq-toggle[aria-expanded="true"] > .faq-sign)::before,
+html#we-site body details.faq-item[open] summary > span.faq-toggle::before{content:"−"}
+@media(prefers-reduced-motion:reduce){
+  html#we-site body .faq-item :is(.faq-q > .plus,button.faq-toggle > .faq-sign,summary > span.faq-toggle){transition:none!important}
+}
