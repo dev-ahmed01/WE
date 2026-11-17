@@ -71,6 +71,7 @@ def apply_site_polish(body, key):
             body = once(body,'A workspace that</span><span class="bn-heading-line bn-heading-line--accent">','A workspace that</span> <span class="bn-heading-line bn-heading-line--accent">',"benefits title spacing")
             body,n = re.subn(r'(<div class="hs-cta">[\s\S]*?<a\b[^>]*href="tel:[^"]+"[^>]*>)Call now(</a>)',r'\1Talk with us\2',body,count=1)
             if n!=1: raise SystemExit("One-person process CTA marker changed")
+            body = once(body,'<p class="hs-cta-line">Start with a quick call.</p>', '', "remove process CTA caption")
             # Keep the original offer ticket, text and plan choices, but use the
             # same consultation dialog, callback integration and one CTA as category.
             body,n = re.subn(r'<a class="lm-cta"[^>]*>[\s\S]*?</a>',

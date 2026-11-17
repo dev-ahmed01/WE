@@ -355,3 +355,19 @@ html#we-site body #why-us #officeEnquiry .form-help{margin-top:8px!important}
 @supports not ((-webkit-backdrop-filter:blur(2px)) or (backdrop-filter:blur(2px))){
  html#we-site body :is(#home.hero-section .hero-panel,#options .sol-card .sol-glass,#locations .location-card.choose-location .location-label,#why-us #enquiry.we-form-panel:has(#officeEnquiry)){background:rgba(255,252,248,.91)!important}
 }
+
+/* Shared 90px inter-section rhythm: 45px below + 45px above.
+   Hero top offsets, content-internal spacing and GSAP pin clearance are independent. */
+html#we-site body :is(body > section,body > main > section):not(.hero,.hero-section,.we-hero,.benefits-section,#how-it-works){
+ padding-block:var(--we-section-space)!important;margin-block:0!important;
+}
+html#we-site body :is(section.hero,section.hero-section,section.we-hero){padding-bottom:var(--we-section-space)!important;margin-bottom:0!important}
+html#we-site body #how-it-works{padding-block:0!important;margin-block:0!important}
+html#we-site body #how-it-works .hs-inner{padding-block:var(--we-section-space)!important}
+html#we-site body #benefits.benefits-section{padding-block:0!important;margin-block:0!important}
+html#we-site body #benefits.benefits-section:not(.bn-live) .bn-inner{padding-block:var(--we-section-space)!important}
+/* Pinned Benefits must remain clear of the fixed navigation while playing.
+   The final card stack's internal clearance is not standard section padding. */
+html#we-site body #benefits.bn-live .bn-inner{padding-bottom:var(--we-section-space)!important}
+/* The process CTA stands on its own; keep it centered above its connector. */
+html#we-site body #how-it-works .hs-cta{gap:0!important}

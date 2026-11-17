@@ -1,8 +1,8 @@
 /* Final consistency pass: shared rhythm, footer, illustration markers,
    FAQ spacing, consultation composition and a single glass material scale. */
 :root{
-  --we-section-space:60px;
-  --we-section-space-mobile:44px;
+  --we-section-space:45px;
+  --we-section-space-mobile:45px;
   --we-faq-pad-x:24px;
   --we-faq-pad-y:20px;
   --we-faq-gap:12px;

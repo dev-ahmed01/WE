@@ -81,6 +81,7 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
       assert.equal(await tile.evaluate(el => getComputedStyle(el, '::before').display), 'none',
         'no red fill pseudo-element on amenities');
       const tileText = tile.locator('h3');
+      assert.equal(await tileText.evaluate(el=>getComputedStyle(el).fontWeight),'400','regular amenity label');
       assert.equal(await tileText.evaluate(el => getComputedStyle(el).color), 'rgb(22, 22, 22)',
         'amenities remain dark on hover');
 
@@ -93,6 +94,7 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
       assert.deepEqual(await groups.locator('.we-pop__category').allInnerTexts(),
         ['Work & technology','Comfort & convenience','Site services & security','Community & events']);
       assert.deepEqual(await groups.locator('.we-pop__tile').count(), 16);
+      assert.deepEqual(await groups.locator('.we-pop__tile h3').evaluateAll(els=>els.map(e=>getComputedStyle(e).fontWeight)),Array(16).fill('400'),'all modal amenities regular weight');
       assert.deepEqual(await groups.evaluateAll(els => els.map(el=>el.querySelectorAll('.we-pop__tile').length)),
         [5,4,4,3], 'all amenities categorized by purpose');
       assert.equal(await page.locator('#weAmPop .we-pop__tile').first()

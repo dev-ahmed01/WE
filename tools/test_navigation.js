@@ -275,14 +275,16 @@ async function checkFinalConsistency(page,route,mobile){
     const footer=document.querySelector('footer.we-universal-footer');
     const marker=[...document.querySelectorAll('.we-hl__art')].map(e=>({width:getComputedStyle(e,'::after').width,bg:getComputedStyle(e,'::after').backgroundImage,stroke:e.querySelector('svg[stroke-width],svg [stroke-width]')?getComputedStyle(e.querySelector('svg[stroke-width],svg [stroke-width]')).strokeWidth:null}));
     const sections=[...document.querySelectorAll('body > section,body > main > section')].filter(e=>!e.matches('.hero,.hero-section,.we-hero,#how-it-works,.benefits-section')).map(e=>({id:e.id||e.className,top:getComputedStyle(e).paddingTop,bottom:getComputedStyle(e).paddingBottom}));
+    const special=[...document.querySelectorAll('section.hero,section.hero-section,section.we-hero,#how-it-works .hs-inner,#benefits.benefits-section:not(.bn-live) .bn-inner')].map(e=>({id:e.id||e.className,bottom:getComputedStyle(e).paddingBottom,top:getComputedStyle(e).paddingTop,hero:e.matches('.hero,.hero-section,.we-hero')}));
     const faq=[...document.querySelectorAll('.faq-item summary,.faq-item button.faq-q,.faq-item button.faq-toggle')].map(e=>getComputedStyle(e).padding);
-    return {footer:!!footer,footerLinks:[...footer.querySelectorAll('nav a')].map(e=>e.getAttribute('href')),marker,sections,faq,scrollWidth:document.documentElement.scrollWidth,width:innerWidth};
+    return {footer:!!footer,footerLinks:[...footer.querySelectorAll('nav a')].map(e=>e.getAttribute('href')),marker,sections,special,faq,scrollWidth:document.documentElement.scrollWidth,width:innerWidth};
   });
   assert.ok(state.footer,route+': common footer');
   assert.deepEqual(state.footerLinks,['/','/workspaces/','/managed-office/south-bangalore/','/managed-office/one-person-office/'],route+': common footer links');
   assert.equal(state.marker.length,4,route+': four matching markers');
   for(const m of state.marker){assert.equal(m.bg,'none',route+': legacy plus removed');}
-  for(const s of state.sections){assert.equal(s.top,route==='/workspaces/'?'45px':mobile?'44px':'60px',route+': spacing '+s.id);assert.equal(s.bottom,s.top,route+': balanced spacing '+s.id);}
+  for(const s of state.sections){assert.equal(s.top,'45px',route+': spacing '+s.id);assert.equal(s.bottom,s.top,route+': balanced spacing '+s.id);}
+  for(const s of state.special){assert.equal(s.bottom,'45px',route+': section end '+s.id);if(!s.hero)assert.equal(s.top,'45px',route+': section start '+s.id);}
   for(const f of state.faq)assert.equal(f,mobile?'16px 18px':'20px 24px',route+': common FAQ padding');
   assert.ok(state.scrollWidth<=state.width+2,route+': no horizontal overflow');
   if(route.includes('/managed-office/')){
@@ -356,6 +358,7 @@ async function checkSharedForm(page,route,mobile){
       await page.emulateMedia({reducedMotion:'reduce'});
     }
 
+    assert.equal(await page.locator('#how-it-works .hs-cta-line').count(),0,'remove process CTA caption');
     assert.equal((await page.locator('#how-it-works .hs-cta a').innerText()).trim(),'Talk with us');
     assert.ok((await page.locator('#how-it-works .hs-cta a').getAttribute('href')).startsWith('tel:'),'preserve call action');
     for(const [id,label] of [['customise-heading','Make your office your own.'],['benefits-title','A workspace that works around you.'],['stepsTitle','Your office space, made simple.']]){

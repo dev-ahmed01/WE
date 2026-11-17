@@ -202,3 +202,8 @@ html#we-site body #top.hp-b .hp-desc p{max-width:none!important}
  html#we-site body #photos .we-ph__head .right-copy,html#we-site body #top.hp-b .hp-desc{padding-left:16px!important}
 }
 html#we-site body #locations .we-lc__head{grid-template-columns:minmax(0,1fr)!important;align-items:start!important;gap:0!important}
+
+/* Amenity names are regular-weight labels, not card headings. Preserve modal
+   category hierarchy, icon badges, sizes and four-column grouping. */
+html#we-site body #weAmPop .we-pop__tile h3,
+html#we-site body #weAm .we-am__item h3{font-weight:400!important}
