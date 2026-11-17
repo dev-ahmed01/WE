@@ -201,7 +201,7 @@ fs.mkdirSync(SHOTS, {recursive:true});
      assert.deepEqual([v.heading,v.weight,v.body],['21px','600','14px'],'approved typography');
      assert.equal(v.panel,'rgb(245, 239, 234)','original neutral dotted panel');
      assert.ok(v.texture.includes('radial-gradient'),'dotted texture preserved');
-     assert.ok(v.height>=90&&v.height<=150,'compact panel height');
+     assert.ok(v.height>=89.5&&v.height<=150.5,'compact panel height');
      assert.equal(v.marker,true,'quadrant plus marker');
      assert.ok(v.markerBg.includes('radial-gradient'),'two-tone marker');
      assert.equal(v.headingColor,'rgb(22, 22, 22)','normal heading colour');

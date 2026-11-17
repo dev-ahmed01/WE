@@ -189,10 +189,10 @@ async function checkCardFamilies(page,route,mobile){
   const cards=page.locator('[data-card-variant="quadrant"] .we-hl__card');
   const panels=await cards.evaluateAll(els=>els.map(el=>{
     const a=el.querySelector('.we-hl__art'),h=a.querySelector('h3'),p=el.querySelector('.we-hl__txt p'),q=a.querySelector('.we-quadrant-symbol'),ar=a.getBoundingClientRect(),hr=h.getBoundingClientRect(),pr=p.getBoundingClientRect(),qr=q.getBoundingClientRect();
-    return {aria:a.getAttribute('aria-hidden'),heading:getComputedStyle(h).fontSize,height:ar.height,texture:getComputedStyle(a,'::before').backgroundImage,fit:hr.right<=qr.left+1&&hr.bottom<=ar.bottom+1,desc:pr.top>=ar.bottom-.5,ratio:(qr.width/ar.width),path:q.querySelector('path').getAttribute('d'),tab:el.tabIndex};
+    return {aria:a.getAttribute('aria-hidden'),heading:getComputedStyle(h).fontSize,height:ar.height,minHeight:getComputedStyle(a).minHeight,layoutHeight:a.offsetHeight,texture:getComputedStyle(a,'::before').backgroundImage,fit:hr.right<=qr.left+1&&hr.bottom<=ar.bottom+1,desc:pr.top>=ar.bottom-.5,ratio:(qr.width/ar.width),path:q.querySelector('path').getAttribute('d'),tab:el.tabIndex};
   }));
   assert.deepEqual(panels.map(p=>p.path),['M24 3 V24 H45','M45 24 H24 V45','M24 45 V24 H3','M3 24 H24 V3'],route+': four distinct quadrants');
-  for(const p of panels){assert.equal(p.aria,null);assert.equal(p.heading,'21px');assert.ok(p.height>=(mobile?90:104));assert.ok(p.texture.includes('radial-gradient'));assert.ok(p.fit&&p.desc&&Math.abs(p.ratio-.25)<.02,route+': panel split and text fit '+JSON.stringify(p));assert.equal(p.tab,0);}
+  for(const p of panels){assert.equal(p.aria,null);assert.equal(p.heading,'21px');assert.equal(p.minHeight,mobile?'90px':'104px',route+': panel minimum height '+JSON.stringify(p));assert.ok(p.layoutHeight>=(mobile?90:104)&&p.height>=(mobile?89.5:103.5),route+': actual panel height '+JSON.stringify(p));assert.ok(p.texture.includes('radial-gradient'));assert.ok(p.fit&&p.desc&&Math.abs(p.ratio-.25)<.02,route+': panel split and text fit '+JSON.stringify(p));assert.equal(p.tab,0);}
   const first=cards.first(),second=cards.nth(1);
   if(mobile){
     await first.tap();
