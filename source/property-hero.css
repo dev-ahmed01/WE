@@ -7,18 +7,14 @@ html#we-site body section#top.we-hero.hp.hp-b{
 html#we-site body #top.hp-b .hp-deco{display:none!important}
 html#we-site body #top.hp-b .hp-wrap{width:min(1376px,calc(100% - 86px));margin-inline:auto}
 html#we-site body #top.hp-b .hp-grid{
-  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+  display:grid;grid-template-columns:minmax(max-content,1.4fr) minmax(0,1fr);
   align-items:center;gap:clamp(40px,5vw,78px);
-}
-html#we-site body #top.hp-b .hp-eyebrow{
-  display:flex;align-items:center;gap:16px;margin:0 0 24px;
-  font:600 16px/1.35 var(--we-type-body)!important;color:#161616!important;letter-spacing:0!important;
 }
 html#we-site body #top.hp-b h1{
   font:700 var(--we-type-main)/1.1 var(--we-type-heading)!important;
-  letter-spacing:-.035em!important;margin:0;max-width:15em;
+  letter-spacing:-.035em!important;margin:0;max-width:none!important;white-space:nowrap;
 }
-html#we-site body #top.hp-b h1 em{display:block;color:#ED2024!important;font:inherit!important}
+html#we-site body #top.hp-b h1 em{display:inline!important;color:#ED2024!important;font:inherit!important}
 html#we-site body #top.hp-b .hp-sub{
   display:block!important;margin:18px 0 0;max-width:36em;
   font:600 16px/1.5 var(--we-type-body)!important;color:#161616!important;letter-spacing:0!important;
@@ -58,7 +54,8 @@ html#we-site body #top.hp-b .we-pill:not(.active):is(:hover,:focus-visible){bord
 @media(max-width:1100px){
   html#we-site body section#top.we-hero.hp.hp-b{padding-top:132px!important}
   html#we-site body #top.hp-b .hp-wrap{width:calc(100% - 48px)}
-  html#we-site body #top.hp-b .hp-grid{gap:32px}
+  html#we-site body #top.hp-b .hp-grid{grid-template-columns:minmax(0,1fr);gap:24px}
+  html#we-site body #top.hp-b h1{white-space:normal;overflow-wrap:normal}
   html#we-site body #top.hp-b .we-pills{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:36px;gap:12px}
 }
 @media(max-width:760px){
@@ -67,8 +64,6 @@ html#we-site body #top.hp-b .we-pill:not(.active):is(:hover,:focus-visible){bord
 @media(max-width:640px){
   html#we-site body section#top.we-hero.hp.hp-b{padding:112px 0 44px!important}
   html#we-site body #top.hp-b .hp-wrap{width:calc(100% - 36px)}
-  html#we-site body #top.hp-b .hp-eyebrow{margin-bottom:18px;gap:10px}
-  html#we-site body #top.hp-b .hp-eyebrow::before{width:25px;flex:none}
   html#we-site body #top.hp-b .hp-sub{margin-top:14px}
   html#we-site body #top.hp-b .hp-desc{padding-left:16px!important}
   html#we-site body #top.hp-b .we-pills{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:28px}
@@ -79,3 +74,7 @@ html#we-site body #top.hp-b .we-pill:not(.active):is(:hover,:focus-visible){bord
 @media(prefers-reduced-motion:reduce){
   html#we-site body #top.hp-b .we-pill{transition:none!important}
 }
+
+/* Decorative heading bars are retired across Workspaces only. */
+html#we-site body:has(#top.hp-b) .eyebrow-line{display:none!important}
+html#we-site body #top.hp-b .hp-left{min-width:0;max-width:none}

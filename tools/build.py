@@ -483,7 +483,13 @@ def patch_workspaces(b):
         raise SystemExit("Workspaces section markers changed; refusing an unsafe edit")
     b = b[:b.index(start)] + b[b.index(end):]
     b = rep(b, '<p class="hp-sub">Flexible, professional and fully equipped spaces designed to help your business grow.</p>',
-            '<p class="hp-sub">Flexible, Ready-to-Use Spaces for Teams of Any Size.</p>', label="approved workspaces hero subtitle")
+            '<p class="hp-sub">Flexible, Ready to Use Spaces for Teams of Any Size.</p>', label="approved workspaces hero subtitle")
+    # Remove decorative section rules and the superseded hero eyebrow, not
+    # meaningful dividers, category icons, links or copy punctuation.
+    b = rep(b, '<p class="hp-eyebrow">FLEXIBLE WORKSPACE SOLUTIONS</p>', '', label="remove Workspaces hero eyebrow")
+    b, rules = re.subn(r'<div\b(?=[^>]*\bclass="eyebrow-line")[^>]*>\s*</div>', '', b)
+    if rules < 6:
+        raise SystemExit("Expected Workspaces decorative heading rules")
     # Keep the first span's textContent exactly as before: the existing category handler reads it.
     category_icons = [["Private Office","<path d=\"M3 13h18v3H3zM5 16v5m14-5v5M8 13V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v8M8 8h8\"/>"],["Coworking","<circle cx=\"12\" cy=\"7\" r=\"3\"/><path d=\"M6 21v-3a6 6 0 0 1 12 0v3M5 5a3 3 0 0 0 0 6m14-6a3 3 0 0 1 0 6M2 21v-4a4 4 0 0 1 4-4m16 8v-4a4 4 0 0 0-4-4\"/>"],["Meeting Rooms","<rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M7 3v4m10-4v4M3 10h18m-12 5h6m-8 3h2m6 0h2\"/>"],["Event Space","<rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M7 3v4m10-4v4M3 10h18m-9 2 1.2 2.4 2.8.4-2 1.9.5 2.8-2.5-1.3-2.5 1.3.5-2.8-2-1.9 2.8-.4Z\"/>"],["Day Pass","<path d=\"M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4Z M14 7v2m0 2v2m0 2v2\"/>"],["Virtual Office","<path d=\"M3 21h18M5 21V7h8v14M13 21V3h6v18M8 10h2m-2 4h2m-2 4h2m6-11h1m-1 4h1m-1 4h1\"/>"]]
     pill_match = re.search(r'<div class="we-pills"[^>]*>[\s\S]*?</div>', b)

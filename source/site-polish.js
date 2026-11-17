@@ -40,9 +40,9 @@
   new MutationObserver(records=>{
     if(records.some(r=>r.type==='childList'&&(r.target.closest?.(actions)||[...r.addedNodes].some(n=>n.nodeType===1&&(n.matches(actions)||n.querySelector(actions))))))schedule();
   }).observe(document.body,{subtree:true,childList:true});
-  // Workspaces has the same above-title eyebrow as Managed Offices.
+  // Workspaces starts with the H1; measure its visible lettering, not its box.
   // Home and One Person Office deliberately have different approved hero compositions.
-  const hero=document.querySelector('#top.hp-b'),eyebrow=hero?.querySelector('.hp-eyebrow'),nav=document.querySelector('.em-nav');
+  const hero=document.querySelector('#top.hp-b'),heroHeading=hero?.querySelector('h1'),nav=document.querySelector('.em-nav');
   const panel=document.querySelector('.we-form-main')?.closest('.we-form-panel');
   const layout=panel?.closest('.eq-w,.enquiry-grid,.why-layout');
   const sticky=layout?.querySelector(':scope > .glass-area')||panel;
@@ -50,16 +50,16 @@
     if(!nav)return;
     const bottom=nav.getBoundingClientRect().bottom;
     document.documentElement.style.setProperty('--we-sticky-top',(bottom+20)+'px');
-    if(hero&&eyebrow){
-      const s=getComputedStyle(eyebrow),ctx=document.createElement('canvas').getContext('2d');
+    if(hero&&heroHeading){
+      const s=getComputedStyle(heroHeading),ctx=document.createElement('canvas').getContext('2d');
       ctx.font=s.fontWeight+' '+s.fontSize+' '+s.fontFamily;
-      const label=s.textTransform==='uppercase'?eyebrow.textContent.trim().toUpperCase():eyebrow.textContent.trim();
+      const label=s.textTransform==='uppercase'?heroHeading.textContent.trim().toUpperCase():heroHeading.textContent.trim();
       const m=ctx.measureText(label),line=parseFloat(s.lineHeight);
       const ink=Number.isFinite(m.fontBoundingBoxAscent)&&Number.isFinite(m.fontBoundingBoxDescent)?Math.max(0,(line-m.fontBoundingBoxAscent-m.fontBoundingBoxDescent)/2+m.fontBoundingBoxAscent-m.actualBoundingBoxAscent):5;
-      const gap=eyebrow.getBoundingClientRect().top+scrollY-bottom+ink;
+      const gap=heroHeading.getBoundingClientRect().top+scrollY-bottom+ink;
       const current=parseFloat(getComputedStyle(hero).paddingTop)||0;
       if(Math.abs(gap-80)>.5)hero.style.setProperty('--we-workspaces-hero-top',(current+80-gap)+'px');
-      hero.dataset.visibleNavGap=String(Math.round((eyebrow.getBoundingClientRect().top+scrollY-bottom+ink)*10)/10);
+      hero.dataset.visibleNavGap=String(Math.round((heroHeading.getBoundingClientRect().top+scrollY-bottom+ink)*10)/10);
     }
     if(layout&&sticky&&panel){
       layout.classList.add('we-enquiry-layout');
@@ -70,7 +70,7 @@
   // Navigation is injected before these page scripts; also handle late font loads.
   const observer=new ResizeObserver(measure);
   if(nav)observer.observe(nav);
-  if(eyebrow)observer.observe(eyebrow);
+  if(heroHeading)observer.observe(heroHeading);
   if(panel)observer.observe(panel);
   addEventListener('resize',measure,{passive:true});
   document.fonts?.ready.then(measure);document.fonts?.addEventListener('loadingdone',measure);

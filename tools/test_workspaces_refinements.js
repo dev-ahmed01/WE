@@ -7,7 +7,7 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
 (async () => {
   const browser = await chromium.launch({ headless: true });
   try {
-    for (const width of [1440, 390]) {
+    for (const width of [1440, 1264, 1024, 390]) {
       const page = await browser.newPage({ viewport: { width, height: 900 } });
       await page.goto(BASE + '/workspaces/', { waitUntil: 'domcontentloaded' });
       const directives = (await page.locator('meta[name="robots"]').getAttribute('content'))
@@ -16,13 +16,22 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
         'Workspaces remains noindex and nofollow');
       assert.equal(await page.locator('#spaces').count(), 0, 'redundant office carousel removed');
       const hero=page.locator('#top.hp-b');
-      assert.equal(await hero.locator('.hp-left .hp-sub').innerText(),'Flexible, Ready-to-Use Spaces for Teams of Any Size.');
+      assert.equal(await hero.locator('.hp-left .hp-sub').innerText(),'Flexible, Ready to Use Spaces for Teams of Any Size.');
+      assert.equal(await hero.locator('.hp-eyebrow').count(),0,'removed hero eyebrow');
+      assert.equal(await page.locator('.eyebrow-line').count(),0,'all decorative heading bars removed');
+      assert.equal(await hero.locator('h1').innerText(),'Workspace for Every Business');
+      await page.waitForFunction(()=>Math.abs(Number(document.querySelector('#top.hp-b').dataset.visibleNavGap)-80)<=1);
+      const heading=await hero.locator('h1').evaluate(h=>{const r=h.getBoundingClientRect(),s=getComputedStyle(h),range=document.createRange();range.selectNodeContents(h);const rects=[...range.getClientRects()];return {height:r.height,line:parseFloat(s.lineHeight),font:s.fontFamily,weight:s.fontWeight,size:parseFloat(s.fontSize),fits:rects.every(x=>x.left>=r.left-1&&x.right<=r.right+1),accent:getComputedStyle(h.querySelector('em')).color,display:getComputedStyle(h.querySelector('em')).display};});
+      assert.ok(heading.fits,'hero heading stays within its column '+JSON.stringify(heading));
+      assert.ok(heading.font.includes('Bricolage Grotesque')&&heading.weight==='700','approved H1 typography');
+      if(width>1100){assert.equal(heading.size,48);assert.ok(heading.height<=heading.line+1,'single-line desktop title');}
+      assert.equal(heading.accent,'rgb(237, 32, 36)');assert.equal(heading.display,'inline');
       const layout=await hero.evaluate(e=>{
         const d=e.querySelector('.hp-desc'),g=e.querySelector('.hp-grid'),h=e.querySelector('h1'),sub=e.querySelector('.hp-sub');
         const s=getComputedStyle(d),b=getComputedStyle(e),r=h.getBoundingClientRect(),sr=sub.getBoundingClientRect();
         return {background:b.backgroundColor,gradient:b.backgroundImage,descBg:s.backgroundImage,shadow:s.boxShadow,blur:s.backdropFilter,leftBorder:s.borderLeftWidth,columns:getComputedStyle(g).gridTemplateColumns.split(' ').length,headingAboveSub:sr.top>=r.bottom,subSize:getComputedStyle(sub).fontSize,subWeight:getComputedStyle(sub).fontWeight};
       });
-      assert.deepEqual(layout,{background:'rgb(255, 255, 255)',gradient:'none',descBg:'none',shadow:'none',blur:'none',leftBorder:'2px',columns:width>760?2:1,headingAboveSub:true,subSize:'16px',subWeight:'600'},'approved plain editorial layout');
+      assert.deepEqual(layout,{background:'rgb(255, 255, 255)',gradient:'none',descBg:'none',shadow:'none',blur:'none',leftBorder:'2px',columns:width>1100?2:1,headingAboveSub:true,subSize:'16px',subWeight:'600'},'approved plain editorial layout');
       const pills=hero.locator('.we-pill');
       assert.deepEqual(await pills.locator('.hp-category-label').allTextContents(),['Private Office','Coworking','Meeting Rooms','Event Space','Day Pass','Virtual Office']);
       assert.equal(await pills.locator('svg.hp-category-icon').count(),6,'six category-specific icons');
