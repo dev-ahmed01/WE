@@ -66,7 +66,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for path in / /workspaces/ /managed-office/south-bangalore/ /managed-office/one-person-office/; do
+          for path in / /workspaces/ /managed-office/south-bangalore/ /managed-office/one-person-office/ /legal/; do
             response="$(curl --silent --show-error --fail --max-time 25 \
               -H 'Cache-Control: no-cache' \
               -D - -o /dev/null "https://workspacebyemlen.co.uk$path")"

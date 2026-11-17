@@ -16,7 +16,8 @@
     '/': { original: 'header.nav', enquire: '#enquire' },
     '/workspaces/': { original: 'header.we-nav', enquire: '#enquiry' },
     '/managed-office/south-bangalore/': { original: 'nav.nav', enquire: '#enquiry' },
-    '/managed-office/one-person-office/': { original: 'header.site-nav', enquire: '#enquiry' }
+    '/managed-office/one-person-office/': { original: 'header.site-nav', enquire: '#enquiry' },
+    '/legal/': { original: 'header.legal-original', enquire: '/workspaces/#enquiry' }
   };
 
   // Public contact number is already used by the site's existing Call now links.

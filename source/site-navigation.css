@@ -101,7 +101,7 @@
   background: transparent;
   color: #262323 !important;
   white-space: nowrap;
-  font: 400 18px/1.5 'Poppins',system-ui,sans-serif !important;
+  font: 600 16px/1.5 'Poppins',system-ui,sans-serif !important;
   letter-spacing: -.013em;
   transition: color .22s ease, background .22s ease, transform .25s ease;
 }
@@ -113,7 +113,7 @@
 .em-nav__link.is-current {
   background: rgba(255,255,255,.20);
   color: var(--em-red) !important;
-  font-weight: 400 !important;
+  font-weight: 600 !important;
 }
 .em-nav__link.is-current::after {
   content: '';
@@ -245,7 +245,7 @@
   padding: 13px 15px;
   border-radius: 14px;
   color: #252121 !important;
-  font: 400 18px/1.5 'Poppins',system-ui,sans-serif !important;
+  font: 600 16px/1.5 'Poppins',system-ui,sans-serif !important;
 }
 .em-nav__mobile-link.is-current {
   background: rgba(237,32,36,.08);

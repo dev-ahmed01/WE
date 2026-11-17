@@ -47,3 +47,7 @@ html#we-site body #speak-dialog .field-grid .we-field{margin:0!important}
 
 /* Preserve the navigation's narrow-screen visibility rule after action-icon styling. */
 @media(max-width:410px){html#we-site body .em-nav__cta{display:none!important}}
+
+/* Navigation call CTA: red fill on hover with white text and icon. */
+html#we-site body :is(.em-nav__call,.em-nav__mobile-call):is(:hover,:focus-visible){background:#ED2024!important;color:#fff!important;border-color:#ED2024!important;box-shadow:0 8px 18px rgba(237,32,36,.16)!important}
+html#we-site body :is(.em-nav__call,.em-nav__mobile-call):is(:hover,:focus-visible) :is(svg,span){color:#fff!important;stroke:currentColor}

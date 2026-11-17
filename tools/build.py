@@ -225,6 +225,7 @@ def make_head(page, metas, css_path, font_url, title, extra_css=()):
 def json_ld(page):
     crumbs = {"home": [("Home", "/")],
               "workspaces": [("Home", "/"), ("Workspaces", "/workspaces/")],
+              "legal": [("Home", "/"), ("Legal", "/legal/")],
               "category": [("Home", "/"), ("Managed offices in South Bangalore", page["url"])],
               "one-person": [("Home", "/"), ("Managed offices in South Bangalore",
                                              "/managed-office/south-bangalore/"),
@@ -709,6 +710,15 @@ def main():
         write(page["out"], out)
         print(f"  {page['out']:<52} {len(out)/1024:7.1f} KB  (css {len(css)/1024:.0f} KB)")
 
+    # Legal is a real static destination outside the four commercial page templates.
+    legal_page = dict(key="legal", url="/legal/")
+    legal_css = "\n".join((SRC / name).read_text(encoding="utf-8") for name in
+        ("site-typography.css","site-buttons.css","site-cards.css","site-consistency.css","site-polish.css","legal.css"))
+    legal_path = asset("css","legal",normalize_brand_red(legal_css))
+    legal_body = apply_shared_footer((SRC / "legal.html").read_text(encoding="utf-8"),"legal")
+    legal_body = extract_scripts(legal_body,"legal")
+    legal_head = make_head(legal_page,{"description":"Website privacy, cookies, terms of use, booking and cancellation information, and contact details for Workspace by Emlen."},legal_path,font_url,"Legal & Policies | Workspace by Emlen") + json_ld(legal_page)
+    write("legal/index.html",'<!doctype html><html id="we-site" lang="en"><head>'+legal_head+'</head><body>'+legal_body+'</body></html>')
     htaccess = ROOT / "deploy" / ".htaccess"
     if htaccess.exists():
         write(".htaccess", htaccess.read_bytes())

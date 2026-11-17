@@ -57,6 +57,11 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
         'locations carousel not visible');
       assert.equal(await page.locator('#locationMap').count(), 1, 'neighbourhood map retained');
 
+      if(width>1100){
+        const panels=await page.locator('#weLc :is(.we-lc__photo,.we-lc__mapcard,.we-lc__near)').evaluateAll(els=>els.map(e=>{const r=e.getBoundingClientRect();return {top:r.top,bottom:r.bottom,height:r.height}}));
+        assert.equal(panels.length,3);assert.ok(panels.every(p=>Math.abs(p.top-panels[0].top)<=2&&Math.abs(p.bottom-panels[0].bottom)<=2),'three equally aligned panels '+JSON.stringify(panels));
+        assert.ok(panels[0].height<=390,'compact location explorer');
+      }
       const tile = page.locator('#weAm .we-am__item').first();
       await tile.scrollIntoViewIfNeeded();
       await tile.hover();
@@ -99,6 +104,12 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
         .split(',').map(x => x.trim());
       assert.ok(flags.includes('noindex') && flags.includes('nofollow'), path + ' excluded from indexes');
     }
+    await response.goto(BASE+'/legal/');
+    assert.equal(await response.locator('h1').innerText(),'Legal & policies');
+    assert.equal(await response.locator('details.legal-policy').count(),6);
+    await response.locator('#privacy summary').click();
+    assert.ok(await response.locator('#privacy').getAttribute('open')!==null,'native accordion opens');
+    assert.ok((await response.locator('meta[name="robots"]').getAttribute('content')).includes('noindex'));
     await response.close();
     console.log('WORKSPACES SEO OK');
   } finally {

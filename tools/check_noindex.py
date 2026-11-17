@@ -14,6 +14,7 @@ pages = [
     "workspaces/index.html",
     "managed-office/south-bangalore/index.html",
     "managed-office/one-person-office/index.html",
+    "legal/index.html",
     "404.html",
 ]
 required = {"noindex", "nofollow", "noarchive", "nosnippet", "noimageindex"}
