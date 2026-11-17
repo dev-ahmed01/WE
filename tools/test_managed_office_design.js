@@ -213,7 +213,7 @@ fs.mkdirSync(SHOTS, {recursive:true});
      const firstCard=allCards.first();
      await firstCard.scrollIntoViewIfNeeded();
      await firstCard.hover();
-     await page.waitForFunction(()=>{const e=document.querySelector('#managedHl .we-hl__card');return getComputedStyle(e).backgroundColor==='rgb(237, 32, 36)'&&getComputedStyle(e.querySelector('.we-q-highlight')).strokeDashoffset==='0px'});
+     await page.waitForFunction(()=>{const e=document.querySelector('#managedHl .we-hl__card');return Math.abs(new DOMMatrix(getComputedStyle(e,'::before').transform).a-1)<.001&&getComputedStyle(e.querySelector('.we-q-highlight')).strokeDashoffset==='0px'&&getComputedStyle(e.querySelector('h3')).color==='rgb(255, 255, 255)'&&getComputedStyle(e.querySelector('.we-hl__art')).backgroundColor==='rgb(201, 22, 27)'});
      assert.equal(await firstCard.locator('h3').evaluate(e=>getComputedStyle(e).color),'rgb(255, 255, 255)');
      assert.equal(await firstCard.locator('.we-hl__art').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(201, 22, 27)');
      assert.equal(await firstCard.locator('.we-q-highlight').evaluate(e=>getComputedStyle(e).stroke),'rgb(255, 185, 0)');

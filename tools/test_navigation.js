@@ -189,10 +189,10 @@ async function checkCardFamilies(page,route,mobile){
   const cards=page.locator('[data-card-variant="quadrant"] .we-hl__card');
   const panels=await cards.evaluateAll(els=>els.map(el=>{
     const a=el.querySelector('.we-hl__art'),h=a.querySelector('h3'),p=el.querySelector('.we-hl__txt p'),q=a.querySelector('.we-quadrant-symbol'),ar=a.getBoundingClientRect(),hr=h.getBoundingClientRect(),pr=p.getBoundingClientRect(),qr=q.getBoundingClientRect();
-    return {aria:a.getAttribute('aria-hidden'),heading:getComputedStyle(h).fontSize,height:ar.height,minHeight:getComputedStyle(a).minHeight,layoutHeight:a.offsetHeight,texture:getComputedStyle(a,'::before').backgroundImage,fit:hr.right<=qr.left+1&&hr.bottom<=ar.bottom+1,desc:pr.top>=ar.bottom-.5,ratio:(qr.width/ar.width),path:q.querySelector('path').getAttribute('d'),tab:el.tabIndex};
+    return {aria:a.getAttribute('aria-hidden'),heading:getComputedStyle(h).fontSize,height:ar.height,minHeight:getComputedStyle(a).minHeight,layoutHeight:a.offsetHeight,texture:getComputedStyle(a,'::before').backgroundImage,fit:hr.right<=qr.left+1&&hr.bottom<=ar.bottom+1,desc:pr.top>=ar.bottom-.5,ratio:(qr.width/ar.width),path:q.querySelector('path').getAttribute('d'),tab:el.tabIndex,stroke:getComputedStyle(q.querySelector('line')).strokeWidth,highlightStroke:getComputedStyle(q.querySelector('path')).strokeWidth,fill:getComputedStyle(el,'::before').backgroundImage};
   }));
   assert.deepEqual(panels.map(p=>p.path),['M24 3 V24 H45','M45 24 H24 V45','M24 45 V24 H3','M3 24 H24 V3'],route+': four distinct quadrants');
-  for(const p of panels){assert.equal(p.aria,null);assert.equal(p.heading,'21px');assert.equal(p.minHeight,mobile?'90px':'104px',route+': panel minimum height '+JSON.stringify(p));assert.ok(p.layoutHeight>=(mobile?90:104)&&p.height>=(mobile?89.5:103.5),route+': actual panel height '+JSON.stringify(p));assert.ok(p.texture.includes('radial-gradient'));assert.ok(p.fit&&p.desc&&Math.abs(p.ratio-.25)<.02,route+': panel split and text fit '+JSON.stringify(p));assert.equal(p.tab,0);}
+  for(const p of panels){assert.equal(p.aria,null);assert.equal(p.heading,'21px');assert.equal(p.minHeight,mobile?'90px':'104px',route+': panel minimum height '+JSON.stringify(p));assert.ok(p.layoutHeight>=(mobile?90:104)&&p.height>=(mobile?89.5:103.5),route+': actual panel height '+JSON.stringify(p));assert.ok(p.texture.includes('radial-gradient'));assert.ok(p.fit&&p.desc&&Math.abs(p.ratio-.25)<.02,route+': panel split and text fit '+JSON.stringify(p));assert.equal(p.tab,0);assert.equal(p.stroke,'5px');assert.equal(p.highlightStroke,'5px');assert.ok(p.fill.includes('radial-gradient')&&p.fill.includes('237, 32, 36'),route+': radial fill');}
   const first=cards.first(),second=cards.nth(1);
   if(mobile){
     await first.tap();
@@ -202,11 +202,13 @@ async function checkCardFamilies(page,route,mobile){
     await second.tap();
     assert.ok(await second.evaluate(e=>!e.classList.contains('is-active')));
   }else{
-    await first.scrollIntoViewIfNeeded();await first.hover();
-    await page.waitForFunction(()=>{const e=document.querySelector('[data-card-variant="quadrant"] .we-hl__card');return getComputedStyle(e).backgroundColor==='rgb(237, 32, 36)'&&getComputedStyle(e.querySelector('.we-q-highlight')).strokeDashoffset==='0px'});
+    await first.scrollIntoViewIfNeeded();await page.mouse.move(0,0);await first.hover({position:{x:15,y:20}});
+    const origin=await first.evaluate(e=>{const s=e.style,p=getComputedStyle(e,'::before');return {x:parseFloat(s.getPropertyValue('--we-fill-x')),y:parseFloat(s.getPropertyValue('--we-fill-y')),duration:p.transitionDuration}});
+    assert.ok(Math.abs(origin.x-15)<=2&&Math.abs(origin.y-20)<=2&&origin.duration.includes('0.8s'),route+': pointer-origin fill '+JSON.stringify(origin));
+    await page.waitForFunction(()=>{const e=document.querySelector('[data-card-variant="quadrant"] .we-hl__card');return Math.abs(new DOMMatrix(getComputedStyle(e,'::before').transform).a-1)<.001&&getComputedStyle(e.querySelector('.we-q-highlight')).strokeDashoffset==='0px'&&getComputedStyle(e.querySelector('h3')).color==='rgb(255, 255, 255)'&&getComputedStyle(e.querySelector('.we-hl__art')).backgroundColor==='rgb(201, 22, 27)'});
     const state=await first.evaluate(e=>({panel:getComputedStyle(e.querySelector('.we-hl__art')).backgroundColor,ink:getComputedStyle(e.querySelector('h3')).color,desc:getComputedStyle(e.querySelector('p')).color,yellow:getComputedStyle(e.querySelector('.we-q-highlight')).stroke}));
     assert.deepEqual(state,{panel:'rgb(201, 22, 27)',ink:'rgb(255, 255, 255)',desc:'rgb(255, 255, 255)',yellow:'rgb(255, 185, 0)'},route+': reference hover colours');
-    await page.mouse.move(0,0);await page.waitForFunction(()=>getComputedStyle(document.querySelector('[data-card-variant="quadrant"] .we-hl__card')).backgroundColor==='rgb(255, 255, 255)');
+    await page.mouse.move(0,0);await page.waitForFunction(()=>{const e=document.querySelector('[data-card-variant="quadrant"] .we-hl__card');return Math.abs(new DOMMatrix(getComputedStyle(e,'::before').transform).a)<.001&&getComputedStyle(e.querySelector('h3')).color==='rgb(22, 22, 22)'});
   }
   console.log('CARD SYSTEM OK: '+route+' '+(mobile?'mobile':'desktop')+' ('+data.length+' cards)');
 }
