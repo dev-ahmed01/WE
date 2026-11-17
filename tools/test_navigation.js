@@ -378,6 +378,7 @@ async function checkSharedForm(page,route,mobile){
       assert.ok(state.enquireHref.startsWith('#'), route + ': enquiry CTA preserved');
       assert.ok(state.oldSectionsRemoved, route + ': obsolete On this page dropdown removed');
       assert.ok(state.glassBackdrop.includes('blur('), route + ': liquid glass blur enabled');
+      assert.equal(await desktop.locator('.em-nav__link.is-current').evaluate(e=>getComputedStyle(e,'::after').display),'none',route+': active underline removed');
       assert.ok(state.translucentSurface.includes('linear-gradient('), route + ': translucent glass surface');
       assert.ok(state.navFont.includes('Poppins'), route + ': original navigation typography');
       const wordmark=await desktop.locator('.em-nav__wordmark').evaluate(el=>{const s=getComputedStyle(el);return {size:s.fontSize,weight:s.fontWeight,family:s.fontFamily,tm:!!el.querySelector('.em-nav__tm')};});

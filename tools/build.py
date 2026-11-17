@@ -505,8 +505,9 @@ def patch_workspaces(b):
     b = b[:pill_match.start()] + pills + b[pill_match.end():]
     b = rep(b, 'Choose your <span class="accent">ideal location.</span>',
             'Explore our <span class="accent">Jayanagar workspace.</span>', label="location heading")
-    b = rep(b, 'Explore our workspaces across South Bengaluru. Select a location to view its workspace, nearby landmarks and map.',
-            'Explore the workspace, nearby landmarks and neighbourhood map.', label="location description")
+    b, removed = re.subn(r'<p\\b[^>]*class="we-lc__copy"[^>]*>[\\s\\S]*?</p>', '', b, count=1)
+    if removed != 1:
+        raise SystemExit("Workspaces location description marker changed")
     # Reorganize the existing 16 amenity tiles into three meaningful columns.
     # Keep all original icons and content and preserve the existing modal controls.
     tile_marker = "  all.querySelectorAll('.we-pop__tile').forEach(c=>{"

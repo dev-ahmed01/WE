@@ -171,3 +171,34 @@ html#we-site body #locations .we-lc__cta{min-height:42px!important;padding:8px 1
 
 /* Compact location copy is 12px, but interactive map links retain the 13px anchor role. */
 html#we-site body #locations :is(.we-lc__mapbot a,.we-lc__find){font:400 13px/1.45 var(--we-type-body)!important}
+
+/* Workspaces editorial blocks share one container, column split and rule.
+   Keep the desktop H1 on one line and the mobile layout stacked. */
+html#we-site body #photos>.container{width:min(1376px,calc(100% - 86px))!important;max-width:none!important;margin-inline:auto;padding-inline:0!important}
+html#we-site body #photos .we-ph__head{align-items:start!important}
+html#we-site body #top.hp-b .hp-grid{align-items:start!important}
+html#we-site body #photos .we-ph__head .right-copy,
+html#we-site body #top.hp-b .hp-desc{
+ box-sizing:border-box;align-self:start!important;margin:0!important;max-width:none!important;width:100%!important;
+ border:0!important;border-left:2px solid #ED2024!important;border-radius:0!important;
+ padding:4px 0 4px 30px!important;font:400 14px/1.65 var(--we-type-body)!important;letter-spacing:0!important;color:#161616!important;
+}
+html#we-site body #top.hp-b .hp-desc p{max-width:none!important}
+@media(min-width:1101px){
+ html#we-site body #top.hp-b .hp-grid,html#we-site body #photos .we-ph__head{
+  grid-template-columns:minmax(0,63%) minmax(0,1fr)!important;gap:0!important;
+ }
+ html#we-site body #photos .we-ph__head>div:first-child{min-width:0;padding-right:20px}
+}
+@media(min-width:1101px) and (max-width:1200px){
+ html#we-site body #top.hp-b .hp-grid,html#we-site body #photos .we-ph__head{grid-template-columns:minmax(0,66%) minmax(0,1fr)!important}
+}
+@media(max-width:1100px){
+ html#we-site body #photos>.container{width:calc(100% - 48px)!important}
+ html#we-site body #photos .we-ph__head{grid-template-columns:minmax(0,1fr)!important;gap:24px!important}
+}
+@media(max-width:640px){
+ html#we-site body #photos>.container{width:calc(100% - 36px)!important}
+ html#we-site body #photos .we-ph__head .right-copy,html#we-site body #top.hp-b .hp-desc{padding-left:16px!important}
+}
+html#we-site body #locations .we-lc__head{grid-template-columns:minmax(0,1fr)!important;align-items:start!important;gap:0!important}

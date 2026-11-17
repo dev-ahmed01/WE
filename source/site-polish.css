@@ -218,3 +218,20 @@ html#we-site body #locations .location-label :is(h3,.round-arrow){position:relat
 html#we-site body #why-us .glass-area:has(#officeEnquiry),
 html#we-site body #why-us #enquiry:has(#officeEnquiry){max-height:none!important;overflow:visible!important;height:auto!important}
 @media(prefers-reduced-motion:reduce){html#we-site body #locations .location-card.choose-location .location-label::after{animation:none!important}}
+
+/* Location photo overlay: use the header's actual material and reflections.
+   Keep the established, high-contrast red Get directions action. */
+html#we-site body #locations #weLcCard.we-lc__card{
+ background:var(--we-nav-material)!important;border:1px solid var(--we-nav-edge)!important;
+ box-shadow:var(--we-nav-shadow)!important;backdrop-filter:var(--we-nav-backdrop)!important;-webkit-backdrop-filter:var(--we-nav-backdrop)!important;
+ isolation:isolate;
+}
+html#we-site body #locations #weLcCard.we-lc__card::before{
+ content:"";position:absolute;inset:2px;z-index:-1;pointer-events:none;border-radius:inherit;
+ background:radial-gradient(ellipse 21% 62% at 5% 3%,rgba(255,255,255,.45),transparent 100%),radial-gradient(ellipse 22% 78% at 96% 94%,rgba(255,255,255,.26),transparent 100%),linear-gradient(165deg,rgba(255,255,255,.12),transparent 45%)!important;
+}
+html#we-site body #locations #weLcCard.we-lc__card::after{
+ content:"";position:absolute;inset:1px;z-index:-1;pointer-events:none;border-radius:inherit;
+ border:0;border-top:1px solid rgba(255,255,255,.73);border-bottom:1px solid rgba(125,106,95,.09);opacity:.95;background:none!important;
+}
+html#we-site body #locations #weLcCard .we-lc__addr{color:#161616!important}

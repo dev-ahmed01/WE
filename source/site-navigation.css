@@ -115,16 +115,7 @@
   color: var(--em-red) !important;
   font-weight: 500 !important;
 }
-.em-nav__link.is-current::after {
-  content: '';
-  position: absolute;
-  width: 12px;
-  height: 2px;
-  left: calc(50% - 6px);
-  bottom: 2px;
-  border-radius: 3px;
-  background: var(--em-red);
-}
+.em-nav__link.is-current::after { content: none; display: none; }
 .em-nav__actions {
   position: relative;
   display: flex;

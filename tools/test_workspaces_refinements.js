@@ -33,6 +33,14 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
       });
       assert.deepEqual(layout,{background:'rgb(255, 255, 255)',gradient:'none',descBg:'none',shadow:'none',blur:'none',leftBorder:'2px',columns:width>1100?2:1,headingAboveSub:true,subSize:'16px',subWeight:'600'},'approved plain editorial layout');
       assert.equal(await hero.locator('.we-pills').evaluate(e=>getComputedStyle(e).marginTop),width>1100?'72px':width>640?'56px':'48px','pills lowered 20px');
+      await page.evaluate(()=>document.fonts.ready);
+      const aligned=await page.evaluate(()=>{
+        const a=document.querySelector('#top.hp-b .hp-desc'),b=document.querySelector('#photos .we-ph__head .right-copy');
+        const metrics=e=>{const s=getComputedStyle(e),r=e.getBoundingClientRect();return {x:r.left,left:s.borderLeftWidth,top:s.borderTopWidth,pad:s.paddingLeft,padTop:s.paddingTop,padBottom:s.paddingBottom,font:s.fontSize,line:s.lineHeight}};
+        return [metrics(a),metrics(b)];
+      });
+      assert.ok(Math.abs(aligned[0].x-aligned[1].x)<=1,'shared editorial rule alignment '+JSON.stringify(aligned));
+      for(const key of ['left','top','pad','padTop','padBottom','font','line'])assert.equal(aligned[0][key],aligned[1][key],'matching description '+key);
       const spacing=await page.evaluate(()=>{const h=document.querySelector('#top.hp-b'),p=document.querySelector('#photos');return parseFloat(getComputedStyle(h).paddingBottom)+parseFloat(getComputedStyle(p).paddingTop)});
       assert.equal(spacing,90,'90px between hero and gallery content areas');
       if(width>1100){
@@ -56,6 +64,11 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
       assert.equal(await page.locator('#locations .we-lc__bar').isVisible(), false,
         'locations carousel not visible');
       assert.equal(await page.locator('#locationMap').count(), 1, 'neighbourhood map retained');
+      assert.equal(await page.locator('#locations .we-lc__copy').count(),0,'location description removed');
+      await page.locator('#weLcCard .we-lc__cta').waitFor({state:'attached'});
+      const locationGlass=await page.locator('#weLcCard').evaluate(e=>{const n=document.querySelector('.em-nav'),a=getComputedStyle(e),b=getComputedStyle(n);return ['backgroundImage','backgroundColor','borderTopColor','boxShadow','backdropFilter'].map(k=>[k,a[k],b[k]])});
+      assert.ok(locationGlass.every(([,a,b])=>a===b),'location card matches navigation material '+JSON.stringify(locationGlass));
+      assert.ok((await page.locator('#weLcCard .we-lc__cta').getAttribute('href')),'directions action retained');
 
       if(width>1100){
         const panels=await page.locator('#weLc :is(.we-lc__photo,.we-lc__mapcard,.we-lc__near)').evaluateAll(els=>els.map(e=>{const r=e.getBoundingClientRect();return {top:r.top,bottom:r.bottom,height:r.height}}));
