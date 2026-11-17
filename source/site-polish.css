@@ -106,7 +106,7 @@ html#we-site body #officeEnquiry .field-grid>.we-field{min-width:0;grid-row:auto
 html#we-site body #officeEnquiry .field-grid>.we-field:has(textarea){grid-column:1/-1!important}
 @media(min-width:1101px){
  html#we-site body #why-us .why-layout:has(#officeEnquiry){grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;min-height:var(--we-one-person-enquiry-height,0px)}
- html#we-site body #why-us .glass-area:has(#officeEnquiry){position:sticky!important;top:var(--we-sticky-top,104px)!important;max-height:calc(100dvh - var(--we-sticky-top,104px) - 16px);overflow:auto!important;overscroll-behavior:contain}
+ html#we-site body #why-us .glass-area:has(#officeEnquiry){position:sticky!important;top:var(--we-sticky-top,104px)!important;max-height:none!important;overflow:visible!important;overscroll-behavior:auto}
 }
 @media(max-width:850px){html#we-site body #why-us .why-layout:has(#officeEnquiry){grid-template-columns:minmax(0,1fr)!important}}
 @media(max-width:640px){html#we-site body #officeEnquiry .field-grid{grid-template-columns:1fr!important;gap:14px!important}html#we-site body #why-us #enquiry:has(#officeEnquiry){padding:24px 18px!important}}
@@ -189,3 +189,32 @@ html#we-site body #why-us #officeEnquiry .form-help{margin-top:12px!important}
   html#we-site body #why-us :is(#enquiry-form,#officeEnquiry) .field-grid{grid-template-columns:1fr!important;gap:14px!important}
   html#we-site body #why-us #enquiry:has(#officeEnquiry){padding:24px 18px!important}
 }
+
+/* Final client review: neutral navigation glass with More Services sweep. */
+html#we-site body #offices .office-tile .office-glass,
+html#we-site body #offices .office-tile:is(:hover,:focus-visible) .office-glass,
+html#we-site body #locations .location-card.choose-location .location-label{
+ background:var(--we-nav-material)!important;border:1px solid var(--we-nav-edge)!important;
+ box-shadow:var(--we-nav-shadow)!important;backdrop-filter:var(--we-nav-backdrop)!important;-webkit-backdrop-filter:var(--we-nav-backdrop)!important;
+}
+html#we-site body #offices .office-tile .office-glass strong{color:#161616!important;text-shadow:none!important}
+html#we-site body #offices .office-tile .office-glass::before,
+html#we-site body #locations .location-card.choose-location .location-label::before{
+ content:"";position:absolute;inset:2px;height:auto;pointer-events:none;border-radius:inherit;z-index:0;
+ background:radial-gradient(ellipse 21% 62% at 5% 3%,rgba(255,255,255,.45),transparent 100%),radial-gradient(ellipse 22% 78% at 96% 94%,rgba(255,255,255,.26),transparent 100%),linear-gradient(165deg,rgba(255,255,255,.12),transparent 45%)!important;
+}
+html#we-site body #locations .location-card.choose-location .location-label{isolation:isolate;overflow:hidden}
+html#we-site body #locations .location-card.choose-location .location-label::after{
+ content:"";position:absolute;top:-45%;left:-65%;width:52%;height:190%;z-index:0;background:linear-gradient(105deg,transparent 15%,rgba(255,255,255,.24) 50%,transparent 85%);transform:skewX(-20deg);pointer-events:none;opacity:0;
+}
+html#we-site body #locations .location-card.choose-location:is(:hover,:focus-visible) .location-label::after{animation:we-service-pill-shine .85s ease-out 1}
+html#we-site body #locations .location-label :is(h3,.round-arrow){position:relative;z-index:1}
+@media(min-width:1101px){
+ html#we-site body #how-it-works .hs-head{grid-template-columns:repeat(3,minmax(0,1fr))!important;column-gap:32px!important}
+ html#we-site body #how-it-works .steps-heading{grid-column:1/3}
+ html#we-site body #how-it-works .hs-cta{grid-column:3;justify-self:stretch!important;align-items:center!important;text-align:center!important;display:flex!important;flex-direction:column; margin-inline:0!important;width:100%!important}
+ html#we-site body #how-it-works .hs-cta .btn{align-self:center!important;margin-inline:auto!important}
+}
+html#we-site body #why-us .glass-area:has(#officeEnquiry),
+html#we-site body #why-us #enquiry:has(#officeEnquiry){max-height:none!important;overflow:visible!important;height:auto!important}
+@media(prefers-reduced-motion:reduce){html#we-site body #locations .location-card.choose-location .location-label::after{animation:none!important}}

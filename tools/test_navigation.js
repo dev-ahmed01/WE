@@ -319,7 +319,7 @@ async function checkSharedForm(page,route,mobile){
     assert.equal(benefits.dash,'none');if(!mobile)assert.deepEqual(benefits.insets,['22px','22px']);
     if(!mobile){
       const sticky=await page.locator('#why-us .glass-area').evaluate(e=>{const r=e.getBoundingClientRect(),g=e.closest('.why-layout').getBoundingClientRect();return {position:getComputedStyle(e).position,height:r.height,travel:g.height-r.height}});
-      assert.equal(sticky.position,'sticky');assert.ok(sticky.travel>=8,'one-person form has sticky travel '+JSON.stringify(sticky));
+      assert.equal(await page.locator('#why-us .glass-area').evaluate(e=>getComputedStyle(e).overflowY),'visible','no internal enquiry scrollbar');assert.equal(sticky.position,'sticky');assert.ok(sticky.travel>=8,'one-person form has sticky travel '+JSON.stringify(sticky));
       const names=await form.locator('input[autocomplete=given-name],input[autocomplete=family-name]').evaluateAll(els=>els.map(e=>e.getBoundingClientRect().toJSON()));
       assert.ok(Math.abs(names[0].top-names[1].top)<=1&&names[1].left>names[0].left,'two-column names');
     }

@@ -85,7 +85,7 @@ fs.mkdirSync(SHOTS, {recursive:true});
    }));
    assert.equal(optionStyles.length,7);
    const overlays=await page.locator('#offices .office-glass').evaluateAll(els=>els.map(e=>{const s=getComputedStyle(e),t=getComputedStyle(e.querySelector('strong'));return {radius:s.borderRadius,bg:s.backgroundColor,gradient:s.backgroundImage,color:t.color,blur:s.backdropFilter}}));
-   for(const o of overlays){assert.equal(o.radius,'999px','glass option pill radius');assert.equal(o.bg,'rgb(237, 32, 36)');assert.ok(o.gradient.includes('rgba(255, 255, 255, 0.27)')&&o.blur.includes('blur(26px)'));assert.equal(o.color,'rgb(255, 255, 255)');}
+   for(const o of overlays){assert.equal(o.radius,'999px','glass option pill radius');assert.equal(o.bg,'rgba(0, 0, 0, 0)');assert.ok(o.gradient.includes('115deg')&&o.blur.includes('blur(26px)'));assert.equal(o.color,'rgb(22, 22, 22)');}
    if(!mobile){
      await page.emulateMedia({reducedMotion:'no-preference'});
      await page.locator('#offices .office-tile').first().hover();
