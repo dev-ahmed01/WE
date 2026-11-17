@@ -221,6 +221,10 @@ async function checkFaqIndicators(page,route){
   assert.equal(sideStyle.position,(await page.viewportSize()).width>=1101?'sticky':'relative',route+': FAQ side remains anchored');
   assert.equal(sideStyle.align,'start',route+': FAQ left aligns at top');
   if(route==='/workspaces/')assert.equal(await side.locator('.solid-btn svg.we-action-chevron').count(),1,'FAQ action has shared chevron');
+  if((await page.viewportSize()).width>=1101){
+    const aligned=await side.evaluate(e=>{const r=e.closest('.faq-grid,.faq-layout').getBoundingClientRect(),l=e.closest('.faq-grid,.faq-layout').querySelector('.faq-list').getBoundingClientRect();return Math.abs(r.top-l.top)<=1});
+    assert.ok(aligned,route+': FAQ list begins at grid top');
+  }
   const questions=page.locator('.faq-item');
   assert.ok(await questions.count()>0,route+': FAQ questions retained');
   const button=questions.first().locator('summary,button.faq-q,button.faq-toggle').first();
@@ -299,6 +303,14 @@ async function checkSharedForm(page,route,mobile){
   if(route==='/managed-office/one-person-office/'){
     assert.equal(await page.locator('#consultation #open-speak').innerText(),'Talk with us');
     assert.equal(await page.locator('#speak-dialog').count(),1);
+    const benefits=await page.locator('#benefits').evaluate(e=>({dash:getComputedStyle(e.querySelector('.eyebrow'),'::before').display,insets:[...e.querySelectorAll('.bn-row[data-side="left"] .bn-row-text')].map(t=>getComputedStyle(t).paddingLeft)}));
+    assert.equal(benefits.dash,'none');if(!mobile)assert.deepEqual(benefits.insets,['22px','22px']);
+    if(!mobile){
+      const sticky=await page.locator('#why-us .glass-area').evaluate(e=>{const r=e.getBoundingClientRect(),g=e.closest('.why-layout').getBoundingClientRect();return {position:getComputedStyle(e).position,height:r.height,travel:g.height-r.height}});
+      assert.equal(sticky.position,'sticky');assert.ok(sticky.travel>=8,'one-person form has sticky travel '+JSON.stringify(sticky));
+      const names=await form.locator('input[autocomplete=given-name],input[autocomplete=family-name]').evaluateAll(els=>els.map(e=>e.getBoundingClientRect().toJSON()));
+      assert.ok(Math.abs(names[0].top-names[1].top)<=1&&names[1].left>names[0].left,'two-column names');
+    }
   }
   const submit=await form.locator('button[type=submit]').evaluate(el=>{const s=getComputedStyle(el);return {size:s.fontSize,weight:s.fontWeight,radius:s.borderRadius};});
   assert.deepEqual(submit,{size:'13px',weight:'600',radius:'13px'},route+': common CTA typography');

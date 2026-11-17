@@ -108,6 +108,7 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
     await response.locator('footer a[href="/legal/"]').click();
     await response.waitForURL('**/legal/');
     assert.equal(await response.locator('h1').innerText(),'Legal & policies');
+    assert.equal(await response.locator('.legal-review').count(),0,'large draft banner removed');
     assert.equal(await response.locator('details.legal-policy').count(),6);
     assert.equal(await response.locator('.legal-breadcrumb').count(),0,'no visible breadcrumb');
     await response.waitForFunction(()=>Math.abs(Number(document.querySelector('.legal-main').dataset.visibleNavGap)-80)<=1);

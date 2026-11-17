@@ -84,7 +84,14 @@ fs.mkdirSync(SHOTS, {recursive:true});
      return {size:h.fontSize,weight:h.fontWeight,red:s.backgroundColor,radius:s.borderRadius,path:a.querySelector('path')?.getAttribute('d')};
    }));
    assert.equal(optionStyles.length,7);
-   assert.equal(await page.locator('#offices .office-glass').first().evaluate(e=>getComputedStyle(e).borderRadius),'999px','glass option pill radius');
+   const overlays=await page.locator('#offices .office-glass').evaluateAll(els=>els.map(e=>{const s=getComputedStyle(e),t=getComputedStyle(e.querySelector('strong'));return {radius:s.borderRadius,bg:s.backgroundColor,gradient:s.backgroundImage,color:t.color,blur:s.backdropFilter}}));
+   for(const o of overlays){assert.equal(o.radius,'999px','glass option pill radius');assert.equal(o.bg,'rgb(237, 32, 36)');assert.ok(o.gradient.includes('rgba(255, 255, 255, 0.27)')&&o.blur.includes('blur(22px)'));assert.equal(o.color,'rgb(255, 255, 255)');}
+   if(!mobile){
+     await page.emulateMedia({reducedMotion:'no-preference'});
+     await page.locator('#offices .office-tile').first().hover();
+     assert.equal(await page.locator('#offices .office-glass').first().evaluate(e=>getComputedStyle(e,'::after').animationName),'we-service-pill-shine','office overlay uses travelling shine');
+     await page.mouse.move(0,0);await page.emulateMedia({reducedMotion:'reduce'});
+   }
    for(const x of optionStyles)assert.deepEqual(x,{size:'18px',weight:'500',red:'rgb(237, 32, 36)',radius:'8px',path:'M9 5l7 7-7 7'});
    assert.equal(await page.locator('#other-title .other-highlight').innerText(),'different office solution');
    assert.equal(await page.locator('#other-title .other-highlight').evaluate(e=>getComputedStyle(e,'::after').display),'none','decorative underline removed');
@@ -242,6 +249,13 @@ fs.mkdirSync(SHOTS, {recursive:true});
    assert.ok(seam.paddingTop>=38,'consultation gets enough separation from adjacent sections');
    const benefits=page.locator('#benefits');
    assert.equal(await benefits.locator('.bn-card').count(),4,'all four benefits preserved');
+   assert.equal(await benefits.locator('.bn-head .eyebrow').evaluate(e=>getComputedStyle(e,'::before').display),'none','no benefits dash');
+   if(!mobile){
+     for(const card of await benefits.locator('.bn-card').all()){
+       const p=await card.evaluate(e=>{const s=getComputedStyle(e.querySelector('.bn-body')),f=getComputedStyle(e.querySelector('.bn-photo')),h=getComputedStyle(e.querySelector('.bn-strip'));return {right:s.paddingRight,bottom:s.paddingBottom,top:parseFloat(f.marginTop)+parseFloat(h.height)}});
+       assert.equal(p.right,'20px');assert.equal(p.bottom,'20px');assert.ok(Math.abs(p.top-20)<=1,'equal image inset '+JSON.stringify(p));
+     }
+   }
    if(!mobile){
      const expandedLayout=await benefits.evaluate(el=>({
        pinned:el.classList.contains('bn-live'),
