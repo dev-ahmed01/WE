@@ -47,6 +47,7 @@
 
     var header = document.createElement('header');
     header.className = 'em-nav';
+    header.id = 'we-global-nav';
     header.setAttribute('aria-label', 'Workspace by Emlen site navigation');
     header.innerHTML =
       '<a class="em-nav__brand" href="/" aria-label="Workspace by Emlen home">' +

@@ -364,8 +364,8 @@ async function checkSharedForm(page,route,mobile){
       await desktop.setViewportSize({width:1440,height:900});
 
       const call=desktop.locator('.em-nav__call');await call.hover();
-      await desktop.waitForFunction(()=>getComputedStyle(document.querySelector('.em-nav__call')).backgroundColor==='rgb(237, 32, 36)');
-      assert.equal(await call.evaluate(e=>getComputedStyle(e).color),'rgb(255, 255, 255)');
+      await desktop.waitForFunction(()=>{const s=getComputedStyle(document.querySelector('.em-nav__call'));return s.backgroundColor==='rgb(237, 32, 36)'&&s.backgroundImage==='none'&&s.color==='rgb(255, 255, 255)'},{},{timeout:5000});
+      assert.equal(await call.locator('svg').evaluate(e=>getComputedStyle(e).color),'rgb(255, 255, 255)',route+': white phone icon on red hover');
       await desktop.mouse.move(2,130);
       assert.equal(await desktop.locator('footer a[href="/legal/"]').count(),1);
       if (route === '/') {

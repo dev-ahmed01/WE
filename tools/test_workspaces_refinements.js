@@ -104,12 +104,17 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
         .split(',').map(x => x.trim());
       assert.ok(flags.includes('noindex') && flags.includes('nofollow'), path + ' excluded from indexes');
     }
-    await response.goto(BASE+'/legal/');
+    await response.goto(BASE+'/workspaces/');
+    await response.locator('footer a[href="/legal/"]').click();
+    await response.waitForURL('**/legal/');
     assert.equal(await response.locator('h1').innerText(),'Legal & policies');
     assert.equal(await response.locator('details.legal-policy').count(),6);
     await response.locator('#privacy summary').click();
     assert.ok(await response.locator('#privacy').getAttribute('open')!==null,'native accordion opens');
     assert.ok((await response.locator('meta[name="robots"]').getAttribute('content')).includes('noindex'));
+    assert.equal(await response.locator('.em-nav__cta').getAttribute('href'),'/workspaces/#enquiry');
+    await response.locator('.legal-index a[href="#cookies"]').click();
+    await response.waitForFunction(()=>document.querySelector('#cookies').open);
     await response.close();
     console.log('WORKSPACES SEO OK');
   } finally {
