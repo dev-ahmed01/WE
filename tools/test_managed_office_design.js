@@ -84,13 +84,40 @@ fs.mkdirSync(SHOTS, {recursive:true});
      return {size:h.fontSize,weight:h.fontWeight,red:s.backgroundColor,radius:s.borderRadius,path:a.querySelector('path')?.getAttribute('d')};
    }));
    assert.equal(optionStyles.length,7);
-   const overlays=await page.locator('#offices .office-glass').evaluateAll(els=>els.map(e=>{const s=getComputedStyle(e),t=getComputedStyle(e.querySelector('strong'));return {radius:s.borderRadius,bg:s.backgroundColor,gradient:s.backgroundImage,color:t.color,blur:s.backdropFilter}}));
-   for(const o of overlays){assert.equal(o.radius,'999px','glass option pill radius');assert.equal(o.bg,'rgba(0, 0, 0, 0)');assert.ok(o.gradient.includes('115deg')&&o.blur.includes('blur(26px)'));assert.equal(o.color,'rgb(22, 22, 22)');}
+   const officePills=page.locator('#offices .office-glass');
+   const overlays=await officePills.evaluateAll(els=>{
+     const nav=document.querySelector('.em-nav'),ns=getComputedStyle(nav),nr=getComputedStyle(nav,'::before'),ne=getComputedStyle(nav,'::after');
+     return els.map(e=>{
+       const s=getComputedStyle(e),r=getComputedStyle(e,'::before'),edge=getComputedStyle(e,'::after');
+       const keys=['backgroundImage','backgroundColor','borderTopColor','borderTopWidth','boxShadow','backdropFilter','borderRadius'];
+       const actual=keys.map(k=>[k,s[k],ns[k]]);
+       const reflections=['backgroundImage','top','bottom','left','right','zIndex'].map(k=>[k,r[k],nr[k]]);
+       const rim=['borderTopColor','borderBottomColor','borderTopWidth','borderBottomWidth','opacity','zIndex'].map(k=>[k,edge[k],ne[k]]);
+       return {actual,reflections,rim,shine:e.querySelector('.we-office-shine')?.getAttribute('aria-hidden'),color:getComputedStyle(e.querySelector('strong')).color,special:e.closest('.office-tile').classList.contains('office-special')};
+     });
+   });
+   for(const o of overlays){
+     assert.ok([...o.actual,...o.reflections,...o.rim].every(([,a,b])=>a===b),'exact navigation glass '+JSON.stringify(o));
+     assert.equal(o.shine,'true');assert.equal(o.color,o.special?'rgb(255, 255, 255)':'rgb(22, 22, 22)');
+   }
    if(!mobile){
      await page.emulateMedia({reducedMotion:'no-preference'});
-     await page.locator('#offices .office-tile').first().hover();
-     assert.equal(await page.locator('#offices .office-glass').first().evaluate(e=>getComputedStyle(e,'::after').animationName),'we-service-pill-shine','office overlay uses travelling shine');
-     await page.mouse.move(0,0);await page.emulateMedia({reducedMotion:'reduce'});
+     const pill=officePills.first();
+     await pill.hover();
+     const sweep=pill.locator('.we-office-shine');
+     const motion=await sweep.evaluate(e=>{
+       const a=e.getAnimations().find(a=>a.animationName==='we-service-pill-shine'),s=getComputedStyle(e);
+       if(!a)return null;
+       a.pause();a.currentTime=170;const x1=parseFloat(getComputedStyle(e).left);
+       a.currentTime=560;const x2=parseFloat(getComputedStyle(e).left);
+       return {name:s.animationName,duration:s.animationDuration,x1,x2};
+     });
+     assert.ok(motion&&motion.name==='we-service-pill-shine'&&motion.duration==='0.85s'&&motion.x2>motion.x1,'same left-to-right sweep '+JSON.stringify(motion));
+     await page.mouse.move(0,0);
+     await page.emulateMedia({reducedMotion:'reduce'});
+     await pill.hover();
+     assert.equal(await sweep.evaluate(e=>getComputedStyle(e).animationName),'none','respect reduced motion');
+     await page.mouse.move(0,0);
    }
    for(const x of optionStyles)assert.deepEqual(x,{size:'18px',weight:'500',red:'rgb(237, 32, 36)',radius:'8px',path:'M9 5l7 7-7 7'});
    assert.equal(await page.locator('#other-title .other-highlight').innerText(),'different office solution');

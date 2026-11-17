@@ -82,9 +82,6 @@ html#we-site body #offices .office-tile .office-glass{position:relative!importan
 html#we-site body #offices .office-tile .office-glass strong{position:relative;z-index:1;color:#fff!important;overflow-wrap:normal}
 html#we-site body #offices .office-tile .office-glass .office-arrow{position:relative;z-index:1}
 html#we-site body #offices .office-tile .office-glass::before{content:"";position:absolute;inset:1px 3px auto;height:48%;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.14),transparent);pointer-events:none;z-index:0}
-html#we-site body #offices .office-tile .office-glass::after{content:"";position:absolute;top:-45%;left:-65%;right:auto;bottom:auto;width:52%;height:190%;z-index:0;background:linear-gradient(105deg,transparent 15%,rgba(255,255,255,.24) 50%,transparent 85%);transform:skewX(-20deg);filter:none;pointer-events:none;opacity:0}
-html#we-site body #offices .office-tile:is(:hover,:focus-visible) .office-glass::after{animation:we-service-pill-shine .85s ease-out 1}
-@media(prefers-reduced-motion:reduce){html#we-site body #offices .office-tile:is(:hover,:focus-visible) .office-glass::after{animation:none!important}}
 /* Benefits: equal top, right and bottom photo inset, and a consistent text inset. */
 @media(min-width:761px){
  html#we-site body #benefits .bn-card .bn-photo{margin-top:calc(-1 * var(--strip) + 20px)!important}
@@ -235,3 +232,45 @@ html#we-site body #locations #weLcCard.we-lc__card::after{
  border:0;border-top:1px solid rgba(255,255,255,.73);border-bottom:1px solid rgba(125,106,95,.09);opacity:.95;background:none!important;
 }
 html#we-site body #locations #weLcCard .we-lc__addr{color:#161616!important}
+
+/* Managed Offices: the complete navigation material, with a separate
+   non-interactive sweep layer using the original More Services keyframes. */
+html#we-site body #offices .office-tile .office-glass,
+html#we-site body #offices .office-tile:is(:hover,:focus-visible) .office-glass{
+ background:var(--we-nav-material)!important;
+ border:1px solid var(--we-nav-edge)!important;
+ box-shadow:var(--we-nav-shadow)!important;
+ backdrop-filter:var(--we-nav-backdrop)!important;
+ -webkit-backdrop-filter:var(--we-nav-backdrop)!important;
+}
+html#we-site body #offices .office-tile .office-glass::before{
+ content:'';position:absolute;inset:2px;height:auto;z-index:-1;pointer-events:none;border-radius:inherit;
+ background:radial-gradient(ellipse 21% 62% at 5% 3%,rgba(255,255,255,.45),transparent 100%),radial-gradient(ellipse 22% 78% at 96% 94%,rgba(255,255,255,.26),transparent 100%),linear-gradient(165deg,rgba(255,255,255,.12),transparent 45%)!important;
+ opacity:1;transform:none;filter:none;
+}
+html#we-site body #offices .office-tile .office-glass::after{
+ content:'';position:absolute;inset:1px;height:auto;width:auto;z-index:-1;pointer-events:none;border-radius:inherit;
+ border:0;border-top:1px solid rgba(255,255,255,.73);border-bottom:1px solid rgba(125,106,95,.09);
+ background:none!important;opacity:.95;transform:none;filter:none;animation:none!important;
+}
+html#we-site body #offices .office-tile .office-glass>.we-office-shine{
+ position:absolute;top:-45%;left:-65%;width:52%;height:190%;z-index:0;
+ background:linear-gradient(105deg,transparent 15%,rgba(255,255,255,.24) 50%,transparent 85%);
+ transform:skewX(-20deg);pointer-events:none;opacity:0;
+}
+html#we-site body #offices .office-tile:focus-visible .we-office-shine,
+html#we-site body #offices .office-tile .office-glass:hover>.we-office-shine{
+ animation:we-service-pill-shine .85s ease-out 1;
+}
+html#we-site body #offices .office-tile .office-glass>strong,
+html#we-site body #offices .office-tile .office-glass>.office-arrow{position:relative;z-index:1}
+/* Dark enterprise card needs light lettering against the same glass. */
+html#we-site body #offices .office-tile.office-special .office-glass>strong{color:#fff!important;text-shadow:0 1px 2px rgba(22,22,22,.38)!important}
+@supports not ((-webkit-backdrop-filter:blur(2px)) or (backdrop-filter:blur(2px))){
+ html#we-site body #offices .office-tile .office-glass,
+ html#we-site body #offices .office-tile:is(:hover,:focus-visible) .office-glass{background:rgba(255,252,248,.91)!important}
+ html#we-site body #offices .office-tile.office-special .office-glass>strong{color:#161616!important;text-shadow:none!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html#we-site body #offices .office-tile .office-glass>.we-office-shine{animation:none!important;opacity:0!important}
+}
