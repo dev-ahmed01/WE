@@ -143,7 +143,7 @@ html#we-site body #locations #weLc .we-lc__side{
   grid-template-columns:minmax(0,2.1fr) minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr)!important;gap:16px!important;align-items:stretch;
 }
 html#we-site body #locations #weLc :is(.we-lc__photo,.we-lc__mapcard,.we-lc__near){
-  min-width:0;min-height:0!important;height:100%!important;box-sizing:border-box;align-self:stretch;margin:0!important;border-radius:24px!important;
+  min-width:0;min-height:0!important;height:100%!important;box-sizing:border-box;align-self:stretch;margin:0!important;
 }
 html#we-site body #locations .we-lc__mapcard{padding:12px!important}
 html#we-site body #locations .we-lc__mapframe{flex:1;min-height:0!important;height:auto!important}
