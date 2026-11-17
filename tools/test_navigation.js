@@ -216,6 +216,11 @@ async function checkSectionPanels(page,route,mobile){
 
 async function checkFaqIndicators(page,route){
   if(route==='/')return;
+  const side=page.locator(':is(#faq,#faqs) :is(.faq-left,.faq-copy,.faq-side)').first();
+  const sideStyle=await side.evaluate(el=>({position:getComputedStyle(el).position,align:getComputedStyle(el).alignSelf}));
+  assert.equal(sideStyle.position,(await page.viewportSize()).width>=1101?'sticky':'relative',route+': FAQ side remains anchored');
+  assert.equal(sideStyle.align,'start',route+': FAQ left aligns at top');
+  if(route==='/workspaces/')assert.equal(await side.locator('.solid-btn svg.we-action-chevron').count(),1,'FAQ action has shared chevron');
   const questions=page.locator('.faq-item');
   assert.ok(await questions.count()>0,route+': FAQ questions retained');
   const button=questions.first().locator('summary,button.faq-q,button.faq-toggle').first();
@@ -292,7 +297,7 @@ async function checkSharedForm(page,route,mobile){
     await page.waitForFunction(()=>Math.abs(Number(document.querySelector('#top.hp-b').dataset.visibleNavGap)-80)<=1);
   }
   if(route==='/managed-office/one-person-office/'){
-    assert.equal(await page.locator('#consultation #open-speak').innerText(),'Book a consultation');
+    assert.equal(await page.locator('#consultation #open-speak').innerText(),'Talk with us');
     assert.equal(await page.locator('#speak-dialog').count(),1);
   }
   const submit=await form.locator('button[type=submit]').evaluate(el=>{const s=getComputedStyle(el);return {size:s.fontSize,weight:s.fontWeight,radius:s.borderRadius};});

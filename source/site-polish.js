@@ -1,7 +1,7 @@
 /* Shared visual refinements: keep non-action controls and page-specific content intact. */
 (()=>{
   const ns='http://www.w3.org/2000/svg', path='M9 5l7 7-7 7';
-  const actions='a.btn-red,a.btn-yellow,a.we-btn--red,a.btn-line,a.we-btn--line,.em-nav__cta,.em-nav__mobile-cta,.hero .actions .button:first-child,.callback-btn,.submit-btn,.form-submit,.we-form button[type=submit],.lk-c,.dp a,.we-am__more,.we-pop__cta,.we-lc__cta,.ticket-unlock,.sol-link,.cz-cta,.consult-call,.lm-cta,.location-card,.other-pill,.office-tile';
+  const actions='a.solid-btn,a.btn-red,a.btn-yellow,a.we-btn--red,a.btn-line,a.we-btn--line,.em-nav__cta,.em-nav__mobile-cta,.hero .actions .button:first-child,.callback-btn,.submit-btn,.form-submit,.we-form button[type=submit],.lk-c,.dp a,.we-am__more,.we-pop__cta,.we-lc__cta,.ticket-unlock,.sol-link,.cz-cta,.consult-call,.lm-cta,.location-card,.other-pill,.office-tile';
   function icon(){
     const svg=document.createElementNS(ns,'svg'),p=document.createElementNS(ns,'path');
     for(const [k,v] of Object.entries({class:'we-action-chevron','aria-hidden':'true',focusable:'false',viewBox:'0 0 24 24',fill:'none',stroke:'currentColor','stroke-width':'2.8','stroke-linecap':'round','stroke-linejoin':'round'}))svg.setAttribute(k,v);
@@ -64,11 +64,12 @@
     if(layout&&sticky&&panel){
       layout.classList.add('we-enquiry-layout');
       layout.closest('section')?.classList.add('we-enquiry-section');
-      const workspaces=!!hero;
-      sticky.classList.toggle('we-sticky-enquiry',innerWidth>=1101&&(workspaces||panel.getBoundingClientRect().height+bottom+40<innerHeight));
+      const workspaces=!!hero,onePerson=!!document.querySelector('#officeEnquiry');
+      sticky.classList.toggle('we-sticky-enquiry',innerWidth>=1101&&(workspaces||onePerson||panel.getBoundingClientRect().height+bottom+40<innerHeight));
       // Preserve a small sticky travel distance even when the optional enquiry
       // fields are taller than the left-side business cards.
       if(workspaces&&innerWidth>=1101)layout.style.setProperty('--we-enquiry-height',(panel.getBoundingClientRect().height+48)+'px');
+      if(onePerson&&innerWidth>=1101)layout.style.setProperty('--we-one-person-enquiry-height',(sticky.getBoundingClientRect().height+48)+'px');
     }
   }
   // Navigation is injected before these page scripts; also handle late font loads.

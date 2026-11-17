@@ -4,8 +4,8 @@ html#we-site body{margin:0;background:#fff;color:#161616;font-family:var(--we-ty
 .legal-main{box-sizing:border-box;width:min(1324px,calc(100% - 96px));margin:auto;padding:var(--legal-top,164px) 0 72px;--legal-anchor-offset:110px}
 .legal-intro{text-align:left}
 .legal-intro h1{margin:0 0 16px}.legal-intro p{margin:0;max-width:72ch;line-height:1.65}
-.legal-review{margin:24px 0 36px;padding:14px 18px;border:1px solid #e9e7e5;border-radius:13px;background:#faf7f4;line-height:1.65}
-.legal-layout{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:32px;align-items:start}
+.legal-status{margin:28px 0 0;font:400 12px/1.5 var(--we-type-body);color:#595959}
+.legal-layout{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:32px;align-items:start;margin-top:36px}
 .legal-index{box-sizing:border-box;position:sticky;top:var(--legal-anchor-offset);min-width:0;padding:24px;border:1px solid #e6e4e2;border-radius:24px;background:#fff;box-shadow:var(--we-card-shadow);max-height:calc(100dvh - var(--legal-anchor-offset) - 24px);overflow:auto}
 html#we-site body .legal-index h2{font:600 21px/1.25 var(--we-type-heading)!important;margin:0 0 16px;letter-spacing:-.02em!important}
 .legal-index-links{display:grid;gap:0}

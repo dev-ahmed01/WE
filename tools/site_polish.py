@@ -65,7 +65,7 @@ def apply_site_polish(body, key):
             # Keep the original offer ticket, text and plan choices, but use the
             # same consultation dialog, callback integration and one CTA as category.
             body,n = re.subn(r'<a class="lm-cta"[^>]*>[\s\S]*?</a>',
-                '<button class="lm-cta" id="open-speak" type="button" aria-haspopup="dialog">Book a consultation</button>',body,count=1)
+                '<button class="lm-cta" id="open-speak" type="button" aria-haspopup="dialog">Talk with us</button>',body,count=1)
             if n!=1: raise SystemExit("Cross-page polish: consultation CTA changed")
             body += '\n'+DIALOG+'\n<script>'+SCRIPT.replace("category-consultation","one-person-consultation")+'</script>\n'
     body += '\n<script>\n'+(SRC/"site-polish.js").read_text(encoding="utf-8")+'\n</script>\n'
