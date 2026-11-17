@@ -294,6 +294,8 @@ html#we-site body :is(.em-nav__link,
   .we-lc__mapbot a):is(:hover,:focus-visible) {
   color:var(--we-button-red)!important;transform:none!important;
 }
+/* Navigation is an explicit 18px role; ordinary anchor typography remains 13px. */
+html#we-site body :is(.em-nav__link,.em-nav__mobile-link){font:400 var(--we-type-nav,18px)/1.5 var(--we-type-body)!important;letter-spacing:0!important}
 /* Existing page selection remains visible; keep all native hit areas and widths. */
 html#we-site body .em-nav__link.is-current,html#we-site body .em-nav__mobile-link.is-current{color:var(--we-button-red)!important}
 html#we-site body :is(.consult-call,.lm-cta){gap:12px!important;padding:12px 22px!important}

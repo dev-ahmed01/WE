@@ -78,7 +78,7 @@ async function checkTypography(page,route,mobile){
     const weights={section:'700',card:'600',body:'400',action:'600',anchor:'400'};
     assert.equal(value.weight,weights[role],route+': '+role+' weight');
     if(role==='section'&&mobile) assert.ok(value.size>=27 && value.size<=32,route+': responsive section heading');
-    else assert.equal(value.size,{section:36,card:21,body:14,action:13,anchor:13}[role],route+': '+role+' size');
+    else assert.equal(value.size,{section:36,card:21,body:14,action:13,anchor:18}[role],route+': '+role+' size');
   }
 }
 
@@ -108,7 +108,7 @@ async function checkTypographyCoverage(page,route,mobile){
   for(const r of rows){
     const label=route+' '+r.role+' '+r.text;
     const head=['section','card','form title'].includes(r.role);
-    const size={'section':36,'card':21,'form title':21,'highlight':16,'subheading':16,'bullet':16,'body':14,'button':13,'anchor':13}[r.role];
+    const size={'section':36,'card':21,'form title':21,'highlight':16,'subheading':16,'bullet':16,'body':14,'button':13,'anchor':18}[r.role];
     const weight={'section':'700','card':'600','form title':'600','highlight':'600','subheading':'600','bullet':'400','body':'400','button':'600','anchor':'400'}[r.role];
     assert.ok(r.family.includes(head?'Bricolage Grotesque':'Poppins'),label+' font');
     assert.equal(r.weight,r.option?'500':weight,label+' weight');
@@ -122,13 +122,13 @@ async function checkTypographyCoverage(page,route,mobile){
 async function checkButtons(page,route,mobile){
   const items=await page.evaluate(()=>[...document.querySelectorAll('button,a')].filter(e=>!e.closest('[inert],.em-nav-replaced')&&e.getClientRects().length&&getComputedStyle(e).visibility==='visible').map(e=>{
     const s=getComputedStyle(e);
-    return {role:s.getPropertyValue('--we-control-role').trim(),text:e.textContent.trim().slice(0,65),font:s.fontFamily,size:s.fontSize,weight:s.fontWeight,radius:s.borderRadius,border:s.borderTopWidth,bg:s.backgroundColor,img:s.backgroundImage,borderColor:s.borderTopColor,color:s.color,secondaryHero:e.matches('#top.hero .actions .button:nth-child(2)')};
+    return {navLink:e.matches('.em-nav__link,.em-nav__mobile-link'),role:s.getPropertyValue('--we-control-role').trim(),text:e.textContent.trim().slice(0,65),font:s.fontFamily,size:s.fontSize,weight:s.fontWeight,radius:s.borderRadius,border:s.borderTopWidth,bg:s.backgroundColor,img:s.backgroundImage,borderColor:s.borderTopColor,color:s.color,secondaryHero:e.matches('#top.hero .actions .button:nth-child(2)')};
   }).filter(x=>x.role));
   assert.ok(items.length>=5,route+': shared button roles applied');
   for(const i of items){
     const label=route+' '+i.role+' '+i.text;
     assert.ok(i.font.includes('Poppins'),label+' font');
-    if(i.role!=='icon'){assert.equal(i.size,'13px',label+' size');assert.equal(i.weight,i.role==='anchor'?'400':'600',label+' weight');}
+    if(i.role!=='icon'){assert.equal(i.size,i.navLink?'18px':'13px',label+' size');assert.equal(i.weight,i.role==='anchor'?'400':'600',label+' weight');}
     if(i.role==='main'){assert.equal(i.radius,'13px',label+' radius');assert.equal(i.border,'0px',label+' border');assert.ok(['rgb(237, 32, 36)','rgb(255, 185, 0)','rgb(22, 22, 22)'].includes(i.bg),label+' approved solid color '+i.bg);}
     if(i.role==='secondary')assert.equal(i.radius,'13px',label+' radius');
     if(i.role==='hero-action'){
@@ -351,6 +351,17 @@ async function checkSharedForm(page,route,mobile){
       assert.ok(state.glassBackdrop.includes('blur('), route + ': liquid glass blur enabled');
       assert.ok(state.translucentSurface.includes('linear-gradient('), route + ': translucent glass surface');
       assert.ok(state.navFont.includes('Poppins'), route + ': original navigation typography');
+      for(const width of [1440,1264,1181]){
+        await desktop.setViewportSize({width,height:900});
+        await desktop.evaluate(()=>document.fonts.ready);
+        const metrics=await desktop.locator('.em-nav').evaluate(nav=>{
+          const links=[...nav.querySelectorAll('.em-nav__link')],brand=nav.querySelector('.em-nav__brand').getBoundingClientRect(),actions=nav.querySelector('.em-nav__actions').getBoundingClientRect();
+          return {types:links.map(a=>{const s=getComputedStyle(a);return [s.fontSize,s.fontWeight]}),fit:links[0].getBoundingClientRect().left>=brand.right-1&&links.at(-1).getBoundingClientRect().right<=actions.left+1};
+        });
+        assert.deepEqual(metrics.types,Array(4).fill(['18px','400']),route+': navigation font '+width);
+        assert.ok(metrics.fit,route+': navigation labels fit '+width);
+      }
+      await desktop.setViewportSize({width:1440,height:900});
 
       if (route === '/') {
         await desktop.screenshot({ path: path.join(SHOTS, 'home-desktop.png'), animations: 'disabled' });
@@ -391,6 +402,8 @@ async function checkSharedForm(page,route,mobile){
         await mobile.screenshot({ path: path.join(SHOTS, 'managed-office-mobile-menu.png'), animations: 'disabled' });
       }
       const destination = routes[(i + 1) % routes.length];
+      const mobileFonts=await mobile.locator('.em-nav__mobile-link').evaluateAll(links=>links.map(a=>{const s=getComputedStyle(a);return [s.fontSize,s.fontWeight]}));
+      assert.deepEqual(mobileFonts,Array(4).fill(['18px','400']),route+': mobile navigation font');
       await mobile.locator('.em-nav__mobile-link[href="' + destination + '"]').click();
       await mobile.waitForURL('**' + destination, { timeout: 15000 });
       assert.equal(new URL(mobile.url()).pathname, destination, route + ': mobile cross-page link works');

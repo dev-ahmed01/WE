@@ -101,7 +101,7 @@
   background: transparent;
   color: #262323 !important;
   white-space: nowrap;
-  font: 500 clamp(12px, .94vw, 13.8px)/1.3 'Poppins',system-ui,sans-serif !important;
+  font: 400 18px/1.5 'Poppins',system-ui,sans-serif !important;
   letter-spacing: -.013em;
   transition: color .22s ease, background .22s ease, transform .25s ease;
 }
@@ -113,7 +113,7 @@
 .em-nav__link.is-current {
   background: rgba(255,255,255,.20);
   color: var(--em-red) !important;
-  font-weight: 600 !important;
+  font-weight: 400 !important;
 }
 .em-nav__link.is-current::after {
   content: '';
@@ -245,7 +245,7 @@
   padding: 13px 15px;
   border-radius: 14px;
   color: #252121 !important;
-  font: 600 14px/1.4 'Poppins',system-ui,sans-serif !important;
+  font: 400 18px/1.5 'Poppins',system-ui,sans-serif !important;
 }
 .em-nav__mobile-link.is-current {
   background: rgba(237,32,36,.08);
@@ -296,4 +296,11 @@ html.em-site-navigation-ready { scroll-padding-top: 104px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .em-nav * { transition: none !important; animation: none !important; }
+}
+
+/* Keep larger navigation labels within the existing header on smaller desktops. */
+@media (min-width:1181px) and (max-width:1360px){
+ .em-nav__link{padding-inline:8px}
+ .em-nav__brand{width:clamp(195px,16vw,220px)}
+ .em-nav{gap:10px}
 }
