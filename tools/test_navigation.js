@@ -202,6 +202,8 @@ async function checkCardFamilies(page,route,mobile){
     await second.tap();
     assert.ok(await second.evaluate(e=>!e.classList.contains('is-active')));
   }else{
+    const previousMotion=await page.evaluate(()=>matchMedia('(prefers-reduced-motion: reduce)').matches?'reduce':'no-preference');
+    await page.emulateMedia({reducedMotion:'no-preference'});
     await first.scrollIntoViewIfNeeded();await page.mouse.move(0,0);await first.hover({position:{x:15,y:20}});
     const origin=await first.evaluate(e=>{const s=e.style,p=getComputedStyle(e,'::before');return {x:parseFloat(s.getPropertyValue('--we-fill-x')),y:parseFloat(s.getPropertyValue('--we-fill-y')),duration:p.transitionDuration}});
     assert.ok(Math.abs(origin.x-15)<=2&&Math.abs(origin.y-20)<=2&&origin.duration.includes('0.8s'),route+': pointer-origin fill '+JSON.stringify(origin));
@@ -209,6 +211,12 @@ async function checkCardFamilies(page,route,mobile){
     const state=await first.evaluate(e=>({panel:getComputedStyle(e.querySelector('.we-hl__art')).backgroundColor,ink:getComputedStyle(e.querySelector('h3')).color,desc:getComputedStyle(e.querySelector('p')).color,yellow:getComputedStyle(e.querySelector('.we-q-highlight')).stroke}));
     assert.deepEqual(state,{panel:'rgb(201, 22, 27)',ink:'rgb(255, 255, 255)',desc:'rgb(255, 255, 255)',yellow:'rgb(255, 185, 0)'},route+': reference hover colours');
     await page.mouse.move(0,0);await page.waitForFunction(()=>{const e=document.querySelector('[data-card-variant="quadrant"] .we-hl__card');return Math.abs(new DOMMatrix(getComputedStyle(e,'::before').transform).a)<.001&&getComputedStyle(e.querySelector('h3')).color==='rgb(22, 22, 22)'});
+    await page.emulateMedia({reducedMotion:'reduce'});
+    await first.hover({position:{x:15,y:20}});
+    const reduced=await first.evaluate(e=>({duration:getComputedStyle(e,'::before').transitionDuration,scale:new DOMMatrix(getComputedStyle(e,'::before').transform).a}));
+    assert.deepEqual(reduced,{duration:'0s',scale:1},route+': reduced-motion static fill');
+    await page.mouse.move(0,0);
+    await page.emulateMedia({reducedMotion:previousMotion});
   }
   console.log('CARD SYSTEM OK: '+route+' '+(mobile?'mobile':'desktop')+' ('+data.length+' cards)');
 }
