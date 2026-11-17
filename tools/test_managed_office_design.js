@@ -85,7 +85,7 @@ fs.mkdirSync(SHOTS, {recursive:true});
    }));
    assert.equal(optionStyles.length,7);
    const overlays=await page.locator('#offices .office-glass').evaluateAll(els=>els.map(e=>{const s=getComputedStyle(e),t=getComputedStyle(e.querySelector('strong'));return {radius:s.borderRadius,bg:s.backgroundColor,gradient:s.backgroundImage,color:t.color,blur:s.backdropFilter}}));
-   for(const o of overlays){assert.equal(o.radius,'999px','glass option pill radius');assert.equal(o.bg,'rgb(237, 32, 36)');assert.ok(o.gradient.includes('rgba(255, 255, 255, 0.27)')&&o.blur.includes('blur(22px)'));assert.equal(o.color,'rgb(255, 255, 255)');}
+   for(const o of overlays){assert.equal(o.radius,'999px','glass option pill radius');assert.equal(o.bg,'rgb(237, 32, 36)');assert.ok(o.gradient.includes('rgba(255, 255, 255, 0.27)')&&o.blur.includes('blur(26px)'));assert.equal(o.color,'rgb(255, 255, 255)');}
    if(!mobile){
      await page.emulateMedia({reducedMotion:'no-preference'});
      await page.locator('#offices .office-tile').first().hover();
@@ -210,7 +210,7 @@ fs.mkdirSync(SHOTS, {recursive:true});
      });
      assert.equal(style.bg,'rgba(0, 0, 0, 0)','no solid dark red fill');
      assert.ok(style.gradient.includes('rgba(255, 255, 255, 0.27)')&&style.gradient.includes('rgba(72, 0, 0, 0.16)'),'original light frosted gradient');
-     assert.ok(style.blur.includes('blur(22px)'),'original frosted blur');
+     assert.ok(style.blur.includes('blur(26px)'),'navigation-matched frosted blur');
      assert.ok(style.highlight.includes('linear-gradient'),'static glass reflection');
      assert.equal(style.color,'rgb(255, 255, 255)','white readable label');
      assert.equal(style.icon,'rgb(237, 32, 36)','visible red arrow');

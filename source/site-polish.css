@@ -100,7 +100,7 @@ html#we-site body #why-us .why-left h2{margin-top:0!important}
 html#we-site body #why-us .why-left .testimonial{flex:0 0 auto}
 html#we-site body #why-us .glass-area:has(#officeEnquiry){align-self:start!important;background:none!important;box-shadow:none!important;overflow:visible!important}
 html#we-site body #why-us .glass-area:has(#officeEnquiry)::before,html#we-site body #why-us .glass-area:has(#officeEnquiry)::after{content:none!important}
-html#we-site body #why-us #enquiry:has(#officeEnquiry){padding:28px 28px!important;box-sizing:border-box}
+html#we-site body #why-us #enquiry:has(#officeEnquiry){padding:34px 32px 29px!important;box-sizing:border-box}
 html#we-site body #officeEnquiry .field-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px 16px!important;grid-auto-flow:row!important}
 html#we-site body #officeEnquiry .field-grid>.we-field{min-width:0;grid-row:auto!important}
 html#we-site body #officeEnquiry .field-grid>.we-field:has(textarea){grid-column:1/-1!important}
@@ -118,4 +118,74 @@ html#we-site body #offices .office-tile .office-glass strong{text-shadow:0 1px 2
 html#we-site body #offices .office-tile:is(:hover,:focus-visible) .office-glass{background:linear-gradient(155deg,rgba(255,255,255,.32),rgba(72,0,0,.12) 55%,rgba(255,255,255,.17)),#ED2024!important;border-color:rgba(255,255,255,.72)!important}
 @media(min-width:761px){
  html#we-site body #benefits.bn-live .bn-card .bn-body,html#we-site body #benefits .bn-card .bn-body{padding-right:20px!important;padding-bottom:20px!important}
+}
+
+/* Match the effective header material, not the old gray-backed form material.
+   Navigation's own styles are unchanged. The fixed header's final shared
+   backdrop is blur(26px) saturate(125%); its 115deg surface comes from
+   site-navigation.css. Keep component radii, content and positioning. */
+:root{
+  --we-nav-material:linear-gradient(115deg,rgba(255,255,255,.51) 0%,rgba(255,255,255,.25) 38%,rgba(255,255,255,.33) 62%,rgba(255,255,255,.53) 100%);
+  --we-nav-edge:rgba(255,255,255,.62);
+  --we-nav-backdrop:blur(26px) saturate(125%);
+  --we-nav-shadow:0 12px 33px rgba(44,31,25,.105),0 2px 6px rgba(44,31,25,.035),inset 0 1px 0 rgba(255,255,255,.92),inset 0 -1px 0 rgba(255,255,255,.18);
+}
+html#we-site body :is(.we-form-panel,.cz-panel,.we-gal__shell,.we-lc__mapcard,#find-fit .qb,.ap .dp,.lk-g,#options .sol-card .sol-glass,.location-card.choose-location .location-label,.we-lc__card,.hero-panel){
+  background:var(--we-nav-material)!important;
+  border-color:var(--we-nav-edge)!important;
+  box-shadow:var(--we-nav-shadow)!important;
+  backdrop-filter:var(--we-nav-backdrop)!important;
+  -webkit-backdrop-filter:var(--we-nav-backdrop)!important;
+}
+/* Exact navigation optics on the form enclosure; no solid gray underlay.
+   Keep the floating labels and controls independent of the glass itself. */
+html#we-site body :is(#why-us #enquiry.we-form-panel,#enquiry .form-card.we-form-panel,.we-form-panel){
+  background:var(--we-nav-material)!important;border:1px solid var(--we-nav-edge)!important;
+  box-shadow:var(--we-nav-shadow)!important;
+  backdrop-filter:var(--we-nav-backdrop)!important;-webkit-backdrop-filter:var(--we-nav-backdrop)!important;
+  isolation:isolate;
+}
+html#we-site body :is(#why-us #enquiry.we-form-panel,#enquiry .form-card.we-form-panel,.we-form-panel)::before{
+  content:"";position:absolute;inset:2px;z-index:-1;pointer-events:none;border-radius:inherit;
+  background:radial-gradient(ellipse 21% 62% at 5% 3%,rgba(255,255,255,.45),transparent 100%),radial-gradient(ellipse 22% 78% at 96% 94%,rgba(255,255,255,.26),transparent 100%),linear-gradient(165deg,rgba(255,255,255,.12),transparent 45%)!important;
+  transform:none!important;filter:none!important;opacity:1!important;
+}
+/* The coloured glass remains coloured: same optical blur, original red
+   reflection, contrast, chevrons and left-to-right travelling shine. */
+html#we-site body #offices .office-tile .office-glass,
+html#we-site body #other-solutions .other-pill{
+  backdrop-filter:var(--we-nav-backdrop)!important;-webkit-backdrop-filter:var(--we-nav-backdrop)!important;
+}
+@supports not ((-webkit-backdrop-filter:blur(2px)) or (backdrop-filter:blur(2px))){
+  html#we-site body :is(.we-form-panel,.cz-panel,.we-gal__shell,.we-lc__mapcard,#find-fit .qb,.ap .dp,.lk-g,#options .sol-card .sol-glass,.location-card.choose-location .location-label,.we-lc__card,.hero-panel){background:rgba(255,252,248,.91)!important}
+}
+/* One-Person Office headings keep the normal 36px section role and become
+   single lines on desktop, with natural phone/tablet wrapping. */
+html#we-site body #customise #customise-heading,
+html#we-site body #benefits #benefits-title,
+html#we-site body #how-it-works #stepsTitle{
+  max-width:none!important;max-inline-size:none!important;text-wrap:wrap!important;
+}
+html#we-site body #customise #customise-heading .red,
+html#we-site body #how-it-works #stepsTitle .red,
+html#we-site body #benefits #benefits-title .bn-heading-line{display:inline!important;white-space:normal!important}
+@media(min-width:1101px){
+  html#we-site body #customise .cz-layout{grid-template-columns:minmax(max-content,.95fr) minmax(0,1.05fr)!important;gap:32px!important}
+  html#we-site body #customise .cz-intro,html#we-site body #how-it-works .steps-heading{min-width:0;max-width:none!important}
+  html#we-site body #customise #customise-heading,html#we-site body #benefits #benefits-title,html#we-site body #how-it-works #stepsTitle{white-space:nowrap!important;text-wrap:nowrap!important}
+  html#we-site body #benefits #benefits-title .bn-heading-line{display:inline-block!important}
+  html#we-site body #how-it-works .hs-head{grid-template-columns:minmax(0,1fr) minmax(0,.35fr)!important}
+}
+/* Reference enquiry layout: three rows of two fields on Managed Offices;
+   the same first/last, phone/email arrangement on One-Person Office, with
+   its existing location and office selections retained. */
+html#we-site body #why-us :is(#enquiry-form,#officeEnquiry) .field-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px 16px!important;align-content:start!important;
+}
+html#we-site body #why-us #officeEnquiry .field-grid>.we-field:has(textarea){grid-column:1/-1!important}
+html#we-site body #why-us #officeEnquiry .form-help{margin-top:12px!important}
+@media(max-width:1100px){html#we-site body #why-us #enquiry:has(#officeEnquiry){padding:28px 24px!important}}
+@media(max-width:640px){
+  html#we-site body #why-us :is(#enquiry-form,#officeEnquiry) .field-grid{grid-template-columns:1fr!important;gap:14px!important}
+  html#we-site body #why-us #enquiry:has(#officeEnquiry){padding:24px 18px!important}
 }

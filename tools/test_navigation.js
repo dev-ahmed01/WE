@@ -272,6 +272,8 @@ async function checkSharedForm(page,route,mobile){
   const panel=page.locator('.we-form-panel:not(#speak-dialog *)');
   assert.equal(await panel.count(),1,route+': one glass enclosure');
   const box=await panel.evaluate(el=>{const s=getComputedStyle(el);return {blur:s.backdropFilter,radius:s.borderRadius,title:getComputedStyle(el.querySelector('h2,h3')).fontSize};});
+  const glassMatch=await panel.evaluate(el=>{const a=getComputedStyle(el),b=getComputedStyle(document.querySelector('.em-nav'));return {surface:a.backgroundImage===b.backgroundImage,blur:a.backdropFilter===b.backdropFilter,shadow:a.boxShadow===b.boxShadow,edge:a.borderTopColor===b.borderTopColor}});
+  assert.ok(Object.values(glassMatch).every(Boolean),route+': exact navigation glass material '+JSON.stringify(glassMatch));
   assert.ok(box.blur.includes('blur(26px)'),route+': common glass blur');
   assert.equal(box.radius,mobile?'25px':'30px',route+': common enclosure radius');
   assert.equal(box.title,'21px',route+': common form heading');
@@ -303,6 +305,16 @@ async function checkSharedForm(page,route,mobile){
   if(route==='/managed-office/one-person-office/'){
     assert.equal(await page.locator('#consultation #open-speak').innerText(),'Talk with us');
     assert.equal(await page.locator('#speak-dialog').count(),1);
+    assert.equal((await page.locator('#how-it-works .hs-cta a').innerText()).trim(),'Talk with us');
+    assert.ok((await page.locator('#how-it-works .hs-cta a').getAttribute('href')).startsWith('tel:'),'preserve call action');
+    for(const [id,label] of [['customise-heading','Make your office your own.'],['benefits-title','A workspace that works around you.'],['stepsTitle','Your office space, made simple.']]){
+      const h=page.locator('#'+id);
+      assert.equal((await h.textContent()).replace(/\s+/g,' ').trim(),label);
+      if(!mobile){
+        const m=await h.evaluate(el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect(),range=document.createRange();range.selectNodeContents(el);const boxes=[...range.getClientRects()];return {height:r.height,line:parseFloat(s.lineHeight),fits:boxes.every(b=>b.left>=r.left-1&&b.right<=r.right+2),width:r.width}});
+        assert.ok(m.height<=m.line+2&&m.fits,'single-line heading '+id+' '+JSON.stringify(m));
+      }
+    }
     const benefits=await page.locator('#benefits').evaluate(e=>({dash:getComputedStyle(e.querySelector('.eyebrow'),'::before').display,insets:[...e.querySelectorAll('.bn-row[data-side="left"] .bn-row-text')].map(t=>getComputedStyle(t).paddingLeft)}));
     assert.equal(benefits.dash,'none');if(!mobile)assert.deepEqual(benefits.insets,['22px','22px']);
     if(!mobile){
