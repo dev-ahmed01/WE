@@ -64,7 +64,11 @@
     if(layout&&sticky&&panel){
       layout.classList.add('we-enquiry-layout');
       layout.closest('section')?.classList.add('we-enquiry-section');
-      sticky.classList.toggle('we-sticky-enquiry',innerWidth>=1101&&panel.getBoundingClientRect().height+bottom+40<innerHeight);
+      const workspaces=!!hero;
+      sticky.classList.toggle('we-sticky-enquiry',innerWidth>=1101&&(workspaces||panel.getBoundingClientRect().height+bottom+40<innerHeight));
+      // Preserve a small sticky travel distance even when the optional enquiry
+      // fields are taller than the left-side business cards.
+      if(workspaces&&innerWidth>=1101)layout.style.setProperty('--we-enquiry-height',(panel.getBoundingClientRect().height+48)+'px');
     }
   }
   // Navigation is injected before these page scripts; also handle late font loads.

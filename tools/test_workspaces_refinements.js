@@ -32,6 +32,18 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
         return {background:b.backgroundColor,gradient:b.backgroundImage,descBg:s.backgroundImage,shadow:s.boxShadow,blur:s.backdropFilter,leftBorder:s.borderLeftWidth,columns:getComputedStyle(g).gridTemplateColumns.split(' ').length,headingAboveSub:sr.top>=r.bottom,subSize:getComputedStyle(sub).fontSize,subWeight:getComputedStyle(sub).fontWeight};
       });
       assert.deepEqual(layout,{background:'rgb(255, 255, 255)',gradient:'none',descBg:'none',shadow:'none',blur:'none',leftBorder:'2px',columns:width>1100?2:1,headingAboveSub:true,subSize:'16px',subWeight:'600'},'approved plain editorial layout');
+      assert.equal(await hero.locator('.we-pills').evaluate(e=>getComputedStyle(e).marginTop),width>1100?'72px':width>640?'56px':'48px','pills lowered 20px');
+      const spacing=await page.evaluate(()=>{const h=document.querySelector('#top.hp-b'),p=document.querySelector('#photos');return parseFloat(getComputedStyle(h).paddingBottom)+parseFloat(getComputedStyle(p).paddingTop)});
+      assert.equal(spacing,90,'90px between hero and gallery content areas');
+      if(width>1100){
+        const panel=page.locator('#enquiry .form-card');
+        const geometry=await panel.evaluate(p=>{const g=p.closest('.enquiry-grid'),s=getComputedStyle(p),r=g.getBoundingClientRect();return {pos:s.position,top:parseFloat(s.top),height:p.getBoundingClientRect().height,gridTop:r.top+scrollY,gridHeight:r.height};});
+        assert.equal(geometry.pos,'sticky','desktop enquiry sticky');
+        assert.ok(geometry.gridHeight-geometry.height>=8,'sticky travel available '+JSON.stringify(geometry));
+        await page.evaluate(y=>scrollTo({top:y,behavior:'instant'}),geometry.gridTop-geometry.top+(geometry.gridHeight-geometry.height)/2);
+        await page.waitForFunction(()=>{const p=document.querySelector('#enquiry .form-card');return Math.abs(p.getBoundingClientRect().top-parseFloat(getComputedStyle(p).top))<=2});
+        await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
+      }
       const pills=hero.locator('.we-pill');
       assert.deepEqual(await pills.locator('.hp-category-label').allTextContents(),['Private Office','Coworking','Meeting Rooms','Event Space','Day Pass','Virtual Office']);
       assert.equal(await pills.locator('svg.hp-category-icon').count(),6,'six category-specific icons');
@@ -56,13 +68,15 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
 
       await page.locator('#viewAmenities').click();
       await page.locator('#weAmPop.is-open').waitFor({ timeout: 8000 });
+      const modalHeading=await page.locator('#amenityModalTitle').evaluate(e=>{const s=getComputedStyle(e);return [s.fontSize,s.fontWeight]});
+      assert.deepEqual(modalHeading,['21px','600']);
       const groups = page.locator('#weAmPop .we-pop__column');
-      assert.equal(await groups.count(), 3, 'three vertical amenity groups');
+      assert.equal(await groups.count(), 4, 'four semantic amenity groups');
       assert.deepEqual(await groups.locator('.we-pop__category').allInnerTexts(),
-        ['Work & productivity','Comfort & facilities','People & experience']);
+        ['Work & technology','Comfort & convenience','Site services & security','Community & events']);
       assert.deepEqual(await groups.locator('.we-pop__tile').count(), 16);
       assert.deepEqual(await groups.evaluateAll(els => els.map(el=>el.querySelectorAll('.we-pop__tile').length)),
-        [5,6,5], 'amenity tiles are evenly grouped');
+        [5,4,4,3], 'all amenities categorized by purpose');
       assert.equal(await page.locator('#weAmPop .we-pop__tile').first()
         .evaluate(el => getComputedStyle(el,'::before').display), 'none', 'no modal red fill');
       await page.locator('#closeAmenities').click();

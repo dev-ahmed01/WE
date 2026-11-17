@@ -246,7 +246,7 @@ async function checkFinalConsistency(page,route,mobile){
   assert.deepEqual(state.footerLinks,['/','/workspaces/','/managed-office/south-bangalore/','/managed-office/one-person-office/'],route+': common footer links');
   assert.equal(state.marker.length,4,route+': four matching markers');
   for(const m of state.marker){assert.equal(m.width,'20px');assert.ok(m.bg.includes('linear-gradient'));assert.equal(m.stroke,null,route+': no legacy SVG artwork');}
-  for(const s of state.sections){assert.equal(s.top,mobile?'44px':'60px',route+': spacing '+s.id);assert.equal(s.bottom,s.top,route+': balanced spacing '+s.id);}
+  for(const s of state.sections){assert.equal(s.top,route==='/workspaces/'?'45px':mobile?'44px':'60px',route+': spacing '+s.id);assert.equal(s.bottom,s.top,route+': balanced spacing '+s.id);}
   for(const f of state.faq)assert.equal(f,mobile?'16px 18px':'20px 24px',route+': common FAQ padding');
   assert.ok(state.scrollWidth<=state.width+2,route+': no horizontal overflow');
   if(route.includes('/managed-office/')){
@@ -274,7 +274,7 @@ async function checkSharedForm(page,route,mobile){
   assert.ok(fields.length>=5,route+': existing form fields preserved');
   for(const f of fields){
     assert.equal(f.radius,'13px',route+': '+f.id+' common field radius');
-    assert.equal(f.height,f.kind==='TEXTAREA'?'108px':'54px',route+': '+f.id+' common field height');
+    assert.equal(f.height,f.kind==='TEXTAREA'?(route==='/workspaces/'?'80px':'108px'):'54px',route+': '+f.id+' common field height');
     assert.equal(f.label,'absolute',route+': '+f.id+' internal label');
     assert.equal(f.marker,'none',route+': '+f.id+' no wrapper disclosure arrow');
     assert.equal(f.backgroundImage!=='none',f.kind==='SELECT',route+': '+f.id+' disclosure indicator only on select');

@@ -2,7 +2,7 @@
    Existing design tokens and category interactions are preserved. */
 html#we-site body section#top.we-hero.hp.hp-b{
   background:#fff!important;
-  padding:156px 0 60px!important;
+  padding:156px 0 45px!important;
 }
 html#we-site body #top.hp-b .hp-deco{display:none!important}
 html#we-site body #top.hp-b .hp-wrap{width:min(1376px,calc(100% - 86px));margin-inline:auto}
@@ -31,7 +31,7 @@ html#we-site body #top.hp-b .hp-desc p{
   color:#161616!important;margin:0;padding:0;max-width:38em;
 }
 html#we-site body #top.hp-b .we-pills{
-  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin-top:52px;
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin-top:72px;
 }
 html#we-site body #top.hp-b .we-pill{
   display:flex;justify-content:center;align-items:center;box-sizing:border-box;
@@ -56,17 +56,17 @@ html#we-site body #top.hp-b .we-pill:not(.active):is(:hover,:focus-visible){bord
   html#we-site body #top.hp-b .hp-wrap{width:calc(100% - 48px)}
   html#we-site body #top.hp-b .hp-grid{grid-template-columns:minmax(0,1fr);gap:24px}
   html#we-site body #top.hp-b h1{white-space:normal;overflow-wrap:normal}
-  html#we-site body #top.hp-b .we-pills{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:36px;gap:12px}
+  html#we-site body #top.hp-b .we-pills{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:56px;gap:12px}
 }
 @media(max-width:760px){
   html#we-site body #top.hp-b .hp-grid{grid-template-columns:1fr;gap:24px}
 }
 @media(max-width:640px){
-  html#we-site body section#top.we-hero.hp.hp-b{padding:112px 0 44px!important}
+  html#we-site body section#top.we-hero.hp.hp-b{padding:112px 0 45px!important}
   html#we-site body #top.hp-b .hp-wrap{width:calc(100% - 36px)}
   html#we-site body #top.hp-b .hp-sub{margin-top:14px}
   html#we-site body #top.hp-b .hp-desc{padding-left:16px!important}
-  html#we-site body #top.hp-b .we-pills{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:28px}
+  html#we-site body #top.hp-b .we-pills{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:48px}
   html#we-site body #top.hp-b .we-pill{min-height:50px!important;height:auto!important;padding:9px 10px!important}
   html#we-site body #top.hp-b .hp-category-content{gap:7px}
   html#we-site body #top.hp-b .hp-category-icon{width:19px;height:19px;min-width:19px;padding-right:7px}
@@ -78,3 +78,57 @@ html#we-site body #top.hp-b .we-pill:not(.active):is(:hover,:focus-visible){bord
 /* Decorative heading bars are retired across Workspaces only. */
 html#we-site body:has(#top.hp-b) .eyebrow-line{display:none!important}
 html#we-site body #top.hp-b .hp-left{min-width:0;max-width:none}
+
+/* Workspaces review: exactly 90px between adjacent section content areas
+   (45px below the previous section + 45px above the next). */
+html#we-site body:has(#top.hp-b) main>section.section{
+  padding-block:45px!important;margin-block:0!important;
+}
+html#we-site body #top.hp-b{margin-bottom:0!important;padding-bottom:45px!important}
+/* Four semantic amenity groups; all sixteen existing tiles and handlers remain. */
+html#we-site body #weAmPop #amenityModalTitle,
+html#we-site body #weAmPop .we-pop__category{
+  font:600 21px/1.25 var(--we-type-heading)!important;letter-spacing:-.02em!important;color:#161616;
+}
+html#we-site body #weAmPop #amenityModalTitle .accent{color:#ED2024!important}
+html#we-site body #weAmPop #weAmAll{
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  align-items:start!important;gap:16px!important;
+}
+html#we-site body #weAmPop .we-pop__column{
+  min-width:0;padding:0!important;margin:0!important;
+}
+html#we-site body #weAmPop .we-pop__category{
+  margin:0 0 16px!important;min-height:2.5em;display:flex;align-items:center;
+}
+html#we-site body #weAmPop .we-pop__column-items{display:grid;grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+html#we-site body #weAmPop .we-pop__tile{min-width:0;padding:12px!important;gap:10px!important;min-height:62px!important}
+html#we-site body #weAmPop .we-pop__tile h3{white-space:normal;overflow-wrap:normal;min-width:0}
+@media(max-width:1100px){html#we-site body #weAmPop #weAmAll{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:640px){
+  html#we-site body #weAmPop #weAmAll{grid-template-columns:minmax(0,1fr)!important}
+  html#we-site body #weAmPop .we-pop__category{min-height:0}
+}
+/* Keep the entire enquiry inside the visible desktop scroll area. Never hide
+   optional controls; unusually short screens can scroll the panel itself. */
+html#we-site body:has(#top.hp-b) #enquiry .enquiry-grid{overflow:visible!important;align-items:start!important}
+html#we-site body:has(#top.hp-b) #enquiry .form-card.we-form-panel{
+  padding:22px 24px!important;
+}
+html#we-site body:has(#top.hp-b) #enquiry .we-form-kicker{margin-bottom:8px!important}
+html#we-site body:has(#top.hp-b) #enquiry .we-form-intro{margin-bottom:14px!important}
+html#we-site body:has(#top.hp-b) #enquiry #enquiryForm{gap:10px 16px!important}
+html#we-site body:has(#top.hp-b) #enquiry #message{height:80px!important;min-height:80px!important}
+html#we-site body:has(#top.hp-b) #enquiry #enquiryForm button[type=submit]{margin-top:8px!important}
+@media(min-width:1101px){
+  html#we-site body:has(#top.hp-b) #enquiry .form-card.we-form-panel{
+    position:sticky!important;top:var(--we-sticky-top,104px)!important;align-self:start!important;
+    max-height:calc(100dvh - var(--we-sticky-top,104px) - 16px);
+    overflow-y:auto;overscroll-behavior:contain;
+  }
+  html#we-site body:has(#top.hp-b) #enquiry .enquiry-grid{min-height:var(--we-enquiry-height,0px)}
+}
+@media(max-width:640px){
+ html#we-site body:has(#top.hp-b) #enquiry .form-card.we-form-panel{padding:24px 18px!important}
+ html#we-site body:has(#top.hp-b) #enquiry #enquiryForm{gap:14px!important}
+}

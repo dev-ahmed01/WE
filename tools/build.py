@@ -510,9 +510,10 @@ def patch_workspaces(b):
     # Keep all original icons and content and preserve the existing modal controls.
     tile_marker = "  all.querySelectorAll('.we-pop__tile').forEach(c=>{"
     categories = """  const amenityGroups=[
-    {title:'Work & productivity',keys:['wifi','meeting','booth','print','power']},
-    {title:'Comfort & facilities',keys:['lounge','pantry','parking','ac','clean','locker']},
-    {title:'People & experience',keys:['reception','security','outdoor','event','community']}
+    {title:'Work & technology',keys:['wifi','meeting','booth','print','power']},
+    {title:'Comfort & convenience',keys:['lounge','pantry','ac','locker']},
+    {title:'Site services & security',keys:['reception','parking','clean','security']},
+    {title:'Community & events',keys:['outdoor','event','community']}
   ];
   const amenityTiles=new Map([...all.children].map(el=>[el.dataset.key,el]));
   all.replaceChildren();
