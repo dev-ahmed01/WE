@@ -51,7 +51,7 @@
     header.setAttribute('aria-label', 'Workspace by Emlen site navigation');
     header.innerHTML =
       '<a class="em-nav__brand" href="/" aria-label="Workspace by Emlen home">' +
-        '<img alt="Workspace by Emlen" src="' + brand.getAttribute('src') + '">' +
+        '<span class="em-nav__wordmark" aria-hidden="true"><span class="em-nav__wordmark-name">workspace</span><span>by emlen</span><span class="em-nav__tm">TM</span></span>' +
       '</a>' +
       '<nav class="em-nav__links" aria-label="Explore pages">' +
         pageLinks('em-nav__link') +

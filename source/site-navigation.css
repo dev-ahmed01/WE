@@ -101,7 +101,7 @@
   background: transparent;
   color: #262323 !important;
   white-space: nowrap;
-  font: 600 16px/1.5 'Poppins',system-ui,sans-serif !important;
+  font: 500 14px/1.5 'Poppins',system-ui,sans-serif !important;
   letter-spacing: -.013em;
   transition: color .22s ease, background .22s ease, transform .25s ease;
 }
@@ -113,7 +113,7 @@
 .em-nav__link.is-current {
   background: rgba(255,255,255,.20);
   color: var(--em-red) !important;
-  font-weight: 600 !important;
+  font-weight: 500 !important;
 }
 .em-nav__link.is-current::after {
   content: '';
@@ -245,7 +245,7 @@
   padding: 13px 15px;
   border-radius: 14px;
   color: #252121 !important;
-  font: 600 16px/1.5 'Poppins',system-ui,sans-serif !important;
+  font: 500 14px/1.5 'Poppins',system-ui,sans-serif !important;
 }
 .em-nav__mobile-link.is-current {
   background: rgba(237,32,36,.08);
@@ -304,3 +304,8 @@ html.em-site-navigation-ready { scroll-padding-top: 104px; }
  .em-nav__brand{width:clamp(195px,16vw,220px)}
  .em-nav{gap:10px}
 }
+
+/* Header-only typographic wordmark. Keep the original brand assets and reserved layout. */
+html#we-site body #we-global-nav .em-nav__wordmark{display:inline-flex;align-items:baseline;white-space:nowrap;position:relative;gap:.24em;font:500 14px/1.5 'Poppins',system-ui,sans-serif!important;letter-spacing:0;color:#161616}
+html#we-site body #we-global-nav .em-nav__wordmark-name{color:#ED2024}
+html#we-site body #we-global-nav .em-nav__tm{align-self:flex-start;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:9px;height:9px;border:0.6px solid currentColor;border-radius:50%;font:500 4.5px/1 'Poppins',sans-serif;letter-spacing:-.2px;margin-left:-2px;margin-top:0;color:#161616}

@@ -14,7 +14,7 @@
   --we-type-copy: 14px;
   --we-type-button: 13px;
   --we-type-anchor: 13px;
-  --we-type-nav: 16px;
+  --we-type-nav: 14px;
   --we-type-ink: #161616;
   --we-type-red: #ED2024;
 }
@@ -115,7 +115,7 @@ html#we-site body a:not(.brand,.we-brand,.em-nav__brand,.office-tile,.btn,.butto
 }
 html#we-site body :is(.em-nav__link,.em-nav__link.is-current,.em-nav__mobile-link) {
   font-size:var(--we-type-nav) !important;
-  font-weight:600 !important;
+  font-weight:500 !important;
   font-family:var(--we-type-body) !important;
 }
 /* Buttons and button-like anchors, preserving icons and existing contrast. */
@@ -163,7 +163,7 @@ html#we-site body :is(.eyebrow,.eb,.hp-eyebrow,.we-eyebrow,.why-kicker,.why-labe
 html#we-site body :is(.pts,.ap-ls,.highlights,.bn-points,.bn-row-points,.consult-points,.lm-points,.points,.benefit-text ul) li {
   font-family:var(--we-type-body)!important;font-size:16px!important;font-weight:400!important;line-height:1.5!important;letter-spacing:0!important;
 }
-html#we-site body :is(.em-nav__link,.em-nav__mobile-link) {font:600 var(--we-type-nav)/1.5 var(--we-type-body)!important;letter-spacing:0!important;}
+html#we-site body :is(.em-nav__link,.em-nav__mobile-link) {font:500 var(--we-type-nav)/1.5 var(--we-type-body)!important;letter-spacing:0!important;}
 html#we-site body :is(a.btn,a.button,a.we-btn,.callback-btn,.submit-btn,.form-submit,.em-nav__cta,.em-nav__call,.em-nav__mobile-cta,.em-nav__mobile-call,.cta,.cz-cta,.sol-link,.option-link,.other-pill) {font:600 13px/1.4 var(--we-type-body)!important;letter-spacing:0!important;}
 /* Preserve the text contrast of branded red hover cards and photo labels. */
 html#we-site body .we-hl__card:hover :is(h3,p){color:#fff!important}
