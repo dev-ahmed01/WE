@@ -64,7 +64,7 @@ def apply_site_polish(body, key):
         if key == "one-person":
             # Keep the reflection layers separate from the moving shine.
             for cls in ("sol-glass", "location-label"):
-                body, count = re.subn(r'(<(?:div|span) class="'+cls+r'">)(?=\s*<h3)', r'\1<span class="we-office-shine" aria-hidden="true"></span>',body)
+                body, count = re.subn(r'(<(?:div|span) class="'+cls+r'">)(?=\s*<h3\b[^>]*>[^<\s])', r'\1<span class="we-office-shine" aria-hidden="true"></span>',body)
                 if count != 4: raise SystemExit("Expected four " + cls + " shine layers, got " + str(count))
             # Keep the approved heading wording and preserve a literal space
             # between both individually animated Benefits heading spans.
