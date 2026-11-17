@@ -183,27 +183,27 @@ fs.mkdirSync(SHOTS, {recursive:true});
    const titles=await allCards.locator('h3').allTextContents();
    assert.deepEqual(titles,['Offices in prime locations','Multiple pricing plans','Flexible commitments','Move-in immediately']);
    for(const card of await allCards.all()){
-     assert.equal(await card.locator('.we-hl__art svg').count(),0,'no illustrations');
+     assert.equal(await card.locator('.we-quadrant-plus').count(),1,'reference quadrant symbol');
      assert.equal(await card.locator('.we-hl__art > h3').count(),1,'heading inside dotted panel');
      assert.equal(await card.locator('.we-hl__txt > p').count(),1,'description below panel');
      assert.equal(await card.locator('.we-hl__art').getAttribute('aria-hidden'),null,'heading is accessible');
      const v=await card.evaluate(el=>{
        const h=el.querySelector('h3'),p=el.querySelector('p'),a=el.querySelector('.we-hl__art');
        const hr=h.getBoundingClientRect(),ar=a.getBoundingClientRect(),pr=p.getBoundingClientRect();
-       const s=getComputedStyle(a),m=getComputedStyle(a,'::after');
+       const s=getComputedStyle(a),m=getComputedStyle(a,'::before'),q=a.querySelector('.we-quadrant-symbol').getBoundingClientRect();
        return {heading:getComputedStyle(h).fontSize,weight:getComputedStyle(h).fontWeight,
-         body:getComputedStyle(p).fontSize,panel:s.backgroundColor,texture:s.backgroundImage,
-         height:ar.height,marker:m.width,markerBg:m.backgroundImage,
-         fits:hr.left>=ar.left-.5&&hr.top>=ar.top-.5&&hr.bottom<=ar.bottom+.5&&hr.right<=ar.right-33+.5,
+         body:getComputedStyle(p).fontSize,panel:s.backgroundColor,texture:m.backgroundImage,
+         height:ar.height,marker:!!a.querySelector('.we-quadrant-plus'),markerBg:m.backgroundImage,
+         fits:hr.left>=ar.left-.5&&hr.top>=ar.top-.5&&hr.bottom<=ar.bottom+.5&&hr.right<=q.left+1,
          descriptionBelow:pr.top>=ar.bottom-.5,headingColor:getComputedStyle(h).color,
          rects:{heading:hr.toJSON(),panel:ar.toJSON(),description:pr.toJSON()},padding:s.padding};
      });
      assert.deepEqual([v.heading,v.weight,v.body],['21px','600','14px'],'approved typography');
-     assert.equal(v.panel,'rgb(247, 241, 236)','original neutral dotted panel');
+     assert.equal(v.panel,'rgb(245, 239, 234)','original neutral dotted panel');
      assert.ok(v.texture.includes('radial-gradient'),'dotted texture preserved');
-     assert.ok(v.height>=96&&v.height<=130,'compact panel height');
-     assert.equal(v.marker,'20px','original plus marker');
-     assert.ok(v.markerBg.includes('linear-gradient'),'two-tone marker');
+     assert.ok(v.height>=90&&v.height<=150,'compact panel height');
+     assert.equal(v.marker,true,'quadrant plus marker');
+     assert.ok(v.markerBg.includes('radial-gradient'),'two-tone marker');
      assert.equal(v.headingColor,'rgb(22, 22, 22)','normal heading colour');
      assert.ok(v.fits&&v.descriptionBelow,'heading fits inside panel and description follows '+JSON.stringify(v));
    }
@@ -213,11 +213,10 @@ fs.mkdirSync(SHOTS, {recursive:true});
      const firstCard=allCards.first();
      await firstCard.scrollIntoViewIfNeeded();
      await firstCard.hover();
-     assert.ok((await firstCard.evaluate(el=>el.style.getPropertyValue('--mx'))).endsWith('px'),'liquid fill tracks cursor entry');
-     assert.equal(await firstCard.locator('h3').evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)','red-fill hover text is white');
-     assert.ok(await firstCard.evaluate(el=>new DOMMatrix(getComputedStyle(el,'::before').transform).a>.95),'hover expands red liquid');
-     assert.ok(await firstCard.locator('.we-hl__art').evaluate(el=>Math.abs(new DOMMatrix(getComputedStyle(el,'::after').transform).b)>.95),'plus rotates on hover');
-     assert.ok(await firstCard.locator('p').evaluate(el=>/^rgba?\(255, 255, 255(?:, [\d.]+)?\)$/.test(getComputedStyle(el).color)),'description stays readable on hover');
+     await page.waitForFunction(()=>{const e=document.querySelector('#managedHl .we-hl__card');return getComputedStyle(e).backgroundColor==='rgb(237, 32, 36)'&&getComputedStyle(e.querySelector('.we-q-highlight')).strokeDashoffset==='0px'});
+     assert.equal(await firstCard.locator('h3').evaluate(e=>getComputedStyle(e).color),'rgb(255, 255, 255)');
+     assert.equal(await firstCard.locator('.we-hl__art').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(201, 22, 27)');
+     assert.equal(await firstCard.locator('.we-q-highlight').evaluate(e=>getComputedStyle(e).stroke),'rgb(255, 185, 0)');
      await page.mouse.move(0,0);
    }
    await page.screenshot({path:path.join(SHOTS,'managed-office-'+viewport.width+'-hero.png'),animations:'disabled'});

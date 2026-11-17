@@ -649,6 +649,7 @@ def main():
         if page["key"] == "category":
             css += "\n/* Client-approved Managed Offices review */\n" + (SRC / "managed-review.css").read_text(encoding="utf-8")
         css += "\n/* Cross-page client refinements */\n" + (SRC / "site-polish.css").read_text(encoding="utf-8")
+        css += "\n/* Shared quadrant highlight cards (reference v3) */\n" + (SRC / "quadrant-highlights.css").read_text(encoding="utf-8")
         # Exact brand red for all solid brand accents, including interaction states.
         # Preserve intentional gradient stops and semantic contrast/error colors.
         css = normalize_brand_red(css)
