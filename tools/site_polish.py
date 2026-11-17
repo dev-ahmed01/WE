@@ -62,6 +62,10 @@ def apply_site_polish(body, key):
             body = re.sub(r'(4\.9)<em>★</em>',r'\1',body)
             body = re.sub(r'(<div class="eq-c eq-s"><b>4\.9)<svg\b[\s\S]*?</svg>',r'\1',body,count=1)
         if key == "one-person":
+            # Keep the reflection layers separate from the moving shine.
+            for cls in ("sol-glass", "location-label"):
+                body, count = re.subn(r'(<(?:div|span) class="'+cls+r'">)(?=\s*<h3)', r'\1<span class="we-office-shine" aria-hidden="true"></span>',body)
+                if count != 4: raise SystemExit("Expected four " + cls + " shine layers, got " + str(count))
             # Keep the approved heading wording and preserve a literal space
             # between both individually animated Benefits heading spans.
             body = once(body,'A workspace that</span><span class="bn-heading-line bn-heading-line--accent">','A workspace that</span> <span class="bn-heading-line bn-heading-line--accent">',"benefits title spacing")

@@ -285,7 +285,7 @@ async function checkSharedForm(page,route,mobile){
   assert.ok(fields.length>=5,route+': existing form fields preserved');
   for(const f of fields){
     assert.equal(f.radius,'13px',route+': '+f.id+' common field radius');
-    assert.equal(f.height,f.kind==='TEXTAREA'?(route==='/workspaces/'?'80px':'108px'):'54px',route+': '+f.id+' common field height');
+    assert.equal(f.height,f.kind==='TEXTAREA'?(route==='/workspaces/'?'80px':route==='/managed-office/one-person-office/'?'72px':'108px'):(route==='/managed-office/one-person-office/'&&!mobile?'48px':'54px'),route+': '+f.id+' common field height');
     assert.equal(f.label,'absolute',route+': '+f.id+' internal label');
     assert.equal(f.marker,'none',route+': '+f.id+' no wrapper disclosure arrow');
     assert.equal(f.backgroundImage!=='none',f.kind==='SELECT',route+': '+f.id+' disclosure indicator only on select');
@@ -305,6 +305,30 @@ async function checkSharedForm(page,route,mobile){
   if(route==='/managed-office/one-person-office/'){
     assert.equal(await page.locator('#consultation #open-speak').innerText(),'Talk with us');
     assert.equal(await page.locator('#speak-dialog').count(),1);
+    await page.waitForFunction(()=>Math.abs(Number(document.querySelector('#home.hero-section').dataset.visibleNavGap)-80)<=1);
+    const materials=await page.locator('#home .hero-panel,#options .sol-glass,#locations .location-label,#why-us #enquiry.we-form-panel').evaluateAll(els=>{
+      const nav=document.querySelector('.em-nav'),s=getComputedStyle(nav),r=getComputedStyle(nav,'::before'),b=getComputedStyle(nav,'::after');
+      return els.map(el=>{
+        const p=getComputedStyle(el),pr=getComputedStyle(el,'::before'),pb=getComputedStyle(el,'::after');
+        return {cls:el.className,match:['backgroundImage','backgroundColor','borderTopColor','borderTopWidth','boxShadow','backdropFilter'].every(k=>p[k]===s[k]),reflection:pr.backgroundImage===r.backgroundImage&&pr.zIndex===r.zIndex,rim:['borderTopColor','borderBottomColor','borderTopWidth','borderBottomWidth','opacity','zIndex'].every(k=>pb[k]===b[k]),radius:p.borderRadius};
+      });
+    });
+    assert.equal(materials.length,10,'hero, four options, four locations, form');
+    assert.ok(materials.every(m=>m.match&&m.reflection&&m.rim),'One Person Office exact glass '+JSON.stringify(materials));
+    assert.ok(materials.filter(m=>m.cls==='location-label').every(m=>m.radius==='999px'),'location capsules');
+    const locPills=page.locator('#locations .location-label');
+    assert.equal(await locPills.locator('.we-office-shine').count(),4);
+    assert.equal(await page.locator('#options .sol-glass>.we-office-shine').count(),4);
+    assert.equal(await locPills.first().locator('.round-arrow').evaluate(e=>getComputedStyle(e).borderRadius),'8px');
+    if(!mobile){
+      await page.emulateMedia({reducedMotion:'no-preference'});
+      await locPills.first().hover();
+      const shine=locPills.first().locator('.we-office-shine');
+      assert.equal(await shine.evaluate(e=>getComputedStyle(e).animationName),'we-service-pill-shine');
+      await page.mouse.move(0,0);
+      await page.emulateMedia({reducedMotion:'reduce'});
+    }
+
     assert.equal((await page.locator('#how-it-works .hs-cta a').innerText()).trim(),'Talk with us');
     assert.ok((await page.locator('#how-it-works .hs-cta a').getAttribute('href')).startsWith('tel:'),'preserve call action');
     for(const [id,label] of [['customise-heading','Make your office your own.'],['benefits-title','A workspace that works around you.'],['stepsTitle','Your office space, made simple.']]){
@@ -320,6 +344,12 @@ async function checkSharedForm(page,route,mobile){
     if(!mobile){
       const sticky=await page.locator('#why-us .glass-area').evaluate(e=>{const r=e.getBoundingClientRect(),g=e.closest('.why-layout').getBoundingClientRect();return {position:getComputedStyle(e).position,height:r.height,travel:g.height-r.height}});
       assert.equal(await page.locator('#why-us .glass-area').evaluate(e=>getComputedStyle(e).overflowY),'visible','no internal enquiry scrollbar');assert.equal(sticky.position,'sticky');assert.ok(sticky.travel>=8,'one-person form has sticky travel '+JSON.stringify(sticky));
+      const compact=await panel.evaluate(e=>{const g=e.closest('.why-layout'),r=g.getBoundingClientRect(),l=g.querySelector('.why-left').getBoundingClientRect();return {top:r.top+scrollY,leftTop:l.top+scrollY,height:e.getBoundingClientRect().height,position:getComputedStyle(g.querySelector('.glass-area')).position,stickyTop:parseFloat(getComputedStyle(g.querySelector('.glass-area')).top),travel:g.getBoundingClientRect().height-g.querySelector('.glass-area').getBoundingClientRect().height};});
+      assert.ok(Math.abs(compact.top-compact.leftTop)<=1,'left starts at grid top');
+      assert.ok(compact.height<640,'compact form '+JSON.stringify(compact));
+      await page.evaluate(y=>scrollTo({top:y,behavior:'instant'}),compact.top-compact.stickyTop+compact.travel/2);
+      await page.waitForFunction(()=>{const e=document.querySelector('#why-us .glass-area');return Math.abs(e.getBoundingClientRect().top-parseFloat(getComputedStyle(e).top))<=2});
+      await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
       const names=await form.locator('input[autocomplete=given-name],input[autocomplete=family-name]').evaluateAll(els=>els.map(e=>e.getBoundingClientRect().toJSON()));
       assert.ok(Math.abs(names[0].top-names[1].top)<=1&&names[1].left>names[0].left,'two-column names');
     }

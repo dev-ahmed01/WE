@@ -43,6 +43,7 @@
   // Workspaces starts with the H1; measure its visible lettering, not its box.
   // Home and One Person Office deliberately have different approved hero compositions.
   const hero=document.querySelector('#top.hp-b'),heroHeading=hero?.querySelector('h1'),nav=document.querySelector('.em-nav');
+  const oneHero=document.querySelector('#home.hero-section:has(.hero-panel)'),onePhoto=oneHero?.querySelector('.hero-photo');
   const panel=document.querySelector('.we-form-main')?.closest('.we-form-panel');
   const layout=panel?.closest('.eq-w,.enquiry-grid,.why-layout');
   const sticky=layout?.querySelector(':scope > .glass-area')||panel;
@@ -61,6 +62,14 @@
       if(Math.abs(gap-80)>.5)hero.style.setProperty('--we-workspaces-hero-top',(current+80-gap)+'px');
       hero.dataset.visibleNavGap=String(Math.round((heroHeading.getBoundingClientRect().top+scrollY-bottom+ink)*10)/10);
     }
+    if(oneHero&&onePhoto){
+      // Align the top of the visual composition (the photo), not the
+      // centered text inside its deliberately overlapping glass panel.
+      const gap=onePhoto.getBoundingClientRect().top+scrollY-bottom;
+      const current=parseFloat(getComputedStyle(oneHero).paddingTop)||0;
+      if(Math.abs(gap-80)>.5)oneHero.style.setProperty('--we-one-person-hero-top',(current+80-gap)+'px');
+      oneHero.dataset.visibleNavGap=String(Math.round((onePhoto.getBoundingClientRect().top+scrollY-bottom)*10)/10);
+    }
     if(layout&&sticky&&panel){
       layout.classList.add('we-enquiry-layout');
       layout.closest('section')?.classList.add('we-enquiry-section');
@@ -76,6 +85,7 @@
   const observer=new ResizeObserver(measure);
   if(nav)observer.observe(nav);
   if(heroHeading)observer.observe(heroHeading);
+  if(onePhoto)observer.observe(onePhoto);
   if(panel)observer.observe(panel);
   addEventListener('resize',measure,{passive:true});
   document.fonts?.ready.then(measure);document.fonts?.addEventListener('loadingdone',measure);

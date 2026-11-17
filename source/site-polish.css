@@ -274,3 +274,84 @@ html#we-site body #offices .office-tile.office-special .office-glass>strong{colo
 @media(prefers-reduced-motion:reduce){
  html#we-site body #offices .office-tile .office-glass>.we-office-shine{animation:none!important;opacity:0!important}
 }
+
+/* One Person Office: copy the full effective navigation glass, not only its blur.
+   Retain the hero's layered composition and the option cards' readable copy. */
+html#we-site body #home.hero-section:has(.hero-panel){padding-top:var(--we-one-person-hero-top,164px)!important}
+html#we-site body :is(#home.hero-section .hero-panel,#options .sol-card .sol-glass,#locations .location-card.choose-location .location-label,#why-us #enquiry.we-form-panel:has(#officeEnquiry)){
+ background:var(--we-nav-material)!important;border:1px solid var(--we-nav-edge)!important;
+ box-shadow:var(--we-nav-shadow)!important;backdrop-filter:var(--we-nav-backdrop)!important;-webkit-backdrop-filter:var(--we-nav-backdrop)!important;
+ isolation:isolate;
+}
+html#we-site body #options .sol-card:is(:hover,:focus-within) .sol-glass,
+html#we-site body #locations .location-card.choose-location:is(:hover,:focus-visible) .location-label{
+ background:var(--we-nav-material)!important;border-color:var(--we-nav-edge)!important;
+ box-shadow:var(--we-nav-shadow)!important;
+}
+html#we-site body :is(#home.hero-section .hero-panel,#options .sol-card .sol-glass,#locations .location-card.choose-location .location-label,#why-us #enquiry.we-form-panel:has(#officeEnquiry))::before{
+ content:""!important;display:block!important;position:absolute;inset:2px!important;width:auto;height:auto!important;
+ z-index:-1;pointer-events:none;border-radius:inherit;border:0;padding:0;opacity:1!important;transform:none;filter:none;
+ background:radial-gradient(ellipse 21% 62% at 5% 3%,rgba(255,255,255,.45),transparent 100%),radial-gradient(ellipse 22% 78% at 96% 94%,rgba(255,255,255,.26),transparent 100%),linear-gradient(165deg,rgba(255,255,255,.12),transparent 45%)!important;
+}
+html#we-site body :is(#home.hero-section .hero-panel,#options .sol-card .sol-glass,#locations .location-card.choose-location .location-label,#why-us #enquiry.we-form-panel:has(#officeEnquiry))::after{
+ content:""!important;display:block!important;position:absolute;inset:1px!important;width:auto;height:auto!important;
+ z-index:-1;pointer-events:none;border-radius:inherit;border:0!important;border-top:1px solid rgba(255,255,255,.73)!important;border-bottom:1px solid rgba(125,106,95,.09)!important;
+ padding:0!important;opacity:.95!important;background:none!important;transform:none!important;filter:none;
+ mask:none!important;-webkit-mask:none!important;animation:none!important;
+}
+/* Convert the location label to exactly the Managed Offices capsule dimensions.
+   Keep the map/location action and the previous location names. */
+html#we-site body #locations .location-card.choose-location .location-label{
+ border-radius:999px!important;box-sizing:border-box;min-height:60px!important;height:auto!important;
+ padding:10px 14px!important;gap:10px!important;align-items:center!important;overflow:hidden;
+}
+html#we-site body #locations .location-card.choose-location .location-label h3{
+ font:500 18px/1.25 var(--we-type-heading)!important;color:#161616!important;
+ min-width:0;max-width:none;letter-spacing:-.02em!important;
+}
+html#we-site body #locations .location-card.choose-location .round-arrow{
+ width:44px!important;height:44px!important;flex:0 0 44px!important;border-radius:8px!important;
+ background:#ED2024!important;box-shadow:none!important;color:#fff!important;
+}
+html#we-site body #locations .location-card.choose-location .location-label>.we-office-shine,
+html#we-site body #options .sol-card .sol-glass>.we-office-shine{
+ position:absolute;top:-45%;left:-65%;width:52%;height:190%;z-index:0;
+ background:linear-gradient(105deg,transparent 15%,rgba(255,255,255,.24) 50%,transparent 85%);
+ transform:skewX(-20deg);pointer-events:none;opacity:0;
+}
+html#we-site body #locations .location-card.choose-location:focus-visible .we-office-shine,
+html#we-site body #locations .location-label:hover>.we-office-shine,
+html#we-site body #options .sol-card .sol-glass:hover>.we-office-shine,
+html#we-site body #options .sol-card:focus-within .we-office-shine{
+ animation:we-service-pill-shine .85s ease-out 1;
+}
+html#we-site body #options .sol-card .sol-glass{overflow:hidden}
+html#we-site body #options .sol-card .sol-glass>:is(h3,p,a),
+html#we-site body #locations .location-label>:is(h3,.round-arrow){position:relative;z-index:1}
+/* Compact the 8 existing enquiry fields; no removed data or nested scroll area.
+   The left and right columns begin at the same baseline. */
+html#we-site body #why-us #enquiry.we-form-panel:has(#officeEnquiry){
+ justify-content:flex-start!important;padding:22px 26px!important;
+ height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;
+}
+html#we-site body #why-us #enquiry:has(#officeEnquiry) :is(.we-form-kicker,.form-kicker){margin-bottom:8px!important}
+html#we-site body #why-us #enquiry:has(#officeEnquiry) :is(.we-form-intro,.section-note){margin-bottom:14px!important}
+html#we-site body #why-us #officeEnquiry .field-grid{gap:10px 16px!important}
+html#we-site body #why-us #officeEnquiry .we-field textarea{height:72px!important;min-height:72px!important}
+html#we-site body #why-us #officeEnquiry button[type=submit]{margin-top:10px!important}
+html#we-site body #why-us #officeEnquiry .form-help{margin-top:8px!important}
+@media(min-width:1101px){
+ html#we-site body #why-us #officeEnquiry .we-field :is(input,select){height:48px!important;min-height:48px!important}
+ html#we-site body #why-us #officeEnquiry .we-field:not(:has(textarea))>label{top:24px}
+ html#we-site body #why-us #officeEnquiry .we-field:is(:focus-within,:has(input:not(:placeholder-shown)),:has(select option:checked:not([value=""])))>label{top:5px}
+ html#we-site body #why-us .why-layout:has(#officeEnquiry)>.why-left,
+ html#we-site body #why-us .why-layout:has(#officeEnquiry)>.glass-area{margin-top:0!important}
+}
+@media(max-width:640px){
+ html#we-site body #why-us #enquiry.we-form-panel:has(#officeEnquiry){padding:22px 18px!important}
+ html#we-site body #why-us #officeEnquiry .field-grid{gap:12px!important}
+}
+@media(prefers-reduced-motion:reduce){html#we-site body :is(#locations .location-label,#options .sol-glass)>.we-office-shine{animation:none!important;opacity:0!important}}
+@supports not ((-webkit-backdrop-filter:blur(2px)) or (backdrop-filter:blur(2px))){
+ html#we-site body :is(#home.hero-section .hero-panel,#options .sol-card .sol-glass,#locations .location-card.choose-location .location-label,#why-us #enquiry.we-form-panel:has(#officeEnquiry)){background:rgba(255,252,248,.91)!important}
+}
