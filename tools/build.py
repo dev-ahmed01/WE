@@ -716,6 +716,13 @@ def main():
         ("site-typography.css","site-buttons.css","site-cards.css","site-consistency.css","site-polish.css","legal.css"))
     legal_path = asset("css","legal",normalize_brand_red(legal_css))
     legal_body = apply_shared_footer((SRC / "legal.html").read_text(encoding="utf-8"),"legal")
+    # Build the accessible sidebar from policy IDs and summary labels. Adding a
+    # new details section automatically creates its corresponding deep link.
+    policies = re.findall(r'<details\b[^>]*\bid="([^"]+)"[^>]*>\s*<summary>(.*?)<span class="faq-toggle"',legal_body,re.S)
+    if not policies or len({pid for pid,_ in policies}) != len(policies):
+        raise SystemExit("Legal policy IDs missing or duplicated")
+    policy_links = "".join(f'<a href="#{html.escape(pid, quote=True)}">{html.escape(html.unescape(re.sub(r"<[^>]+>", "", label).strip()))}</a>' for pid,label in policies)
+    legal_body = rep(legal_body,"<!-- LEGAL_POLICY_LINKS -->",policy_links,label="legal policy index")
     legal_body = extract_scripts(legal_body,"legal")
     legal_head = make_head(legal_page,{"description":"Website privacy, cookies, terms of use, booking and cancellation information, and contact details for Workspace by Emlen."},legal_path,font_url,"Legal & Policies | Workspace by Emlen") + json_ld(legal_page)
     write("legal/index.html",'<!doctype html><html id="we-site" lang="en"><head>'+legal_head+'</head><body>'+legal_body+'</body></html>')

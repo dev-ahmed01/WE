@@ -109,12 +109,31 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
     await response.waitForURL('**/legal/');
     assert.equal(await response.locator('h1').innerText(),'Legal & policies');
     assert.equal(await response.locator('details.legal-policy').count(),6);
+    assert.equal(await response.locator('.legal-breadcrumb').count(),0,'no visible breadcrumb');
+    await response.waitForFunction(()=>Math.abs(Number(document.querySelector('.legal-main').dataset.visibleNavGap)-80)<=1);
+    const legalLayout=await response.evaluate(()=>{
+      const h=document.querySelector('.legal-intro h1').getBoundingClientRect(),m=document.querySelector('.legal-main').getBoundingClientRect(),a=document.querySelector('.legal-index'),ar=a.getBoundingClientRect(),r=document.querySelector('.legal-accordions').getBoundingClientRect();
+      const s=getComputedStyle(a);
+      return {left:Math.abs(h.left-m.left)<=1,aligned:Math.abs(ar.top-r.top)<=1,radius:s.borderRadius,sticky:s.position,links:[...a.querySelectorAll('a')].map(l=>l.hash),policies:[...document.querySelectorAll('.legal-policy')].map(p=>'#'+p.id)};
+    });
+    assert.ok(legalLayout.left&&legalLayout.aligned,'aligned legal heading and panels');
+    assert.equal(legalLayout.radius,'24px');assert.equal(legalLayout.sticky,'sticky');
+    assert.deepEqual(legalLayout.links,legalLayout.policies,'all policies indexed automatically');
+
     await response.locator('#privacy summary').click();
     assert.ok(await response.locator('#privacy').getAttribute('open')!==null,'native accordion opens');
     assert.ok((await response.locator('meta[name="robots"]').getAttribute('content')).includes('noindex'));
     assert.equal(await response.locator('.em-nav__cta').getAttribute('href'),'/workspaces/#enquiry');
     await response.locator('.legal-index a[href="#cookies"]').click();
     await response.waitForFunction(()=>document.querySelector('#cookies').open);
+    assert.equal(await response.locator('.legal-index a[href="#cookies"]').getAttribute('aria-current'),'location');
+    await response.waitForFunction(()=>{const p=document.querySelector('#cookies'),nav=document.querySelector('.em-nav');return p.getBoundingClientRect().top>=nav.getBoundingClientRect().bottom;});
+    await response.setViewportSize({width:390,height:844});
+    await response.goto(BASE+'/legal/#contact');
+    await response.waitForFunction(()=>document.querySelector('#contact').open);
+    assert.equal(await response.locator('.legal-index').evaluate(e=>getComputedStyle(e).position),'static');
+    assert.equal(await response.locator('.legal-index a[href="#contact"]').getAttribute('aria-current'),'location');
+    assert.ok(await response.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),'legal mobile without overflow');
     await response.close();
     console.log('WORKSPACES SEO OK');
   } finally {

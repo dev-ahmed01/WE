@@ -1,9 +1,8 @@
 <header class="legal-original"><a href="/"><img src="/assets/img/workspace-by-emlen-d50fe795.png" alt="Workspace by Emlen" width="640" height="85"></a></header>
 <main class="legal-main">
-  <nav class="legal-breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span aria-current="page">Legal</span></nav>
   <div class="legal-intro"><h1>Legal &amp; <span class="red">policies</span></h1><p>Information about using our website, your personal information and workspace enquiries.</p></div>
   <p class="legal-review">Review draft — these website notices describe the current enquiry features. Final company particulars, approved privacy practices and commercial policies require confirmation before public publication.</p>
-  <div class="legal-layout"><aside class="legal-index"><h2>On this page</h2><a href="#privacy">Privacy notice</a><a href="#cookies">Cookies &amp; embedded services</a><a href="#terms">Website terms</a><a href="#booking">Bookings, cancellations &amp; refunds</a><a href="#offers">Offers &amp; workspace information</a><a href="#contact">Contact &amp; privacy requests</a></aside>
+  <div class="legal-layout"><aside class="legal-index"><h2 id="legal-index-title">On this page</h2><nav class="legal-index-links" aria-labelledby="legal-index-title"><!-- LEGAL_POLICY_LINKS --></nav></aside>
   <div class="legal-accordions">
   <details class="faq-item legal-policy" id="privacy"><summary>Privacy notice<span class="faq-toggle" aria-hidden="true"></span></summary><div class="legal-content"><h3>Information you provide</h3><p>The website enquiry forms request contact details such as name and telephone number, optional work email, team size, workspace preferences, location, move-in timeline and any information you choose to enter in requirements. Please avoid including sensitive personal information in free-text fields.</p><h3>How enquiries are delivered</h3><p>The website is designed to send enquiries to a configured lead service, or to open WhatsApp with your details ready for you to review and send. Enquiry information is used to respond to your request and discuss workspace options. The lead service, if configured, may receive the page address and submission time alongside your enquiry.</p><h3>Retention and sharing</h3><p>Final retention periods, service providers, authorised access, transfer arrangements and deletion procedures must be confirmed by the business. No specific retention or security guarantee is made in this draft. Please contact our team with questions about your information.</p></div></details>
   <details class="faq-item legal-policy" id="cookies"><summary>Cookies &amp; embedded services<span class="faq-toggle" aria-hidden="true"></span></summary><div class="legal-content"><p>The website includes externally provided resources, including Google Fonts and a Google Maps embed. Accessing these resources can disclose technical information such as your IP address and browser details to the provider. Opening WhatsApp or other third-party links is subject to the relevant provider's privacy terms.</p><p>The site's complete cookie, analytics and advertising inventory must be verified against the deployed configuration before a final cookie notice is published. Browser settings allow you to manage cookies and site permissions.</p><p><a href="https://policies.google.com/privacy" rel="noopener noreferrer">Google Privacy Policy</a> · <a href="https://www.whatsapp.com/legal/privacy-policy" rel="noopener noreferrer">WhatsApp Privacy Policy</a></p></div></details>
@@ -15,5 +14,46 @@
 </main>
 <footer></footer>
 <script>
-document.addEventListener('DOMContentLoaded',()=>{function openPolicy(){const id=location.hash.slice(1);const p=document.getElementById(id);if(p?.matches('details.legal-policy'))p.open=true;}addEventListener('hashchange',openPolicy);openPolicy();});
+document.addEventListener('DOMContentLoaded',()=>{
+  const main=document.querySelector('.legal-main'), heading=main.querySelector('h1'), nav=document.querySelector('.em-nav');
+  const links=[...main.querySelectorAll('.legal-index-links a')];
+  const policies=[...main.querySelectorAll('.legal-policy')];
+  function measure(){
+    if(!nav)return;
+    const s=getComputedStyle(heading),context=document.createElement('canvas').getContext('2d');
+    context.font=s.fontWeight+' '+s.fontSize+' '+s.fontFamily;
+    const label=heading.textContent.trim(),m=context.measureText(label),line=parseFloat(s.lineHeight);
+    const ink=Number.isFinite(m.fontBoundingBoxAscent)&&Number.isFinite(m.fontBoundingBoxDescent)?Math.max(0,(line-m.fontBoundingBoxAscent-m.fontBoundingBoxDescent)/2+m.fontBoundingBoxAscent-m.actualBoundingBoxAscent):0;
+    const bottom=nav.getBoundingClientRect().bottom;
+    main.style.setProperty('--legal-top',(bottom+80-ink)+'px');
+    main.style.setProperty('--legal-anchor-offset',(bottom+24)+'px');
+    main.dataset.visibleNavGap=String(Math.round((heading.getBoundingClientRect().top+scrollY-bottom+ink)*10)/10);
+  }
+  function select(id){
+    for(const link of links){
+      if(link.getAttribute('href')==='#'+id)link.setAttribute('aria-current','location');
+      else link.removeAttribute('aria-current');
+    }
+  }
+  function openPolicy(id,scroll){
+    const policy=document.getElementById(id);
+    if(!policy?.matches('details.legal-policy'))return;
+    policy.open=true;
+    select(id);
+    if(scroll)requestAnimationFrame(()=>policy.scrollIntoView({block:'start',behavior:'instant'}));
+  }
+  links.forEach(link=>link.addEventListener('click',()=>{
+    openPolicy(link.hash.slice(1),true);
+  }));
+  policies.forEach(policy=>policy.querySelector('summary').addEventListener('click',()=>{
+    if(!policy.open)select(policy.id);
+  }));
+  addEventListener('hashchange',()=>openPolicy(location.hash.slice(1),true));
+  addEventListener('resize',measure,{passive:true});
+  if(nav)new ResizeObserver(measure).observe(nav);
+  document.fonts?.ready.then(measure);
+  document.fonts?.addEventListener('loadingdone',measure);
+  measure();
+  if(location.hash)openPolicy(location.hash.slice(1),true);
+});
 </script>
