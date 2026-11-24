@@ -559,7 +559,7 @@ def patch_workspaces(b):
             f"<footer>\n<div class=\"container footer-inner\"><span>© Workspace by Emlen. Flexible workspace solutions.</span>"
             f"<nav aria-label=\"Site\"><ul class=\"sl-row\">{LINKS_HTML}</ul></nav><a href=\"#top\">Back to top</a></div>\n</footer>", label="ws footer")
     # Existing solutionData contains extracted first-party image URLs and descriptions.
-    b += "\n<script>\n" + r"""(()=>{
+    catalogue_script = r"""(()=>{
   const section=document.querySelector('#solutions');
   if(!section||typeof solutionData==='undefined')return;
   const tabs=[...section.querySelectorAll('[role=tab]')],panel=section.querySelector('[role=tabpanel]');
@@ -595,7 +595,10 @@ def patch_workspaces(b):
     const enquiry=document.querySelector('#enquiry');if(enquiry)enquiry.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
   });
   render(0);
-})();""" + "\n</script>\n"
+})();"""
+    # Run inside the original script closure, where solutionData and esc are defined.
+    catalogue_marker = '/* ---- Workspaces section: carousel of private offices + "Office spaces at {location}" ---- */'
+    b = rep(b, catalogue_marker, catalogue_script + "\n" + catalogue_marker, label="solutions catalogue initialization")
     return b
 
 def patch_category(b):
