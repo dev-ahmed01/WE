@@ -3,9 +3,9 @@
 :root{
   --we-section-space:45px;
   --we-section-space-mobile:45px;
-  --we-faq-pad-x:24px;
-  --we-faq-pad-y:20px;
-  --we-faq-gap:12px;
+  --we-faq-pad-x:20px;
+  --we-faq-pad-y:12px;
+  --we-faq-gap:10px;
   --we-glass-blur:22px;
   --we-glass-strong-blur:26px;
   --we-glass-saturation:125%;
@@ -74,7 +74,7 @@ html#we-site body .we-hl__art>svg [stroke-width="2.5"]{stroke-width:2.8!importan
 html#we-site body .faq-list{gap:var(--we-faq-gap)!important}
 html#we-site body .faq-item :is(summary,button.faq-q,button.faq-toggle){
   box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;
-  min-height:70px!important;padding:var(--we-faq-pad-y) var(--we-faq-pad-x)!important;
+  min-height:56px!important;padding:var(--we-faq-pad-y) var(--we-faq-pad-x)!important;
   gap:16px!important;font:600 16px/1.4 var(--we-type-body)!important;text-align:left;
 }
 html#we-site body .faq-item :is(.faq-q,button.faq-toggle)>span:first-child{font:inherit!important;letter-spacing:0!important}
@@ -145,12 +145,12 @@ html#we-site body :is(.we-form-panel,.em-nav){
   html#we-site body :is(#office-checklist .consult-card,#consultation .lm-banner){grid-template-columns:1fr!important;gap:28px!important}
 }
 @media(max-width:640px){
-  :root{--we-section-space:var(--we-section-space-mobile);--we-faq-pad-x:18px;--we-faq-pad-y:16px;--we-faq-gap:10px}
+  :root{--we-section-space:var(--we-section-space-mobile);--we-faq-pad-x:16px;--we-faq-pad-y:12px;--we-faq-gap:8px}
   html#we-site body .we-footer-inner{width:calc(100% - 36px)}
   html#we-site body .we-footer-grid{gap:24px 18px}
   html#we-site body .we-footer-brand{grid-column:1/-1}
   html#we-site body footer.we-universal-footer{padding:32px 0 20px!important}
-  html#we-site body .faq-item :is(summary,button.faq-q,button.faq-toggle){min-height:62px!important;gap:12px!important}
+  html#we-site body .faq-item :is(summary,button.faq-q,button.faq-toggle){min-height:54px!important;gap:12px!important}
   html#we-site body :is(#office-checklist>.frame,#consultation>.container){width:calc(100% - 36px)!important}
   html#we-site body #office-checklist .consult-art{height:238px!important}
   html#we-site body #consultation .lm-ticket{min-height:238px}

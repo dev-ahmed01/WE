@@ -285,7 +285,7 @@ async function checkFinalConsistency(page,route,mobile){
   for(const m of state.marker){assert.equal(m.bg,'none',route+': legacy plus removed');}
   for(const s of state.sections){assert.equal(s.top,'45px',route+': spacing '+s.id);assert.equal(s.bottom,s.top,route+': balanced spacing '+s.id);}
   for(const s of state.special){assert.equal(s.bottom,'45px',route+': section end '+s.id);if(!s.hero)assert.equal(s.top,'45px',route+': section start '+s.id);}
-  for(const f of state.faq)assert.equal(f,mobile?'16px 18px':'20px 24px',route+': common FAQ padding');
+  for(const f of state.faq)assert.equal(f,mobile?'12px 16px':'12px 20px',route+': common FAQ padding');
   assert.ok(state.scrollWidth<=state.width+2,route+': no horizontal overflow');
   if(route.includes('/managed-office/')){
     const panel=page.locator('#office-checklist .consult-card,#consultation .lm-banner');

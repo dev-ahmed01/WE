@@ -207,3 +207,40 @@ html#we-site body #locations .we-lc__head{grid-template-columns:minmax(0,1fr)!im
    category hierarchy, icon badges, sizes and four-column grouping. */
 html#we-site body #weAmPop .we-pop__tile h3,
 html#we-site body #weAm .we-am__item h3{font-weight:400!important}
+
+/* Compact amenity cards: one density for the preview and all-amenities dialog.
+   Keep the existing regular-weight labels, icons, grouping and animation. */
+html#we-site body :is(#weAm .we-am__item,#weAmPop .we-pop__tile){
+  box-sizing:border-box;
+  min-width:0;min-height:60px!important;height:auto!important;
+  padding:10px 14px!important;gap:12px!important;
+  flex-direction:row;align-items:center;justify-content:flex-start;
+}
+html#we-site body :is(#weAm .we-am__item,#weAmPop .we-pop__tile) .we-am__ic{
+  box-sizing:border-box;flex:0 0 36px;width:36px!important;height:36px!important;
+}
+html#we-site body :is(#weAm .we-am__item,#weAmPop .we-pop__tile) .we-am__ic svg{
+  width:21px;height:21px;
+}
+html#we-site body :is(#weAm .we-am__item,#weAmPop .we-pop__tile) h3{
+  min-width:0;margin:0;white-space:normal;overflow-wrap:anywhere;
+}
+html#we-site body #weAm{gap:10px!important}
+html#we-site body #weAmPop .we-pop__column{gap:8px!important}
+html#we-site body #weAmPop .we-pop__category{
+  margin:0 0 6px!important;padding:0!important;min-height:1.25em;
+}
+html#we-site body #weAmPop .we-pop__column-items{gap:8px!important}
+html#we-site body #weAmPop .we-pop__head{margin-bottom:20px}
+html#we-site body #weAmPop .we-pop__foot{margin-top:16px}
+@media(min-width:1101px) and (max-width:1300px){
+  html#we-site body #weAmPop .we-pop__category{min-height:2.5em}
+}
+@media(max-width:560px){
+  /* Preserve two readable preview columns on narrow screens. */
+  html#we-site body #weAm .we-am__item{
+    flex-direction:column;align-items:flex-start;justify-content:center;
+    min-height:84px!important;padding:10px 12px!important;gap:6px!important;
+  }
+  html#we-site body #weAmPop .we-pop__tile{padding:10px 12px!important}
+}
