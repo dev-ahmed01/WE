@@ -573,27 +573,16 @@ def patch_workspaces(b):
     ['For growing teams','Flexible setup','Room to grow'],
     ['For larger teams','Dedicated floor','Tailored options']
   ];
-  // Illustrative prototype prices only; replace with approved commercial rates before removing the sample label.
-  const samplePrices={
-    'One Person Office':12000,'Small Team Office':30000,'Large Team Office':75000,'Full Floor Office':150000,
-    'Dedicated Desk':6500,'Coworking Access Plans':4500,'Day Pass':500,
-    'Meeting Rooms':1000,'Training Rooms':2500,'Virtual Office':1500,'Day Office':1500,
-    'Event Space':5000,'Enterprise & GCC':100000
-  };
-  const formatPrice=new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0});
   let active=0;
   function render(index){
     active=index;const category=tabs[index].dataset.category;
     tabs.forEach((tab,i)=>{tab.setAttribute('aria-selected',String(i===index));tab.tabIndex=i===index?0:-1;});
     panel.setAttribute('aria-labelledby',tabs[index].id);
     panel.innerHTML=solutionData[category].map((item,i)=>{
-      const daily=item.name==='Day Pass'||item.name==='Day Office';
-      const unit=daily?'Daily rate':category==='Meeting Rooms'?'Hourly rate':item.name==='Event Space'?'Booking rate':'Monthly rent';
       const features=category==='Private Office'?privateHighlights[i]:item.chips;
       const isOne=item.name==='One Person Office';
       const learn=isOne?'<a class="we-solution-more" href="/managed-office/one-person-office/">Learn more</a>':'';
-      const price=samplePrices[item.name];
-      return '<article class="we-solution-row" style="--row-index:'+i+'"><div class="we-solution-image"><img src="'+esc(item.img)+'" alt="'+esc(item.name)+'" loading="lazy" width="480" height="320"></div><div class="we-solution-content"><header class="we-solution-heading"><h3>'+esc(item.name)+'</h3><p class="we-solution-desc">'+esc(item.desc)+' '+learn+'</p></header><div class="we-solution-highlights">'+features.map(label=>'<span><i>'+tick+'</i>'+esc(label)+'</span>').join('')+'</div><div class="we-solution-bottom"><div class="we-solution-pricing"><div class="we-solution-rate"><span>'+unit+'</span><strong>'+formatPrice.format(price)+'</strong><small class="we-solution-price-note">Indicative</small></div></div><button type="button" class="lx-btn we-solution-cta" data-solution="'+i+'">Unlock offer '+arrow+'</button></div></div></article>';
+      return '<article class="we-solution-row" style="--row-index:'+i+'"><div class="we-solution-image"><img src="'+esc(item.img)+'" alt="'+esc(item.name)+'" loading="lazy" width="480" height="320"></div><div class="we-solution-content"><header class="we-solution-heading"><h3>'+esc(item.name)+'</h3><p class="we-solution-desc">'+esc(item.desc)+' '+learn+'</p></header><div class="we-solution-highlights">'+features.map(label=>'<span><i>'+tick+'</i>'+esc(label)+'</span>').join('')+'</div><div class="we-solution-bottom"><p class="we-solution-hook">Discover a deal <span>tailored to you.</span></p><button type="button" class="lx-btn we-solution-cta" data-solution="'+i+'">Unlock offer '+arrow+'</button></div></div></article>';
     }).join('');
   }
   tabs.forEach((tab,i)=>{
@@ -611,7 +600,7 @@ def patch_workspaces(b):
     const category=tabs[active].dataset.category,item=solutionData[category][Number(button.dataset.solution)];if(!item)return;
     const type=document.querySelector('#type'),message=document.querySelector('#message');
     if(type){const preferred=['Event Space','Day Pass','Virtual Office'].includes(item.name)?item.name:category==='Additional'?'Other':category;type.value=preferred;type.dispatchEvent(new Event('change',{bubbles:true}));}
-    if(message){const detail='I am interested in '+item.name+' at Jayanagar. Please share pricing, availability and current offers.';message.value=message.value.trim()?message.value.trim()+'\n'+detail:detail;message.dispatchEvent(new Event('input',{bubbles:true}));}
+    if(message){const detail='I am interested in '+item.name+' at Jayanagar. Please share the current offers and availability.';message.value=message.value.trim()?message.value.trim()+'\n'+detail:detail;message.dispatchEvent(new Event('input',{bubbles:true}));}
     const enquiry=document.querySelector('#enquiry');if(enquiry)enquiry.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
   });
   render(0);

@@ -268,10 +268,8 @@ html#we-site body #solutions .we-solution-more{color:#ED2024;font:500 13px/1.5 v
 .we-solution-highlights i{display:grid;place-items:center;width:18px;height:18px;flex:0 0 18px;color:#ED2024;background:none;border:0}
 .we-solution-highlights svg{width:18px;height:18px;stroke-width:2.3}
 .we-solution-bottom{display:flex;flex-direction:column;align-items:flex-start;gap:12px;border-top:1px solid rgba(22,22,22,.08);padding-top:13px}
-.we-solution-pricing{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;min-width:0}
-.we-solution-rate{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px;font:400 14px/1.4 var(--we-type-body);color:#5a5655}
-.we-solution-rate strong{color:#161616;font:600 16px/1.4 var(--we-type-body)}
-.we-solution-price-note{color:#655d57;font:400 11px/1.4 var(--we-type-body);margin-left:3px}
+html#we-site body #solutions .we-solution-hook{margin:0;color:#161616;font:500 16px/1.4 var(--we-type-body)!important}
+.we-solution-hook span{color:#ED2024;font-weight:600}
 html#we-site body #solutions .we-solution-cta{display:inline-flex;align-items:center;justify-content:center;gap:12px;flex:none;min-width:155px;width:auto!important}
 .we-solution-cta svg{width:17px;height:17px;flex:none}
 @keyframes weSolutionEnter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
