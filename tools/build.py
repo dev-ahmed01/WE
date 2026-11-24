@@ -595,9 +595,7 @@ def patch_workspaces(b):
     panel.setAttribute('aria-labelledby',tabs[index].id);
     panel.innerHTML=solutionData[category].map((item,i)=>{
       const features=category==='Private Office'?privateHighlights[i]:item.chips;
-      const isOne=item.name==='One Person Office';
-      const learn=isOne?'<a class="we-solution-more" href="/managed-office/one-person-office/">Learn more</a>':'';
-      return '<article class="we-solution-row" style="--row-index:'+i+'"><div class="we-solution-image"><img src="'+esc(item.img)+'" alt="'+esc(item.name)+'" loading="lazy" width="480" height="320"></div><div class="we-solution-content"><header class="we-solution-heading"><h3>'+esc(item.name)+'</h3><p class="we-solution-desc">'+esc(item.desc)+' '+learn+'</p></header><div class="we-solution-highlights">'+features.map(label=>'<span><i>'+tick+'</i>'+esc(label)+'</span>').join('')+'</div><div class="we-solution-bottom"><p class="we-solution-hook">Talk to us to <span>unlock your discount.</span></p><button type="button" class="lx-btn we-solution-cta" aria-haspopup="dialog" aria-controls="weOfferDialog" data-solution="'+i+'">Unlock offer '+arrow+'</button></div></div></article>';
+      return '<article class="we-solution-row" style="--row-index:'+i+'"><div class="we-solution-image"><img src="'+esc(item.img)+'" alt="'+esc(item.name)+'" loading="lazy" width="480" height="320"></div><div class="we-solution-content"><header class="we-solution-heading"><h3>'+esc(item.name)+'</h3><p class="we-solution-desc">'+esc(item.desc)+'</p></header><div class="we-solution-highlights">'+features.map(label=>'<span><i>'+tick+'</i>'+esc(label)+'</span>').join('')+'</div><div class="we-solution-bottom"><p class="we-solution-hook">Talk to us to <span>unlock your discount.</span></p><button type="button" class="lx-btn we-solution-cta" aria-haspopup="dialog" aria-controls="weOfferDialog" data-solution="'+i+'">Unlock offer '+arrow+'</button></div></div></article>';
     }).join('');
   }
   tabs.forEach((tab,i)=>{

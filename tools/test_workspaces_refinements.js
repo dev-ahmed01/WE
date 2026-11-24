@@ -116,6 +116,7 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
         assert.equal(await catalogue.locator('.we-solution-pricing,.we-solution-rate,.we-solution-price-note').count(),0,'no public prices in any solution category');
       }
       assert.equal(await catalogue.locator('.we-solution-row img').count(),4);
+      assert.equal(await catalogue.locator('.we-solution-desc a').count(),0,'solution descriptions have no Learn more link');
       assert.equal(await catalogue.locator('.we-solution-cta').count(),4);
       assert.equal(await catalogue.locator('.we-solutions-intro').count(),1);
       assert.equal(await catalogue.locator('.we-solution-highlights span').count(),12);

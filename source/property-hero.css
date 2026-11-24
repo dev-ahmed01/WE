@@ -254,7 +254,7 @@ html#we-site body #solutions .we-solutions-tabs{display:inline-flex;align-items:
 html#we-site body #solutions .we-solution-tab{border:1px solid transparent;border-radius:999px;background:transparent;color:#161616;min-height:44px;padding:9px 24px;font:500 14px/1.4 var(--we-type-body);cursor:pointer;white-space:nowrap;transition:background .22s,color .22s,border-color .22s}
 html#we-site body #solutions .we-solution-tab[aria-selected=true]{background:#ED2024;color:#fff;box-shadow:0 4px 12px rgba(237,32,36,.17)}
 html#we-site body #solutions .we-solution-tab:not([aria-selected=true]):hover{background:rgba(237,32,36,.055);color:#ED2024}
-.we-solution-tab:focus-visible,.we-solution-cta:focus-visible,.we-solution-more:focus-visible{outline:2px solid #ED2024;outline-offset:3px}
+.we-solution-tab:focus-visible,.we-solution-cta:focus-visible{outline:2px solid #ED2024;outline-offset:3px}
 html#we-site body #solutions .we-solutions-list{display:grid;gap:16px;min-width:0}
 html#we-site body #solutions .we-solution-row{display:grid;grid-template-columns:minmax(0,25%) minmax(0,1fr);gap:28px;padding:18px;border:1px solid var(--we-card-line,rgba(22,22,22,.09));border-radius:var(--we-card-radius,24px);background:#fff;box-shadow:var(--we-card-shadow,0 12px 32px rgba(22,22,22,.07));min-width:0;animation:weSolutionEnter .38s ease both;animation-delay:calc(var(--row-index,0)*45ms)}
 html#we-site body #solutions .we-solution-image{position:relative;min-height:220px;border-radius:16px;overflow:hidden;background:#f3f3f3}
@@ -262,7 +262,6 @@ html#we-site body #solutions .we-solution-image{position:relative;min-height:220
 .we-solution-content{min-width:0;display:flex;flex-direction:column;justify-content:center;padding:4px 12px 4px 0}
 html#we-site body #solutions .we-solution-heading h3{margin:0 0 7px!important;font:600 21px/1.25 var(--we-type-heading)!important;color:#161616!important}
 html#we-site body #solutions .we-solution-desc{margin:0;color:#5a5655;font:400 14px/1.65 var(--we-type-body)!important}
-html#we-site body #solutions .we-solution-more{color:#ED2024;font:500 13px/1.5 var(--we-type-body);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
 .we-solution-highlights{display:flex;flex-wrap:wrap;gap:10px 20px;margin:17px 0}
 .we-solution-highlights span{display:inline-flex;align-items:center;gap:7px;font:400 14px/1.4 var(--we-type-body);color:#161616;min-width:0}
 .we-solution-highlights i{display:grid;place-items:center;width:18px;height:18px;flex:0 0 18px;color:#ED2024;background:none;border:0}
