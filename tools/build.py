@@ -565,18 +565,22 @@ def patch_workspaces(b):
   if(!section||typeof solutionData==='undefined')return;
   const tabs=[...section.querySelectorAll('[role=tab]')],panel=section.querySelector('[role=tabpanel]');
   const symbol=path=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+path+'</svg>';
-  const person=symbol('<circle cx="12" cy="7" r="3"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/>');
-  const team=symbol('<circle cx="9" cy="7" r="3"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M17 4a3 3 0 0 1 0 6m1 4a6 6 0 0 1 4 5v2"/>');
-  const office=symbol('<path d="M3 21h18M5 21V4h14v17M9 8h2m3 0h2m-7 4h2m3 0h2M10 21v-5h4v5"/>');
-  const clock=symbol('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>');
   const tick=symbol('<path d="m5 12 4 4L19 6"/>');
   const arrow='<svg class="we-action-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
   const privateHighlights=[
-    [['For one person',person],['Private workspace',office],['Move-in ready',tick]],
-    [['For small teams',team],['Dedicated office',office],['Managed support',tick]],
-    [['For growing teams',team],['Flexible setup',office],['Room to grow',tick]],
-    [['For larger teams',team],['Dedicated floor',office],['Tailored options',tick]]
+    ['For one person','Private workspace','Move-in ready'],
+    ['For small teams','Dedicated office','Managed support'],
+    ['For growing teams','Flexible setup','Room to grow'],
+    ['For larger teams','Dedicated floor','Tailored options']
   ];
+  // Illustrative prototype prices only; replace with approved commercial rates before removing the sample label.
+  const samplePrices={
+    'One Person Office':12000,'Small Team Office':30000,'Large Team Office':75000,'Full Floor Office':150000,
+    'Dedicated Desk':6500,'Coworking Access Plans':4500,'Day Pass':500,
+    'Meeting Rooms':1000,'Training Rooms':2500,'Virtual Office':1500,'Day Office':1500,
+    'Event Space':5000,'Enterprise & GCC':100000
+  };
+  const formatPrice=new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0});
   let active=0;
   function render(index){
     active=index;const category=tabs[index].dataset.category;
@@ -584,13 +588,12 @@ def patch_workspaces(b):
     panel.setAttribute('aria-labelledby',tabs[index].id);
     panel.innerHTML=solutionData[category].map((item,i)=>{
       const daily=item.name==='Day Pass'||item.name==='Day Office';
-      const unit=category==='Private Office'?'Monthly rent':daily?'Daily rate':category==='Meeting Rooms'?'Booking rate':'Regular price';
-      const features=category==='Private Office'?privateHighlights[i]:item.chips.map((chip,j)=>[chip,j===0?office:tick]);
+      const unit=daily?'Daily rate':category==='Meeting Rooms'?'Hourly rate':item.name==='Event Space'?'Booking rate':'Monthly rent';
+      const features=category==='Private Office'?privateHighlights[i]:item.chips;
       const isOne=item.name==='One Person Office';
       const learn=isOne?'<a class="we-solution-more" href="/managed-office/one-person-office/">Learn more</a>':'';
-      const hook=isOne?'Get 1 month rent free on selected plans':'Unlock an offer for your workspace';
-      const quoteLabel=item.name==='Full Floor Office'||item.name==='Enterprise & GCC'?'Get a quote':'Check availability';
-      return '<article class="we-solution-row" style="--row-index:'+i+'"><div class="we-solution-image"><img src="'+esc(item.img)+'" alt="'+esc(item.name)+'" loading="lazy" width="480" height="320"></div><div class="we-solution-content"><header class="we-solution-heading"><h3>'+esc(item.name)+'</h3><p class="we-solution-desc">'+esc(item.desc)+' '+learn+'</p></header><div class="we-solution-highlights">'+features.map(([label,icon])=>'<span><i>'+icon+'</i>'+esc(label)+'</span>').join('')+'</div><div class="we-solution-bottom"><div class="we-solution-pricing"><div class="we-solution-rate"><span>'+unit+'</span><strong>On request</strong></div><span class="we-solution-hook">'+esc(hook)+'</span></div><button type="button" class="lx-btn we-solution-cta" data-solution="'+i+'">'+quoteLabel+' '+arrow+'</button></div></div></article>';
+      const price=samplePrices[item.name];
+      return '<article class="we-solution-row" style="--row-index:'+i+'"><div class="we-solution-image"><img src="'+esc(item.img)+'" alt="'+esc(item.name)+'" loading="lazy" width="480" height="320"></div><div class="we-solution-content"><header class="we-solution-heading"><h3>'+esc(item.name)+'</h3><p class="we-solution-desc">'+esc(item.desc)+' '+learn+'</p></header><div class="we-solution-highlights">'+features.map(label=>'<span><i>'+tick+'</i>'+esc(label)+'</span>').join('')+'</div><div class="we-solution-bottom"><div class="we-solution-pricing"><div class="we-solution-rate"><span>'+unit+'</span><strong>'+formatPrice.format(price)+'</strong><small class="we-solution-price-note">Indicative</small></div></div><button type="button" class="lx-btn we-solution-cta" data-solution="'+i+'">Unlock offer '+arrow+'</button></div></div></article>';
     }).join('');
   }
   tabs.forEach((tab,i)=>{
