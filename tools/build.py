@@ -484,7 +484,8 @@ def patch_workspaces(b):
         raise SystemExit("Workspaces section markers changed; refusing an unsafe edit")
     solutions = """<section class="section" id="solutions" aria-labelledby="weSolutionsTitle">
 <div class="container we-solutions">
-  <h2 class="section-title" id="weSolutionsTitle">Find your ideal <span class="accent">workspace.</span></h2>
+  <h2 class="section-title" id="weSolutionsTitle">Explore our <span class="accent">workspace solutions.</span></h2>
+  <p class="we-solutions-intro">Find the right space for the way you work, from a private office to a space for your entire team.</p>
   <div class="we-solutions-tabs" role="tablist" aria-label="Workspace solutions">
     <button type="button" class="we-solution-tab" id="we-sol-tab-0" role="tab" aria-selected="true" aria-controls="we-sol-panel" data-category="Private Office">Private Office</button>
     <button type="button" class="we-solution-tab" id="we-sol-tab-1" role="tab" aria-selected="false" aria-controls="we-sol-panel" tabindex="-1" data-category="Coworking">Coworking</button>
@@ -563,17 +564,33 @@ def patch_workspaces(b):
   const section=document.querySelector('#solutions');
   if(!section||typeof solutionData==='undefined')return;
   const tabs=[...section.querySelectorAll('[role=tab]')],panel=section.querySelector('[role=tabpanel]');
-  const tick='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';
-  const arrow='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+  const symbol=path=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+path+'</svg>';
+  const person=symbol('<circle cx="12" cy="7" r="3"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/>');
+  const team=symbol('<circle cx="9" cy="7" r="3"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M17 4a3 3 0 0 1 0 6m1 4a6 6 0 0 1 4 5v2"/>');
+  const office=symbol('<path d="M3 21h18M5 21V4h14v17M9 8h2m3 0h2m-7 4h2m3 0h2M10 21v-5h4v5"/>');
+  const clock=symbol('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>');
+  const tick=symbol('<path d="m5 12 4 4L19 6"/>');
+  const arrow='<svg class="we-action-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+  const privateHighlights=[
+    [['For one person',person],['Private workspace',office],['Move-in ready',tick]],
+    [['For small teams',team],['Dedicated office',office],['Managed support',tick]],
+    [['For growing teams',team],['Flexible setup',office],['Room to grow',tick]],
+    [['For larger teams',team],['Dedicated floor',office],['Tailored options',tick]]
+  ];
   let active=0;
   function render(index){
     active=index;const category=tabs[index].dataset.category;
     tabs.forEach((tab,i)=>{tab.setAttribute('aria-selected',String(i===index));tab.tabIndex=i===index?0:-1;});
     panel.setAttribute('aria-labelledby',tabs[index].id);
     panel.innerHTML=solutionData[category].map((item,i)=>{
-      const unit=category==='Private Office'?'Monthly pricing':item.name==='Day Pass'||item.name==='Day Office'?'Daily pricing':category==='Meeting Rooms'?'Booking rates':'Pricing';
-      const learn=item.name==='One Person Office'?'<a class="we-solution-more" href="/managed-office/one-person-office/">Learn more</a>':'';
-      return '<article class="we-solution-row" style="--row-index:'+i+'"><div class="we-solution-image"><img src="'+esc(item.img)+'" alt="'+esc(item.name)+'" loading="lazy" width="480" height="320"></div><div class="we-solution-content"><h3>'+esc(item.name)+'</h3><p class="we-solution-desc">'+esc(item.desc)+' '+learn+'</p><div class="we-solution-highlights">'+item.chips.map(chip=>'<span><i>'+tick+'</i>'+esc(chip)+'</span>').join('')+'</div><div class="we-solution-bottom"><div class="we-solution-pricing"><span>'+unit+'</span><strong>On request</strong><small>Ask about available offers.</small></div><button type="button" class="lx-btn we-solution-cta" data-solution="'+i+'">Get a quote '+arrow+'</button></div></div></article>';
+      const daily=item.name==='Day Pass'||item.name==='Day Office';
+      const unit=category==='Private Office'?'Monthly rent':daily?'Daily rate':category==='Meeting Rooms'?'Booking rate':'Regular price';
+      const features=category==='Private Office'?privateHighlights[i]:item.chips.map((chip,j)=>[chip,j===0?office:tick]);
+      const isOne=item.name==='One Person Office';
+      const learn=isOne?'<a class="we-solution-more" href="/managed-office/one-person-office/">Learn more</a>':'';
+      const hook=isOne?'Get 1 month rent free on selected plans':'Unlock an offer for your workspace';
+      const quoteLabel=item.name==='Full Floor Office'||item.name==='Enterprise & GCC'?'Get a quote':'Check availability';
+      return '<article class="we-solution-row" style="--row-index:'+i+'"><div class="we-solution-image"><img src="'+esc(item.img)+'" alt="'+esc(item.name)+'" loading="lazy" width="480" height="320"></div><div class="we-solution-content"><header class="we-solution-heading"><h3>'+esc(item.name)+'</h3><p class="we-solution-desc">'+esc(item.desc)+' '+learn+'</p></header><div class="we-solution-highlights">'+features.map(([label,icon])=>'<span><i>'+icon+'</i>'+esc(label)+'</span>').join('')+'</div><div class="we-solution-bottom"><div class="we-solution-pricing"><div class="we-solution-rate"><span>'+unit+'</span><strong>On request</strong></div><span class="we-solution-hook">'+esc(hook)+'</span></div><button type="button" class="lx-btn we-solution-cta" data-solution="'+i+'">'+quoteLabel+' '+arrow+'</button></div></div></article>';
     }).join('');
   }
   tabs.forEach((tab,i)=>{

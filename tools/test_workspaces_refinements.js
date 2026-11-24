@@ -115,6 +115,17 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
       }
       assert.equal(await catalogue.locator('.we-solution-row img').count(),4);
       assert.equal(await catalogue.locator('.we-solution-cta').count(),4);
+      assert.equal(await catalogue.locator('.we-solutions-intro').count(),1);
+      assert.equal(await catalogue.locator('.we-solution-highlights span').count(),12);
+      assert.equal(await catalogue.locator('.we-solution-hook').first().innerText(),'Get 1 month rent free on selected plans');
+      const solutionLayout=await catalogue.locator('.we-solution-row').first().evaluate(e=>{
+        const box=s=>e.querySelector(s).getBoundingClientRect();
+        const image=box('.we-solution-image'),head=box('.we-solution-heading'),features=box('.we-solution-highlights'),price=box('.we-solution-pricing'),cta=box('.we-solution-cta');
+        return {stacked:image.bottom<=head.top+1,side:image.right<=head.left+1,ordered:head.bottom<=features.top+1&&features.bottom<=price.top+1&&price.bottom<=cta.top+1,ctaColor:getComputedStyle(e.querySelector('.we-solution-cta')).backgroundColor};
+      });
+      assert.ok(solutionLayout.ordered,'heading, description, highlights, price/hook then CTA');
+      assert.ok(width<=640?solutionLayout.stacked:solutionLayout.side,'responsive photo layout');
+      assert.equal(solutionLayout.ctaColor,'rgb(237, 32, 36)','Emlen red CTA');
       assert.ok(await catalogue.evaluate(e=>e.scrollWidth<=e.clientWidth+1),'solutions fit viewport');
       await catalogue.locator('.we-solution-cta').first().click();
       assert.equal(await page.locator('#type').inputValue(),'Private Office');
