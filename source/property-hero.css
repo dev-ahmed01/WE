@@ -289,3 +289,24 @@ html#we-site body #solutions .we-solution-cta{display:inline-flex;align-items:ce
  html#we-site body #solutions .we-solution-cta{width:100%!important}
 }
 @media(prefers-reduced-motion:reduce){.we-solution-row,.we-solution-tab{animation:none!important;transition:none!important}}
+
+/* Offer dialog: native focus containment and the shared Emlen floating-label
+   field and button styles, with the same navigation glass optics. */
+html#we-site body #weOfferDialog{box-sizing:border-box;width:min(540px,calc(100% - 32px));max-width:none;max-height:calc(100dvh - 32px);overflow:auto;padding:30px;border:1px solid var(--we-nav-edge);border-radius:28px;background:#fff;box-shadow:0 24px 90px rgba(22,22,22,.22);color:#161616;font-family:var(--we-type-body);margin:auto}
+html#we-site body #weOfferDialog[open]{animation:weOfferEnter .22s ease both}
+#weOfferDialog::backdrop{background:rgba(22,22,22,.36);backdrop-filter:blur(5px)}
+html:has(#weOfferDialog[open]){overflow:hidden}
+html#we-site body #weOfferDialog h3{margin:0 34px 10px 0!important;font:600 21px/1.25 var(--we-type-heading)!important}
+#weOfferTitle span{color:#ED2024}
+#weOfferIntro{margin:0 0 16px;font:400 14px/1.6 var(--we-type-body);color:#5a5655}
+.we-offer-selection{display:inline-flex;margin:0 0 20px;padding:6px 12px;border:1px solid rgba(237,32,36,.14);border-radius:999px;color:#ED2024;background:#fff5f4;font:500 13px/1.4 var(--we-type-body)}
+#weOfferForm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#weOfferForm .we-offer-wide{grid-column:1/-1}
+html#we-site body #weOfferForm .we-field textarea{height:86px;min-height:86px}
+#weOfferStatus{margin:0!important}
+.we-offer-close{position:absolute;top:20px;right:20px;width:36px;height:36px;display:grid;place-items:center;border:1px solid rgba(22,22,22,.08);border-radius:50%;background:#fff5f4;color:#ED2024;cursor:pointer}
+.we-offer-close svg{width:19px;height:19px}
+.we-offer-close:focus-visible{outline:2px solid #ED2024;outline-offset:3px}
+@keyframes weOfferEnter{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+@media(max-width:480px){html#we-site body #weOfferDialog{padding:23px 18px;border-radius:24px}#weOfferForm{grid-template-columns:1fr;gap:10px}}
+@media(prefers-reduced-motion:reduce){html#we-site body #weOfferDialog[open]{animation:none}}

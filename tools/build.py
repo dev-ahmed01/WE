@@ -495,6 +495,21 @@ def patch_workspaces(b):
   <div class="we-solutions-list" id="we-sol-panel" role="tabpanel" aria-labelledby="we-sol-tab-0" tabindex="0"></div>
 </div>
 </section>
+<dialog id="weOfferDialog" aria-labelledby="weOfferTitle" aria-describedby="weOfferIntro">
+  <button class="we-offer-close" type="button" aria-label="Close offer form"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <h3 id="weOfferTitle">Unlock your <span>offer.</span></h3>
+  <p id="weOfferIntro">Share your details and our team will help you explore available discounts.</p>
+  <div class="we-offer-selection" id="weOfferSelection"></div>
+  <form class="we-form" id="weOfferForm">
+    <div class="we-field"><label for="weOfferFirst">First name</label><input id="weOfferFirst" name="firstName" autocomplete="given-name" placeholder=" " required maxlength="80"></div>
+    <div class="we-field"><label for="weOfferLast">Last name</label><input id="weOfferLast" name="lastName" autocomplete="family-name" placeholder=" " required maxlength="80"></div>
+    <div class="we-field"><label for="weOfferMobile">Mobile number</label><input id="weOfferMobile" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder=" " required maxlength="24"></div>
+    <div class="we-field"><label for="weOfferEmail">Email (optional)</label><input id="weOfferEmail" name="email" type="email" autocomplete="email" placeholder=" " maxlength="180"></div>
+    <div class="we-field we-offer-wide"><label for="weOfferNote">Note (optional)</label><textarea id="weOfferNote" name="requirements" placeholder=" " maxlength="1000"></textarea></div>
+    <button type="submit" class="we-offer-wide">Unlock offer</button>
+    <p class="form-status we-offer-wide" id="weOfferStatus" role="status" aria-live="polite" hidden></p>
+  </form>
+</dialog>
 """
     b = b[:b.index(start)] + solutions + b[b.index(end):]
     b = rep(b, '<p class="hp-sub">Flexible, professional and fully equipped spaces designed to help your business grow.</p>',
@@ -582,7 +597,7 @@ def patch_workspaces(b):
       const features=category==='Private Office'?privateHighlights[i]:item.chips;
       const isOne=item.name==='One Person Office';
       const learn=isOne?'<a class="we-solution-more" href="/managed-office/one-person-office/">Learn more</a>':'';
-      return '<article class="we-solution-row" style="--row-index:'+i+'"><div class="we-solution-image"><img src="'+esc(item.img)+'" alt="'+esc(item.name)+'" loading="lazy" width="480" height="320"></div><div class="we-solution-content"><header class="we-solution-heading"><h3>'+esc(item.name)+'</h3><p class="we-solution-desc">'+esc(item.desc)+' '+learn+'</p></header><div class="we-solution-highlights">'+features.map(label=>'<span><i>'+tick+'</i>'+esc(label)+'</span>').join('')+'</div><div class="we-solution-bottom"><p class="we-solution-hook">Discover a deal <span>tailored to you.</span></p><button type="button" class="lx-btn we-solution-cta" data-solution="'+i+'">Unlock offer '+arrow+'</button></div></div></article>';
+      return '<article class="we-solution-row" style="--row-index:'+i+'"><div class="we-solution-image"><img src="'+esc(item.img)+'" alt="'+esc(item.name)+'" loading="lazy" width="480" height="320"></div><div class="we-solution-content"><header class="we-solution-heading"><h3>'+esc(item.name)+'</h3><p class="we-solution-desc">'+esc(item.desc)+' '+learn+'</p></header><div class="we-solution-highlights">'+features.map(label=>'<span><i>'+tick+'</i>'+esc(label)+'</span>').join('')+'</div><div class="we-solution-bottom"><p class="we-solution-hook">Talk to us to <span>unlock your discount.</span></p><button type="button" class="lx-btn we-solution-cta" aria-haspopup="dialog" aria-controls="weOfferDialog" data-solution="'+i+'">Unlock offer '+arrow+'</button></div></div></article>';
     }).join('');
   }
   tabs.forEach((tab,i)=>{
@@ -595,13 +610,37 @@ def patch_workspaces(b):
       e.preventDefault();render(target);tabs[target].focus();
     });
   });
+  const dialog=document.querySelector('#weOfferDialog'),form=document.querySelector('#weOfferForm');
+  const first=document.querySelector('#weOfferFirst'),last=document.querySelector('#weOfferLast'),mobile=document.querySelector('#weOfferMobile'),email=document.querySelector('#weOfferEmail'),note=document.querySelector('#weOfferNote'),status=document.querySelector('#weOfferStatus'),submit=form.querySelector('button[type=submit]');
+  let selected=null,trigger=null,sending=false;
   panel.addEventListener('click',e=>{
     const button=e.target.closest('[data-solution]');if(!button)return;
     const category=tabs[active].dataset.category,item=solutionData[category][Number(button.dataset.solution)];if(!item)return;
-    const type=document.querySelector('#type'),message=document.querySelector('#message');
-    if(type){const preferred=['Event Space','Day Pass','Virtual Office'].includes(item.name)?item.name:category==='Additional'?'Other':category;type.value=preferred;type.dispatchEvent(new Event('change',{bubbles:true}));}
-    if(message){const detail='I am interested in '+item.name+' at Jayanagar. Please share the current offers and availability.';message.value=message.value.trim()?message.value.trim()+'\n'+detail:detail;message.dispatchEvent(new Event('input',{bubbles:true}));}
-    const enquiry=document.querySelector('#enquiry');if(enquiry)enquiry.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
+    selected={category,name:item.name};trigger=button;
+    form.reset();mobile.setCustomValidity('');first.setCustomValidity('');last.setCustomValidity('');
+    status.hidden=true;status.textContent='';submit.disabled=false;sending=false;
+    document.querySelector('#weOfferSelection').textContent=item.name+' · Jayanagar';
+    dialog.showModal();first.focus({preventScroll:true});
+  });
+  dialog.querySelector('.we-offer-close').addEventListener('click',()=>{if(!sending)dialog.close()});
+  dialog.addEventListener('cancel',e=>{if(sending)e.preventDefault()});
+  dialog.addEventListener('click',e=>{if(e.target!==dialog||sending)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close()});
+  dialog.addEventListener('close',()=>{if(trigger?.isConnected)trigger.focus({preventScroll:true});});
+  [first,last,mobile].forEach(field=>field.addEventListener('input',()=>field.setCustomValidity('')));
+  form.addEventListener('submit',e=>{
+    e.preventDefault();if(sending||!selected)return;
+    if(!first.value.trim()){first.setCustomValidity('Enter your first name.');first.reportValidity();return;}
+    if(!last.value.trim()){last.setCustomValidity('Enter your last name.');last.reportValidity();return;}
+    const digits=mobile.value.replace(/\D/g,'');
+    if(!/^\+?[\d\s()-]+$/.test(mobile.value.trim())||digits.length<8||digits.length>15){mobile.setCustomValidity('Enter a valid mobile number.');mobile.reportValidity();return;}
+    const payload={source:'workspaces-unlock-offer',name:first.value.trim()+' '+last.value.trim(),firstName:first.value.trim(),lastName:last.value.trim(),phone:mobile.value.trim(),email:email.value.trim(),requirements:note.value.trim(),workspaceType:selected.category,office:selected.name,location:'Jayanagar'};
+    const intro='Hello Workspace by Emlen, I would like to unlock an offer for '+selected.name+'.';
+    const message=window.EmlenLead.format(payload,intro);
+    sending=true;submit.disabled=true;status.hidden=false;status.textContent='Sending…';
+    window.EmlenLead.deliver(message,payload,status).then(result=>{
+      sending=false;submit.disabled=true;
+      if(result.mode==='api')status.textContent='Thanks! Our team will contact you about available offers.';
+    }).catch(()=>{sending=false;submit.disabled=false;});
   });
   render(0);
 })();"""
