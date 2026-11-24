@@ -477,12 +477,25 @@ def patch_home(b):
     return b + footer
 
 def patch_workspaces(b):
-    # Remove only the redundant private-office carousel and its detail panel.
+    # Replace the redundant carousel with the approved stacked solutions catalogue.
     start = '<section class="section" id="spaces">'
     end = '<section class="section" id="locations">'
     if b.count(start) != 1 or b.count(end) != 1 or b.index(start) >= b.index(end):
         raise SystemExit("Workspaces section markers changed; refusing an unsafe edit")
-    b = b[:b.index(start)] + b[b.index(end):]
+    solutions = """<section class="section" id="solutions" aria-labelledby="weSolutionsTitle">
+<div class="container we-solutions">
+  <h2 class="section-title" id="weSolutionsTitle">Find your ideal <span class="accent">workspace.</span></h2>
+  <div class="we-solutions-tabs" role="tablist" aria-label="Workspace solutions">
+    <button type="button" class="we-solution-tab" id="we-sol-tab-0" role="tab" aria-selected="true" aria-controls="we-sol-panel" data-category="Private Office">Private Office</button>
+    <button type="button" class="we-solution-tab" id="we-sol-tab-1" role="tab" aria-selected="false" aria-controls="we-sol-panel" tabindex="-1" data-category="Coworking">Coworking</button>
+    <button type="button" class="we-solution-tab" id="we-sol-tab-2" role="tab" aria-selected="false" aria-controls="we-sol-panel" tabindex="-1" data-category="Meeting Rooms">Meeting Rooms</button>
+    <button type="button" class="we-solution-tab" id="we-sol-tab-3" role="tab" aria-selected="false" aria-controls="we-sol-panel" tabindex="-1" data-category="Additional">Additional</button>
+  </div>
+  <div class="we-solutions-list" id="we-sol-panel" role="tabpanel" aria-labelledby="we-sol-tab-0" tabindex="0"></div>
+</div>
+</section>
+"""
+    b = b[:b.index(start)] + solutions + b[b.index(end):]
     b = rep(b, '<p class="hp-sub">Flexible, professional and fully equipped spaces designed to help your business grow.</p>',
             '<p class="hp-sub">Flexible, Ready to Use Spaces for Teams of Any Size.</p>', label="approved workspaces hero subtitle")
     # Remove decorative section rules and the superseded hero eyebrow, not
@@ -545,6 +558,44 @@ def patch_workspaces(b):
     b = rep(b, "<footer>\n<div class=\"container footer-inner\"><span>© Workspace by Emlen. Flexible workspace solutions.</span><a href=\"#top\">Back to top</a></div>\n</footer>",
             f"<footer>\n<div class=\"container footer-inner\"><span>© Workspace by Emlen. Flexible workspace solutions.</span>"
             f"<nav aria-label=\"Site\"><ul class=\"sl-row\">{LINKS_HTML}</ul></nav><a href=\"#top\">Back to top</a></div>\n</footer>", label="ws footer")
+    # Existing solutionData contains extracted first-party image URLs and descriptions.
+    b += "\n<script>\n" + r"""(()=>{
+  const section=document.querySelector('#solutions');
+  if(!section||typeof solutionData==='undefined')return;
+  const tabs=[...section.querySelectorAll('[role=tab]')],panel=section.querySelector('[role=tabpanel]');
+  const tick='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';
+  const arrow='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+  let active=0;
+  function render(index){
+    active=index;const category=tabs[index].dataset.category;
+    tabs.forEach((tab,i)=>{tab.setAttribute('aria-selected',String(i===index));tab.tabIndex=i===index?0:-1;});
+    panel.setAttribute('aria-labelledby',tabs[index].id);
+    panel.innerHTML=solutionData[category].map((item,i)=>{
+      const unit=category==='Private Office'?'Monthly pricing':item.name==='Day Pass'||item.name==='Day Office'?'Daily pricing':category==='Meeting Rooms'?'Booking rates':'Pricing';
+      const learn=item.name==='One Person Office'?'<a class="we-solution-more" href="/managed-office/one-person-office/">Learn more</a>':'';
+      return '<article class="we-solution-row" style="--row-index:'+i+'"><div class="we-solution-image"><img src="'+esc(item.img)+'" alt="'+esc(item.name)+'" loading="lazy" width="480" height="320"></div><div class="we-solution-content"><h3>'+esc(item.name)+'</h3><p class="we-solution-desc">'+esc(item.desc)+' '+learn+'</p><div class="we-solution-highlights">'+item.chips.map(chip=>'<span><i>'+tick+'</i>'+esc(chip)+'</span>').join('')+'</div><div class="we-solution-bottom"><div class="we-solution-pricing"><span>'+unit+'</span><strong>On request</strong><small>Ask about available offers.</small></div><button type="button" class="lx-btn we-solution-cta" data-solution="'+i+'">Get a quote '+arrow+'</button></div></div></article>';
+    }).join('');
+  }
+  tabs.forEach((tab,i)=>{
+    tab.addEventListener('click',()=>render(i));
+    tab.addEventListener('keydown',e=>{
+      let target=i;
+      if(e.key==='ArrowRight')target=(i+1)%tabs.length;
+      else if(e.key==='ArrowLeft')target=(i+tabs.length-1)%tabs.length;
+      else if(e.key==='Home')target=0;else if(e.key==='End')target=tabs.length-1;else return;
+      e.preventDefault();render(target);tabs[target].focus();
+    });
+  });
+  panel.addEventListener('click',e=>{
+    const button=e.target.closest('[data-solution]');if(!button)return;
+    const category=tabs[active].dataset.category,item=solutionData[category][Number(button.dataset.solution)];if(!item)return;
+    const type=document.querySelector('#type'),message=document.querySelector('#message');
+    if(type){const preferred=['Event Space','Day Pass','Virtual Office'].includes(item.name)?item.name:category==='Additional'?'Other':category;type.value=preferred;type.dispatchEvent(new Event('change',{bubbles:true}));}
+    if(message){const detail='I am interested in '+item.name+' at Jayanagar. Please share pricing, availability and current offers.';message.value=message.value.trim()?message.value.trim()+'\n'+detail:detail;message.dispatchEvent(new Event('input',{bubbles:true}));}
+    const enquiry=document.querySelector('#enquiry');if(enquiry)enquiry.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
+  });
+  render(0);
+})();""" + "\n</script>\n"
     return b
 
 def patch_category(b):

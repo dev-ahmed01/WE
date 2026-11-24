@@ -15,6 +15,18 @@ const BASE = process.argv[2] || 'http://127.0.0.1:8802';
       assert.ok(directives.includes('noindex') && directives.includes('nofollow'),
         'Workspaces remains noindex and nofollow');
       assert.equal(await page.locator('#spaces').count(), 0, 'redundant office carousel removed');
+      const catalogue=page.locator('#solutions');
+      assert.deepEqual(await catalogue.locator('[role=tab]').allInnerTexts(),['Private Office','Coworking','Meeting Rooms','Additional']);
+      await catalogue.locator('.we-solution-row').first().waitFor();
+      assert.deepEqual(await catalogue.locator('.we-solution-row h3').allInnerTexts(),['One Person Office','Small Team Office','Large Team Office','Full Floor Office']);
+      for(const [category,count] of [['Coworking',3],['Meeting Rooms',2],['Additional',4],['Private Office',4]]){
+        await catalogue.locator('[role=tab]').filter({hasText:category}).click();
+        assert.equal(await catalogue.locator('.we-solution-row').count(),count);
+        assert.equal(await catalogue.locator('[aria-selected=true]').innerText(),category);
+      }
+      assert.equal(await catalogue.locator('.we-solution-row img').count(),4);
+      assert.equal(await catalogue.locator('.we-solution-cta').count(),4);
+      assert.ok(await catalogue.evaluate(e=>e.scrollWidth<=e.clientWidth+1),'solutions fit viewport');
       const hero=page.locator('#top.hp-b');
       assert.equal(await hero.locator('.hp-left .hp-sub').innerText(),'Flexible, Ready to Use Spaces for Teams of Any Size.');
       assert.equal(await hero.locator('.hp-eyebrow').count(),0,'removed hero eyebrow');
