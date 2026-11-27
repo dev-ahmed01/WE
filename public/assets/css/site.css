@@ -1,31 +1,60 @@
 /* Shared, low-specificity additions loaded after each page's own stylesheet. */
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:84px}
-@media (max-width:760px){html{scroll-padding-top:72px}}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:5.25rem}
+@media (max-width:47.5em){html{scroll-padding-top:4.5rem}}
 body{-webkit-tap-highlight-color:transparent}
 .ap-bt a[aria-disabled="true"]{cursor:default;opacity:.62;position:relative;pointer-events:none}
 .ap-bt a[aria-disabled="true"]::after{content:attr(data-soon);display:block;font-size:.68em;font-weight:500;letter-spacing:.04em;opacity:.8}
 
-/* header fit: the original home header wrapped "About Us" / the buttons onto two lines around 1024px, and the
+/* header fit: the original home header wrapped "About Us" / the buttons onto two lines around 64rem, and the
    extra "All offices" link pushed the one-person-office CTA off-screen. Keep labels on one line, drop the least
    important items first (they stay reachable from the footer and mobile menu). */
 header.nav .nav-links a,header.nav .nav-cta .btn{white-space:nowrap}
-@media (max-width:1180px){header.nav .nav-cta .btn-line{display:none}}
-@media (max-width:1240px){.navlinks .nav-extra{display:none}}
+@media (max-width:73.75em){header.nav .nav-cta .btn-line{display:none}}
+@media (max-width:77.5em){.navlinks .nav-extra{display:none}}
 
 /* comfortable touch targets for the cross-page footer links */
-@media (pointer:coarse){.sl-row a,.site-footer li a,.footer-links a,.footer-inner nav a{display:inline-flex;align-items:center;min-height:44px}}
+@media (pointer:coarse){.sl-row a,.site-footer li a,.footer-links a,.footer-inner nav a{display:inline-flex;align-items:center;min-height:2.75rem}}
 
 /* cross-page link rows (footers) */
-.sl-row{display:flex;flex-wrap:wrap;gap:6px 22px;margin:0;padding:0;list-style:none}
-.sl-row a{color:inherit;text-decoration:none;opacity:.86;padding:6px 0;display:inline-block}
+.sl-row{display:flex;flex-wrap:wrap;gap:0.375rem 1.375rem;margin:0;padding:0;list-style:none}
+.sl-row a{color:inherit;text-decoration:none;opacity:.86;padding:0.375rem 0;display:inline-block}
 .sl-row a:hover,.sl-row a:focus-visible{opacity:1;text-decoration:underline;text-underline-offset:3px}
-.sl-footer{background:#161616;color:#fff;padding:44px 20px calc(30px + env(safe-area-inset-bottom));font:500 15px/1.5 var(--body,'Poppins',system-ui,sans-serif)}
-.sl-footer .sl-in{max-width:1180px;margin:0 auto;display:grid;gap:26px}
-.sl-footer .sl-brand{display:block;width:170px;max-width:60%;filter:brightness(0) invert(1)}
+.sl-footer{background:#161616;color:#fff;padding:2.75rem 1.25rem calc(1.875rem + env(safe-area-inset-bottom));font:500 0.9375rem/1.5 var(--body,'Poppins',system-ui,sans-serif)}
+.sl-footer .sl-in{max-width:73.75rem;margin:0 auto;display:grid;gap:1.625rem}
+.sl-footer .sl-brand{display:block;width:10.625rem;max-width:60%;filter:brightness(0) invert(1)}
 .sl-footer p{margin:0;opacity:.72;max-width:46ch}
-.sl-footer small{opacity:.55;display:block;font-size:13px}
-.sl-footer h4{margin:0 0 6px;font:600 12px/1 var(--body,'Poppins',system-ui,sans-serif);letter-spacing:.12em;text-transform:uppercase;opacity:.55}
-@media (min-width:860px){.sl-footer .sl-in{grid-template-columns:1.3fr 1fr 1fr;gap:48px}}
-.sl-more{margin:22px 0 0;text-align:center}
-.sl-more a{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 22px;border-radius:999px;border:1px solid currentColor;color:inherit;font-weight:600;text-decoration:none}
+.sl-footer small{opacity:.55;display:block;font-size:0.8125rem}
+.sl-footer h4{margin:0 0 0.375rem;font:600 0.75rem/1 var(--body,'Poppins',system-ui,sans-serif);letter-spacing:.12em;text-transform:uppercase;opacity:.55}
+@media (min-width:53.75em){.sl-footer .sl-in{grid-template-columns:1.3fr 1fr 1fr;gap:3rem}}
+.sl-more{margin:1.375rem 0 0;text-align:center}
+.sl-more a{display:inline-flex;align-items:center;gap:0.5rem;min-height:2.75rem;padding:0 1.375rem;border-radius:62.4375rem;border:1px solid currentColor;color:inherit;font-weight:600;text-decoration:none}
 .sl-more a:hover,.sl-more a:focus-visible{background:rgba(237,32,36,.08)}
+
+/* Responsive foundation — default 16px browser sizing remains unchanged.
+   Rem scales with user preferences; em breakpoints follow the browser font size. */
+:root{--we-mobile-gutter:1rem;--we-touch-target:2.75rem;--we-mobile-section:2.75rem}
+@media (max-width:56.25em){
+  main,section,article,aside,form{min-inline-size:0}
+  .em-nav__mobile{max-height:min(75vh,36rem);max-height:min(75dvh,36rem);overscroll-behavior:contain}
+  html body .em-nav__mobile-link{min-height:var(--we-touch-target);display:flex;align-items:center}
+  html body .em-nav__toggle{min-width:var(--we-touch-target);min-height:var(--we-touch-target);flex-basis:var(--we-touch-target)}
+  html body :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]),select,textarea){font-size:1rem!important;max-inline-size:100%;box-sizing:border-box}
+  html body :is(.fm,.modal-form,.form-grid){min-width:0;max-width:100%}
+  html body :is(.fm button,.modal-form button[type=submit],.form-grid button[type=submit],.em-nav__mobile-cta,.em-nav__mobile-call){min-height:var(--we-touch-target)}
+  html body :is(.sl-footer,.site-footer,.footer-inner){overflow-wrap:anywhere}
+  html body :is(.sl-footer,.sl-row) a{min-height:var(--we-touch-target);display:inline-flex;align-items:center}
+}
+@media (max-width:37.5em){
+  html body .em-nav{width:calc(100% - 1.25rem);gap:.4375rem;min-height:4rem;padding:.5rem .5625rem .5rem .875rem}
+  html body .em-nav__mobile{width:min(26.25rem,calc(100vw - 1.25rem));padding:1rem;border-radius:1.25rem}
+  html body .em-nav__mobile-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+  html body .em-nav__mobile-actions a{white-space:normal;text-align:center}
+  html body :is(.hero,.hero-section,.we-hero) h1{overflow-wrap:anywhere}
+  html body :is(.why-section,.faq-section,.options-section,.values-section,.solutions-section,.benefits-section) :is(h2,h3,p){overflow-wrap:break-word}
+  html body :is(.fm,.modal-form,.form-grid) input:not([type=checkbox]):not([type=radio]):not([type=hidden]),html body :is(.fm,.modal-form,.form-grid) select{min-height:var(--we-touch-target)}
+  html body :is(.sl-footer,.site-footer) .sl-in{min-width:0}
+  html body :is(.sl-footer,.site-footer) .sl-row{gap:.25rem 1rem}
+}
+@media (max-width:22.5em){
+  html body .em-nav__mobile-actions{grid-template-columns:minmax(0,1fr)}
+}
